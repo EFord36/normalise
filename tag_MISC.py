@@ -10,13 +10,6 @@ import re
 
 from tag1 import tag1
 
-with open('NSW_dict.pickle', mode='rb') as file:
-    NSWs = pickle.load(file)
-
-MISC_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
-             if tag == 'MISC'}
-
-
 def tag_MISC(dic):
     """Return dictionary with added tag within the value tuple."""
     out = {}
