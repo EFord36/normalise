@@ -19,6 +19,7 @@
 - [ ] EXPN
 - [ ] LSEQ
 - [ ] WDLK
+
 ##### NUMB
 - [x] NUM
 - [x] NORD
@@ -33,6 +34,7 @@
 - [x] MONEY
 - [x] PRCT
 - [ ] NSCI
+
 ##### MISC
 - [ ] PROF
 - [ ] NSCI
