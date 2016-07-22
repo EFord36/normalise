@@ -21,6 +21,9 @@ SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
              if tag == 'SPLT'}
 
 
+
+
+
 def tag_SPLT(lst):
     """ Assign new index and tag 'SPLT-' to every part of a split token."""
     if len(lst) > 9:
