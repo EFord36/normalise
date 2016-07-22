@@ -99,6 +99,7 @@ def seed_features(item, context):
            is_digbased(context[1])) and not acr_pattern.match(nsw)),
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
+           (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
            (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
            (nsw.lower() in wordlist or 
            (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
@@ -161,6 +162,8 @@ def seed(dict_tup, text):
         return 1
     elif (nsw in ampm or nsw in adbc) and is_digbased(context[1]):
         return 2
+    elif nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw):
+        return 3
     elif nsw in element_dict:
         return 1
     elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
@@ -183,7 +186,7 @@ def seed(dict_tup, text):
 def is_cons(w):
     """Return True if no vowels in w."""
     for lt in w:
-        if lt in ['A', 'E', 'I', 'O', 'U']:
+        if lt in ['A', 'E', 'I', 'O', 'U', 'a', 'e', 'i', 'o', 'u']:
             return False
     return True
 
