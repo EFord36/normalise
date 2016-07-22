@@ -14,6 +14,7 @@ from tag1 import tag1, is_digbased, acr_pattern
 from class_NUMB import gen_frame
 from splitter import split, retag1
 from measurements import meas_dict, meas_dict_pl
+from element_dict import element_dict
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -92,12 +93,21 @@ def seed_features(item, context):
     ind, nsw, tag = item[0], item[1][0], item[1][1]
     out = [
            nsw in ['Mr.', 'Mrs.', 'Mr', 'Mrs'],
-           nsw.endswith('.') and nsw.istitle(),
-           nsw.isupper() or (len(nsw) == 1 and nsw not in meas_dict),
-          (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
-           nsw.lower() in wordlist or (nsw[:-1].lower() in wordlist and nsw.endswith('s')),
-           triple_rep(nsw),
-           bool(acr_pattern.match(nsw)),
+           nsw in ['i.e.', 'ie.', 'e.g.', 'eg.'],
+           nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw),
+           (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and 
+           is_digbased(context[1])) and not acr_pattern.match(nsw)),
+           (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
+           (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
+           (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
+           (nsw.lower() in wordlist or 
+           (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
+           and nsw not in ampm),
+           triple_rep(nsw) and len(nsw) > 3,
+           bool(acr_pattern.match(nsw) and nsw not in meas_dict),
+           nsw.islower() and len(nsw) > 3,
+           nsw.endswith('s') and nsw[:-1].isupper(),
+           nsw in element_dict
            ]
     return out
 
@@ -138,17 +148,31 @@ def seed(dict_tup, text):
     context = gen_frame((ind, (nsw, tag)), text)
     if nsw in ['Mr.', 'Mrs.', 'Mr', 'Mrs']:
         return 3
-    elif nsw.endswith('.') and nsw.istitle():
+    elif nsw in ['i.e.', 'ie.', 'e.g.', 'eg.']:
+        return 2
+    elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
         return 1
-    elif nsw.isupper() and is_cons(nsw):
+    elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and 
+         is_digbased(context[1]))):
+             return 2
+    elif nsw.endswith('s') and nsw[:-1].isupper():
         return 2
     elif (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]):
         return 1
-    elif nsw.lower() in wordlist or (nsw[:-1].lower() in wordlist and nsw.endswith('s')):
+    elif (nsw in ampm or nsw in adbc) and is_digbased(context[1]):
+        return 2
+    elif nsw in element_dict:
+        return 1
+    elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
+         (nsw.lower() in wordlist or 
+         (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
+         and nsw not in ampm):
+             return 3
+    elif triple_rep(nsw) and len(nsw) > 3:
         return 3
-    elif triple_rep(nsw):
+    elif nsw.islower() and len(nsw) > 3:
         return 3
-    elif acr_pattern.match(nsw):
+    elif acr_pattern.match(nsw) and not nsw in meas_dict:
         return 2
     elif len(nsw) == 1:
         return 2
