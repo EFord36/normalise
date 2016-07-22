@@ -18,25 +18,25 @@
 ##### ALPHA
 - [ ] EXPN
 - [ ] LSEQ
-= [ ] WDLK
+- [ ] WDLK
 ##### NUMB
-= [x] NUM
-= [x] NORD
-= [ ] NRANGE
-= [ ] NTEL
-= [x] NDIG
-= [ ] NADDR
-= [ ] NZIP
-= [x] NTIME
-= [ ] NDATE
-= [x] NYER
-= [x] MONEY
-= [x] PRCT
-= [ ] NSCI
+- [x] NUM
+- [x] NORD
+- [ ] NRANGE
+- [ ] NTEL
+- [x] NDIG
+- [ ] NADDR
+- [ ] NZIP
+- [x] NTIME
+- [ ] NDATE
+- [x] NYER
+- [x] MONEY
+- [x] PRCT
+- [ ] NSCI
 ##### MISC
-= [ ] PROF
-= [ ] NSCI
-= [ ] PROF
-= [ ] URL
-= [ ] HTAG
-= [ ] NONE
+- [ ] PROF
+- [ ] NSCI
+- [ ] PROF
+- [ ] URL
+- [ ] HTAG
+- [ ] NONE
