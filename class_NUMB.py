@@ -53,7 +53,7 @@ months = ["January", "Jan", "Jan.", "February", "Feb", "Feb.",
           "Dec", "Dec."]
 
 
-def run_clfNUM(dic, text):
+def run_clfNUMB(dic, text):
     """Train classifier on training data, return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
