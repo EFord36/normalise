@@ -496,41 +496,35 @@ def expand_NDIG(w):
     
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-numbers1 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-num_words1 = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
+num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+numbers1 = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+num_words1 = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
 numbers2 = ['13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 num_words2 = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven']
 
-def splita(w):
-    for n in range(len(w)):
-        if not w[n].isdigit() and w[n - 1].isdigit():
-            a = w[:n]
-            return a
-
-def splitb(w):
-    for n in range(len(w)):
-        if not w[n].isdigit() and w[n - 1].isdigit():
-            b = w[n + 1:]
-            return b
 
 def expand_NTIME(w):
     str2 = ''
-    if splita(w) in numbers:
-        str2 += num_words[numbers.index(splita(w))]
+    m = time_pattern.match(w)
+    if w in ['0:00' or '00:00']:
+        return 'midnight'
+    if m.group(1) in numbers:
+        str2 += num_words[numbers.index(m.group(1))]
         str2 += ' '
-    if splita(w) in numbers1:
-        str2 += num_words1[numbers1.index(splita(w))]
+    elif m.group(1) in numbers1:
+        str2 += num_words1[numbers1.index(m.group(1))]
         str2 += ' '
-    if splita(w) in numbers2:
-        str2 += num_words2[numbers2.index(splita(w))]
+    elif m.group(1) in numbers2:
+        str2 += num_words2[numbers2.index(m.group(1))]
         str2 += ' '
-    if int(splitb(w)) < 10:
-        str2 += expand_NDIG(splitb(w))
+    if m.group(3) == '00':
+        str2 += ''
+    elif int(m.group(3)) < 10:
+        str2 += expand_NDIG(m.group(3))
     else:
-        str2 += expand_NUM(splitb(w))
+        str2 += expand_NUM(m.group(3))
         str2 += ' '
-    if int(splita(w)) <= 12:
+    if int(m.group(1)) <= 12:
         str2 += 'am'
     else:
         str2 += 'pm'
@@ -575,5 +569,12 @@ percent_pattern2 = re.compile('''
 ([\.]?)                       
 ([0-9]+?)                        
 (%)                       
+$
+''', re.VERBOSE)
+
+time_pattern = re.compile('''
+([0-9]{1,2})
+([\.|:])
+([0-9]{2})
 $
 ''', re.VERBOSE)
