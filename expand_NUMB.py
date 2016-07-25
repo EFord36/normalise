@@ -532,7 +532,12 @@ def expand_NTIME(w):
     
     
 def expand_NYER(w):
-    if w[1:3] == '00':
+    num_decades = ['00s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s']
+    decades = ['hundreds', 'tens', 'twenties', 'thirties', 'forties', 'fifties',
+               'sixties', 'seventies', 'eighties', 'nineties']
+    if w[-3:] in num_decades:
+        return expand_NUM(w[:2]) + " " + decades[num_decades.index(w[-3:])]
+    elif w[1:3] == '00':
         return expand_NUM(w)
     elif w[2:4] == '00':
         for i in range(len(w)):
