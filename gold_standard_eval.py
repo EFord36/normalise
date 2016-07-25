@@ -26,7 +26,7 @@ def create_NUMB_ex():
     with open('gs_numbs', mode='w', encoding='utf-8') as file:
         file.write(str(NUMB_ex))
 
-gold_standard_predicted = run_clfNUM(gs_numb_dict, text)
+gold_standard_predicted = run_clfNUMB(gs_numb_dict, text)
 
 
 def gold_vs_pred_tuple():

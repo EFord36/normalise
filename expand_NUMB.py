@@ -552,28 +552,28 @@ def expand_NYER(w):
             
 
 def expand_PRCT(w):
-    if '.' in w and len(w) == 4:
-        a = w[:1]
-        b = w[2:3]
-        return (expand_NUM(a) + " point " + expand_NUM(b) + " percent")
-    elif '.' in w and len(w) == 5 and w[0].isdigit() and w[1].isdigit():
-        a = w[:2]
-        b = w[3:4]
-        return (expand_NUM(a) + " point " + expand_NUM(b) + " percent")
-    elif '.' in w and len(w) == 5 and w[2].isdigit() and w[3].isdigit():
-        a = w[:1]
-        b = w[2:4]
-        return (expand_NUM(a) + " point " + expand_NDIG(b) + "percent")
-    elif '.' in w and len(w) == 6:
-        a = w[:2]
-        b = w[3:5]
-        return (expand_NUM(a) + " point " + expand_NDIG(b) + "percent")
-    elif '.' not in w and len(w) == 2:
-        a = w[0]
-        return expand_NUM(a) + " percent"
-    elif '.' not in w and len(w) == 3:
-        a = w[:2]
-        return expand_NUM(a) + " percent"
-    elif '.' not in w and len(w) == 4:
-        a = w[:3]
-        return expand_NUM(a) + " percent"
+    if '.' in w:
+        m = percent_pattern2.match(w)
+        a = m.group(1)
+        b = m.group(3)
+        return [expand_NUM(a) + " point " + expand_NDIG(b) + "percent"]
+    else:
+        m = percent_pattern1.match(w)
+        a = m.group(1)
+        return [expand_NUM(a) + " percent"]
+
+  
+     
+percent_pattern1 = re.compile('''
+([0-9]+)                     
+(%)                       
+$
+''', re.VERBOSE) 
+     
+percent_pattern2 = re.compile('''
+([0-9]+)
+([\.]?)                       
+([0-9]+?)                        
+(%)                       
+$
+''', re.VERBOSE)
