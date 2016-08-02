@@ -496,41 +496,35 @@ def expand_NDIG(w):
     
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-numbers1 = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-num_words1 = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
+num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+numbers1 = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+num_words1 = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']
 numbers2 = ['13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
 num_words2 = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven']
 
-def splita(w):
-    for n in range(len(w)):
-        if not w[n].isdigit() and w[n - 1].isdigit():
-            a = w[:n]
-            return a
-
-def splitb(w):
-    for n in range(len(w)):
-        if not w[n].isdigit() and w[n - 1].isdigit():
-            b = w[n + 1:]
-            return b
 
 def expand_NTIME(w):
     str2 = ''
-    if splita(w) in numbers:
-        str2 += num_words[numbers.index(splita(w))]
+    m = time_pattern.match(w)
+    if w in ['0:00' or '00:00']:
+        return 'midnight'
+    if m.group(1) in numbers:
+        str2 += num_words[numbers.index(m.group(1))]
         str2 += ' '
-    if splita(w) in numbers1:
-        str2 += num_words1[numbers1.index(splita(w))]
+    elif m.group(1) in numbers1:
+        str2 += num_words1[numbers1.index(m.group(1))]
         str2 += ' '
-    if splita(w) in numbers2:
-        str2 += num_words2[numbers2.index(splita(w))]
+    elif m.group(1) in numbers2:
+        str2 += num_words2[numbers2.index(m.group(1))]
         str2 += ' '
-    if int(splitb(w)) < 10:
-        str2 += expand_NDIG(splitb(w))
+    if m.group(3) == '00':
+        str2 += ''
+    elif int(m.group(3)) < 10:
+        str2 += expand_NDIG(m.group(3))
     else:
-        str2 += expand_NUM(splitb(w))
+        str2 += expand_NUM(m.group(3))
         str2 += ' '
-    if int(splita(w)) <= 12:
+    if int(m.group(1)) <= 12:
         str2 += 'am'
     else:
         str2 += 'pm'
@@ -538,7 +532,12 @@ def expand_NTIME(w):
     
     
 def expand_NYER(w):
-    if w[1:3] == '00':
+    num_decades = ['00s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s']
+    decades = ['hundreds', 'tens', 'twenties', 'thirties', 'forties', 'fifties',
+               'sixties', 'seventies', 'eighties', 'nineties']
+    if w[-3:] in num_decades:
+        return expand_NUM(w[:2]) + " " + decades[num_decades.index(w[-3:])]
+    elif w[1:3] == '00':
         return expand_NUM(w)
     elif w[2:4] == '00':
         for i in range(len(w)):
@@ -552,28 +551,35 @@ def expand_NYER(w):
             
 
 def expand_PRCT(w):
-    if '.' in w and len(w) == 4:
-        a = w[:1]
-        b = w[2:3]
-        return (expand_NUM(a) + " point " + expand_NUM(b) + " percent")
-    elif '.' in w and len(w) == 5 and w[0].isdigit() and w[1].isdigit():
-        a = w[:2]
-        b = w[3:4]
-        return (expand_NUM(a) + " point " + expand_NUM(b) + " percent")
-    elif '.' in w and len(w) == 5 and w[2].isdigit() and w[3].isdigit():
-        a = w[:1]
-        b = w[2:4]
-        return (expand_NUM(a) + " point " + expand_NDIG(b) + "percent")
-    elif '.' in w and len(w) == 6:
-        a = w[:2]
-        b = w[3:5]
-        return (expand_NUM(a) + " point " + expand_NDIG(b) + "percent")
-    elif '.' not in w and len(w) == 2:
-        a = w[0]
-        return expand_NUM(a) + " percent"
-    elif '.' not in w and len(w) == 3:
-        a = w[:2]
-        return expand_NUM(a) + " percent"
-    elif '.' not in w and len(w) == 4:
-        a = w[:3]
-        return expand_NUM(a) + " percent"
+    if '.' in w:
+        m = percent_pattern2.match(w)
+        a = m.group(1)
+        b = m.group(3)
+        return [expand_NUM(a) + " point " + expand_NDIG(b) + "percent"]
+    else:
+        m = percent_pattern1.match(w)
+        a = m.group(1)
+        return [expand_NUM(a) + " percent"]
+
+  
+     
+percent_pattern1 = re.compile('''
+([0-9]+)                     
+(%)                       
+$
+''', re.VERBOSE) 
+     
+percent_pattern2 = re.compile('''
+([0-9]+)
+([\.]?)                       
+([0-9]+?)                        
+(%)                       
+$
+''', re.VERBOSE)
+
+time_pattern = re.compile('''
+([0-9]{1,2})
+([\.|:])
+([0-9]{2})
+$
+''', re.VERBOSE)
