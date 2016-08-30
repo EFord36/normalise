@@ -256,9 +256,11 @@ def expand_NORD(n):
             
  
 scurr_dict = {'$': 'dollar', 'Y': 'yen', '€': 'euro',
-              '£': 'pound', 'HK$': 'Hong Kong Dollar'}
+              '£': 'pound', 'HK$': 'Hong Kong Dollar',
+              'US$': 'U S Dollar'}
 scurr_dict_pl = {'$': 'dollars', 'Y': 'yen', '€': 'euros',
-                 '£': 'pounds', 'HK$': 'Hong Kong Dollars'}
+                 '£': 'pounds', 'HK$': 'Hong Kong Dollars',
+                 'US$': 'U S Dollars'}
 end_dict = {'k': 'thousand', 'm': 'million', 'b': 'billion'}
 ecurr_dict = {
                      "US$": "U S Dollar",
@@ -428,8 +430,8 @@ ecurr_dict = {
 invariant_plural_curr = ['JPY', 'CNY', 'THB', 'ZAR']
 irregular_plural_curr = {'SEK': 'Swedish Kronor', 'NOK': 'Norwegian Kroner',
                          'DKK': 'Danish Kroner', 'ISK': 'Iceland Kronur',
-                         'BRL': 'Brazilian Reais', 'LTL': 'litai',
-                         'LVL': 'latu', 'RON': 'lei'}
+                         'BRL': 'Brazilian Reais', 'LTL': 'Litai',
+                         'LVL': 'Latu', 'RON': 'Lei'}
 
 
 def expand_MONEY(n):
@@ -438,19 +440,27 @@ def expand_MONEY(n):
     ecurr = ''
     end = ''
     num = ''
-    for i in range(3):
-        if not n[i].isdigit():
-            scurr += n[i]
-        else:
-            num = n[i:-3]
-            break
-    if n[-3].isalpha():
-        ecurr += n[-3:]
-    elif n[-1].isalpha():
-        num += n[-3:-1]
-        end += n[-1]
+    if len(n) < 3:
+        if not n[0].isdigit():
+            scurr += n[0]
+            num += n[1]
+        else: 
+            num += n[0]
+            ecurr += n[1]
     else:
-        num += n[-3:]
+        for i in range(len(n)-3):
+            if not n[i].isdigit():
+                scurr += n[i]
+            else:
+                num = n[i:-3]
+                break
+        if n[-3].isalpha():
+               ecurr += n[-3:]
+        elif n[-1].isalpha():
+            num += n[-3:-1]
+            end += n[-1]
+        else:
+            num += n[-3:]
 
     exp_num = expand_NUM(num)
     if num == '1' and not end:
