@@ -38,7 +38,6 @@
 ##### MISC
 - [ ] PROF
 - [ ] NSCI
-- [ ] PROF
 - [ ] URL
 - [ ] HTAG
 - [ ] NONE
