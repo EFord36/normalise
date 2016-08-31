@@ -1,8 +1,10 @@
+from math import log
 import re
 import pickle
 
 from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize as wt
+from nltk import FreqDist as fd
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -11,6 +13,20 @@ with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
+brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_common(5000)[100:]}
+
+
+def overlap(i, word):
+    overlap = 0
+    sig = gen_signature(word)
+    context = gen_context(i, brown)
+    for w in context:
+        if w in sig:
+            if w in brown_common:
+                overlap += brown_common[w]
+            else:
+                overlap += log(1161192 / 1)
+    return overlap
 
 
 def find_matches(word):
@@ -29,10 +45,12 @@ def gen_signature(word):
                   str(wn.synsets(word)[0]).lower())))
         examples = (eval("wn.{}.examples()".format(
                     str(wn.synsets(word)[0]).lower())))
+        if examples:
+            for ex in examples:
+                    signature += wt(ex)
         if define:
             signature += wt(define)
-        if examples:
-            signature += wt(examples)
+
     for i in inds:
         signature += gen_context(i, brown)
     return signature
