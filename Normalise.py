@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jul 22 13:06:35 2016
+Created on Thu Sep  1 15:18:06 2016
 
-@author: Elliot
+@author: emmaflint
 """
+
 from __future__ import division, print_function, unicode_literals
 
 from NSW_new import create_NSW_dict
@@ -12,8 +13,9 @@ from splitter import split, retag1
 from class_ALPHA import run_clfALPHA
 from class_NUMB import run_clfNUMB
 from tag_MISC import tag_MISC
+from expand_all import expand_all
 
-def detect_and_tag(text):
+def normalise(text):
     NSWs = create_NSW_dict(text)
     tagged = tag1(NSWs)
     ALPHA_dict = {}
@@ -43,4 +45,8 @@ def detect_and_tag(text):
     tagged_ALPHA = run_clfALPHA(ALPHA_dict, text)
     tagged_NUMB = run_clfNUMB(NUMB_dict, text)
     tagged_MISC = tag_MISC(MISC_dict)
-    return tagged_ALPHA, tagged_NUMB, tagged_MISC
+    expanded_ALPHA = expand_all(tagged_ALPHA, text)
+    expanded_NUMB = expand_all(tagged_NUMB, text)
+    expanded_MISC = expand_all(tagged_MISC, text)
+    return expanded_ALPHA, expanded_NUMB, expanded_MISC
+
