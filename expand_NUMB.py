@@ -31,6 +31,21 @@ def expand_NUMB(dic):
 
 
 def expand_NUM(n):
+    if n[-1] == 's':
+        if n[-2:] == "'s":
+            str = ''
+            str += expand_NUM(n[:-2])
+            str += "'s"
+        else:
+            str = ''
+            if expand_NUM(n[:-1])[-1] == 'y':
+                str += expand_NUM(n[:-1])[:-1]
+                str += 'ies'
+            else:
+                str += expand_NUM(n[:-1])
+                str += 's'
+        return str
+        
     """Return n as an cardinal in words."""
     ones_C = [
              "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -116,7 +131,7 @@ def expand_NUM(n):
                 return w[:ind-1] + " and" + w[ind:]
             else:
                 return w
-                
+
                 
 def expand_NRANGE(n):
     m = range_pattern.match(n)
@@ -554,6 +569,22 @@ def expand_NTIME(w):
     
     
 def expand_NYER(w):
+    if w[-1] == 's':
+        if w[-2:] == "'s":
+            str = ''
+            str += expand_NYER(w[:-2])
+            str += "'s"
+        else:
+            str = ''
+            if expand_NYER(w[:-1])[-1] == 'y':
+                str += expand_NYER(w[:-1])[:-1]
+                str += 'ies'
+            else:
+                str += expand_NYER(w[:-1])
+                str += 's'
+        return str
+    
+
     num_decades = ['00s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s']
     decades = ['hundreds', 'tens', 'twenties', 'thirties', 'forties', 'fifties',
                'sixties', 'seventies', 'eighties', 'nineties']
