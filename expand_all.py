@@ -20,7 +20,7 @@ def expand_NRANGE(word):
     return word
 func_dict = {
              'EXPN': 'expand_EXPN(nsw, ind, text)',
-             'LSEQ': 'expand_LSEQ(w)',
+             'LSEQ': 'expand_LSEQ(nsw)',
              'WDLK': 'expand_WDLK(nsw)',
              'NUM': 'expand_NUM(nsw)',
              'NORD': 'expand_NORD(nsw)',
@@ -38,6 +38,7 @@ func_dict = {
 
 
 def expand_all(dic, text):
+    out = {}
     for ind, (nsw, tag, ntag) in dic.items():
-        dic.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
-    return dic
+        out.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
+    return out

@@ -9,25 +9,26 @@ import re
 from gold_standard_numbs import gs_numb_tagged
 
 def expand_NUMB(dic):
+    out = {}
     for ind, (nsw, tag, ntag) in dic.items():
         if ntag == 'NUM':
-            dic.update({ind: (nsw, tag, ntag, (expand_NUM(nsw)))})  
+            out.update({ind: (nsw, tag, ntag, (expand_NUM(nsw)))})
         elif ntag == 'NRANGE':
-            dic.update({ind: (nsw, tag, ntag, (expand_NRANGE(nsw)))})
+            out.update({ind: (nsw, tag, ntag, (expand_NRANGE(nsw)))})
         elif ntag == 'NORD':
-            dic.update({ind: (nsw, tag, ntag, (expand_NORD(nsw)))})
+            out.update({ind: (nsw, tag, ntag, (expand_NORD(nsw)))})
         elif ntag == 'NDIG':
-            dic.update({ind: (nsw, tag, ntag, (expand_NDIG(nsw)))})  
+            out.update({ind: (nsw, tag, ntag, (expand_NDIG(nsw)))})
         elif ntag == 'NTIME':
-            dic.update({ind: (nsw, tag, ntag, (expand_NTIME(nsw)))})  
+            out.update({ind: (nsw, tag, ntag, (expand_NTIME(nsw)))})  
         elif ntag == 'NYER':
-            dic.update({ind: (nsw, tag, ntag, (expand_NYER(nsw)))}) 
+            out.update({ind: (nsw, tag, ntag, (expand_NYER(nsw)))})
         elif ntag == 'MONEY':
-            dic.update({ind: (nsw, tag, ntag, (expand_MONEY(nsw)))})  
+            out.update({ind: (nsw, tag, ntag, (expand_MONEY(nsw)))})
         elif ntag == 'PRCT':
-            dic.update({ind: (nsw, tag, ntag, (expand_PRCT(nsw)))})  
-    return dic      
-    
+            out.update({ind: (nsw, tag, ntag, (expand_PRCT(nsw)))})
+    return out
+
 
 
 def expand_NUM(n):
@@ -45,7 +46,7 @@ def expand_NUM(n):
                 str += expand_NUM(n[:-1])
                 str += 's'
         return str
-        
+
     """Return n as an cardinal in words."""
     ones_C = [
              "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -132,7 +133,7 @@ def expand_NUM(n):
             else:
                 return w
 
-                
+
 def expand_NRANGE(n):
     m = range_pattern.match(n)
     str = ''
@@ -141,8 +142,8 @@ def expand_NRANGE(n):
         str += ' to '
     str += expand_NUM(m.group(3))
     return str
-    
-    
+
+
 def expand_NORD(n):
     """Return n as an ordinal in words."""
     ones_C = [
@@ -280,8 +281,8 @@ def expand_NORD(n):
             return pen + "th"
         else:
             return pen
-            
- 
+
+
 scurr_dict = {'$': 'dollar', 'Y': 'yen', '€': 'euro',
               '£': 'pound', 'HK$': 'Hong Kong Dollar',
               'US$': 'U S Dollar'}
@@ -471,7 +472,7 @@ def expand_MONEY(n):
         if not n[0].isdigit():
             scurr += n[0]
             num += n[1]
-        else: 
+        else:
             num += n[0]
             ecurr += n[1]
     else:
@@ -520,7 +521,7 @@ def expand_MONEY(n):
     items.append(currency)
 
     return ' '.join(items)
-    
+
 
 def expand_NDIG(w):
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -530,7 +531,7 @@ def expand_NDIG(w):
         str2 += num_words[numbers.index(n)]
         str2 += ' '
     return str2
-    
+
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -566,8 +567,8 @@ def expand_NTIME(w):
     else:
         str2 += 'pm'
     return str2
-    
-    
+
+
 def expand_NYER(w):
     if w[-1] == 's':
         if w[-2:] == "'s":
@@ -583,7 +584,7 @@ def expand_NYER(w):
                 str += expand_NYER(w[:-1])
                 str += 's'
         return str
-    
+
 
     num_decades = ['00s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s']
     decades = ['hundreds', 'tens', 'twenties', 'thirties', 'forties', 'fifties',
@@ -601,7 +602,7 @@ def expand_NYER(w):
             a = w[:2]
             b = w[2:]
             return expand_NUM(a) + " " + expand_NUM(b)
-            
+
 
 def expand_PRCT(w):
     if '.' in w:
@@ -614,19 +615,19 @@ def expand_PRCT(w):
         a = m.group(1)
         return [expand_NUM(a) + " percent"]
 
-  
-     
+
+
 percent_pattern1 = re.compile('''
-([0-9]+)                     
-(%)                       
+([0-9]+)
+(%)
 $
-''', re.VERBOSE) 
-     
+''', re.VERBOSE)
+
 percent_pattern2 = re.compile('''
 ([0-9]+)
-([\.]?)                       
-([0-9]+?)                        
-(%)                       
+([\.]?)
+([0-9]+?)
+(%)
 $
 ''', re.VERBOSE)
 
@@ -647,4 +648,3 @@ range_pattern = re.compile('''
 [0-9]*)
 $
 ''', re.VERBOSE)
-
