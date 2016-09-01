@@ -10,11 +10,11 @@ wordlist = nltk.corpus.words.words()
 
 
 def create_regexp(w):
-    """Return regular expression representing word with repeated cs 1+ times.
+    """Return regular expression representing word with repeated chars 1+ times.
     """
     regexp = w[0]
     for i in range(1, len(w)):
-        if w[i] == w[i-1]:
+        if w[i] == w[i - 1]:
             if regexp[-1] != '+':
                 regexp += '+'
         else:
@@ -40,14 +40,14 @@ def expand_FNSP(w):
         else:
             red_word = w[0]
             for i in range(1, len(w)):
-                if w[i] != w[i-1]:
+                if w[i] != w[i - 1]:
                     red_word += w[i]
             return red_word
 
 
 def FNSP_ast(w):
     """Return 'original' rude word from asterisked FNSP."""
-    rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap',  'cum',
+    rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
             'dick' 'fuck', 'pussy', 'shit', 'tits', 'twat']
     candidates = [r for r in rude if len(r) == len(w)]
     final = ''
