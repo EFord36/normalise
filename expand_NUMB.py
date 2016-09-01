@@ -6,29 +6,6 @@ Created on Fri Jul 22 14:30:22 2016
 """
 
 import re
-from gold_standard_numbs import gs_numb_tagged
-
-def expand_NUMB(dic):
-    out = {}
-    for ind, (nsw, tag, ntag) in dic.items():
-        if ntag == 'NUM':
-            out.update({ind: (nsw, tag, ntag, (expand_NUM(nsw)))})
-        elif ntag == 'NRANGE':
-            out.update({ind: (nsw, tag, ntag, (expand_NRANGE(nsw)))})
-        elif ntag == 'NORD':
-            out.update({ind: (nsw, tag, ntag, (expand_NORD(nsw)))})
-        elif ntag == 'NDIG':
-            out.update({ind: (nsw, tag, ntag, (expand_NDIG(nsw)))})
-        elif ntag == 'NTIME':
-            out.update({ind: (nsw, tag, ntag, (expand_NTIME(nsw)))})  
-        elif ntag == 'NYER':
-            out.update({ind: (nsw, tag, ntag, (expand_NYER(nsw)))})
-        elif ntag == 'MONEY':
-            out.update({ind: (nsw, tag, ntag, (expand_MONEY(nsw)))})
-        elif ntag == 'PRCT':
-            out.update({ind: (nsw, tag, ntag, (expand_PRCT(nsw)))})
-    return out
-
 
 
 def expand_NUM(n):
