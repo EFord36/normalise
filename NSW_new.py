@@ -13,6 +13,7 @@ from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
 from nltk.corpus import names
+from contraction_list import contractions
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -57,7 +58,8 @@ def ident_NSW(w):
 
     Return word if it satisfies all four above conditions.
     """
-    return cond1(w) and cond2(w) and cond3(w) and cond4(w)
+    return (cond1(w) and cond2(w) and cond3(w) and cond4(w) 
+            and not (w in contractions))
 
 
 def create_NSW_dict(text):
