@@ -5,21 +5,42 @@ import pickle
 from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
-
-with open('wordlist.pickle', mode='rb') as file:
-    wordlist = pickle.load(file)
+from nltk import pos_tag
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_common(5000)[100:]}
+words = [w for w, freq in fd(brown).most_common()]
 
 
-def overlap(i, word):
+def maximum_overlap(i, text):
+    best = 0
+    current = []
+    for cand in tag_matches(i, text):
+        olap = overlap(i, cand, text)
+        if olap > best and cand in brown_common:
+            best = olap
+            current = [cand]
+        elif olap == best and best != 0:
+            current.append(cand)
+    best = 0
+    curr = ''
+    for c in current:
+        if c in brown_common:
+            freq = brown_common[c]
+        else:
+            freq = 0
+        if freq > best:
+            best = freq
+            curr = c
+    return curr
+
+def overlap(i, word, text):
     overlap = 0
     sig = gen_signature(word)
-    context = gen_context(i, brown)
+    context = gen_context(i, text)
     for w in context:
         if w in sig:
             if w in brown_common:
@@ -39,7 +60,7 @@ def find_matches(word):
 
 def gen_signature(word):
     inds = find_matches(word)
-    signature = []
+    signature = set()
     if word in wn.words():
         define = (eval("wn.{}.definition()".format(
                   str(wn.synsets(word)[0]).lower())))
@@ -47,12 +68,12 @@ def gen_signature(word):
                     str(wn.synsets(word)[0]).lower())))
         if examples:
             for ex in examples:
-                    signature += wt(ex)
+                    signature.update(wt(ex))
         if define:
-            signature += wt(define)
+            signature.update(wt(define))
 
     for i in inds:
-        signature += gen_context(i, brown)
+        signature.update(gen_context(i, brown))
     return signature
 
 
@@ -87,14 +108,41 @@ def gen_context(i, text):
     return context
 
 
+def tag_sent(i, text):
+    sent = gen_context(i, text)
+    return pos_tag(sent)
+
+
+def tag_cands(abbrv):
+    tagged_cands = []
+    for (cand, freq) in gen_best(abbrv):
+        tagged_cands += pos_tag(wt(cand))
+    return tagged_cands
+
+
+def abbrev_tag(i, text):
+    for (cand, tag) in tag_sent(i, text):
+        if text[i] == cand:
+            return tag
+
+
+def tag_matches(i, text):
+    matches = []
+    for (cand, tag) in tag_cands(text[i]):
+        if tag == abbrev_tag(i, text):
+            matches += [cand]
+    return matches
+
+
 def gen_candidates(word):
     cands = []
     reg = ''
-    for lt in word:
-        reg += lt
-        reg += '[aeiou]*'
+    for lt in word.lower():
+        if lt.isalpha():
+            reg += lt
+            reg += '[aeiou]*'
     regex = re.compile(reg)
-    for w in wordlist:
+    for w in words:
         if regex.match(w):
             cands.append(w)
     return cands
