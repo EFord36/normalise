@@ -6,6 +6,7 @@ from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
+from abbrev_dict import abbrev_dict, ambig_abbrevs
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
@@ -14,28 +15,94 @@ brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
 
+def expand_EXPN(w, i, text):
+    if w in abbrev_dict:
+        exp = abbrev_dict[w]
+    elif w in ambig_abbrevs:
+        cands = ambig_abbrevs[w]
+        tagged_cands = []
+        for cand in cands:
+            tagged_cands += pos_tag(wt(cand))
+            matches = []
+        for (w, tag) in tagged_cands:
+            if abbrev_tag(i, text) == tag:
+                matches += [w]
+        if matches:        
+            best = 0
+            current =[]
+            for cand in matches:
+                olap = overlap(i, cand, text)
+                if olap > best and cand in brown_common:
+                    best = olap
+                    current = [cand]
+                elif olap == best and best != 0:
+                    current.append(cand)
+            best = 0
+            exp = ''
+            for c in current:
+                if c in brown_common:
+                    freq = brown_common[c]
+                else:
+                    freq = 0
+                if freq > best:
+                    best = freq
+                    exp = c
+        else:
+            best = 0
+            for cand in cands:
+                if cand in brown_common:
+                    freq = brown_common[cand]
+                else:
+                    freq = 0
+                if freq > best:
+                    best = freq
+                    exp = cand
+    else:
+        exp = maximum_overlap(w, i, text)
+    if exp == '':
+        return w
+    else:
+        return exp
 
-def maximum_overlap(i, text):
+
+def maximum_overlap(w, i, text):
     best = 0
     current = []
-    for cand in tag_matches(i, text):
-        olap = overlap(i, cand, text)
-        if olap > best and cand in brown_common:
-            best = olap
-            current = [cand]
-        elif olap == best and best != 0:
-            current.append(cand)
-    best = 0
-    curr = ''
-    for c in current:
-        if c in brown_common:
-            freq = brown_common[c]
-        else:
-            freq = 0
-        if freq > best:
-            best = freq
-            curr = c
-    return curr
+    if tag_matches(i, text):
+        for cand in tag_matches(i, text):
+            olap = overlap(i, cand, text)
+            if olap > best and cand in brown_common:
+                best = olap
+                current = [cand]
+            elif olap == best and best != 0:
+                current.append(cand)
+        best = 0
+        curr = ''
+        for c in current:
+            if c in brown_common:
+                freq = brown_common[c]
+            else:
+                freq = 0
+            if freq > best:
+                best = freq
+                curr = c
+                return curr
+    else:
+        best = 0
+        curr = ''
+        for (cand, freq) in gen_best(w):
+            if cand in brown_common:
+                freq = brown_common[cand]
+            else:
+                freq = 0
+            if freq > best:
+                    best = freq
+                    curr = cand
+    if curr == '':
+        return w
+    else:
+        return curr
+        
 
 def overlap(i, word, text):
     overlap = 0
