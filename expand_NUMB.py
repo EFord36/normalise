@@ -12,6 +12,8 @@ def expand_NUMB(dic):
     for ind, (nsw, tag, ntag) in dic.items():
         if ntag == 'NUM':
             dic.update({ind: (nsw, tag, ntag, (expand_NUM(nsw)))})  
+        elif ntag == 'NRANGE':
+            dic.update({ind: (nsw, tag, ntag, (expand_NRANGE(nsw)))})
         elif ntag == 'NORD':
             dic.update({ind: (nsw, tag, ntag, (expand_NORD(nsw)))})
         elif ntag == 'NDIG':
@@ -114,8 +116,18 @@ def expand_NUM(n):
                 return w[:ind-1] + " and" + w[ind:]
             else:
                 return w
-
-
+                
+                
+def expand_NRANGE(n):
+    m = range_pattern.match(n)
+    str = ''
+    str += expand_NUM(m.group(1))
+    if m.group(2) in ['/', '-', '–']:
+        str += ' to '
+    str += expand_NUM(m.group(3))
+    return str
+    
+    
 def expand_NORD(n):
     """Return n as an ordinal in words."""
     ones_C = [
@@ -593,3 +605,15 @@ time_pattern = re.compile('''
 ([0-9]{2})
 $
 ''', re.VERBOSE)
+
+range_pattern = re.compile('''
+([0-9]+                 # 1 or more digits
+\.?                     # optional '.'
+[0-9]*)                 # 0 or more digits
+(/|-|–)                   # hyphen or slash
+([0-9]+                 # same pattern as lines 1-3
+\.?
+[0-9]*)
+$
+''', re.VERBOSE)
+
