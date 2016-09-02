@@ -16,29 +16,28 @@
 ### Expansion
 
 ##### ALPHA
-- [ ] EXPN
-- [ ] LSEQ
-- [ ] WDLK
+- [x] EXPN
+- [x] LSEQ
+- [x] WDLK
 
 ##### NUMB
 - [x] NUM
 - [x] NORD
-- [ ] NRANGE
+- [x] NRANGE
 - [ ] NTEL
 - [x] NDIG
 - [ ] NADDR
 - [ ] NZIP
 - [x] NTIME
-- [ ] NDATE
+- [x] NDATE
 - [x] NYER
 - [x] MONEY
 - [x] PRCT
 - [ ] NSCI
 
 ##### MISC
-- [ ] PROF
+- [x] PROF
 - [ ] NSCI
-- [ ] PROF
 - [ ] URL
 - [ ] HTAG
-- [ ] NONE
+- [x] NONE
