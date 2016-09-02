@@ -6,7 +6,7 @@ from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
-from abbrev_dict import abbrev_dict, ambig_abbrevs
+from abbrev_dict import abbrev_dict, ambig_abbrevs, states
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
@@ -16,10 +16,12 @@ brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_commo
 words = [w for w, freq in fd(brown).most_common()]
 
 def expand_EXPN(w, i, text):
-    if w in abbrev_dict:
-        exp = abbrev_dict[w]
-    elif w in ambig_abbrevs:
-        cands = ambig_abbrevs[w]
+    if w in states:
+        exp = states[w]
+    elif w.lower() in abbrev_dict:
+        exp = abbrev_dict[w.lower()]
+    elif w.lower() in ambig_abbrevs:
+        cands = ambig_abbrevs[w.lower()]
         tagged_cands = []
         for cand in cands:
             tagged_cands += pos_tag(wt(cand))

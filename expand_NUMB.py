@@ -9,20 +9,21 @@ import re
 
 
 def expand_NUM(n):
-    if n[-1] == 's':
-        if n[-2:] == "'s":
-            str = ''
-            str += expand_NUM(n[:-2])
-            str += "'s"
-        else:
-            str = ''
-            if expand_NUM(n[:-1])[-1] == 'y':
-                str += expand_NUM(n[:-1])[:-1]
-                str += 'ies'
+    if len(n) > 0:
+        if n[-1] == 's':
+            if len(n) > 1 and n[-2:] == "'s":
+                str = ''
+                str += expand_NUM(n[:-2])
+                str += "'s"
             else:
-                str += expand_NUM(n[:-1])
-                str += 's'
-        return str
+                str = ''
+                if expand_NUM(n[:-1])[-1] == 'y':
+                    str += expand_NUM(n[:-1])[:-1]
+                    str += 'ies'
+                else:
+                    str += expand_NUM(n[:-1])
+                    str += 's'
+            return str
 
     """Return n as an cardinal in words."""
     ones_C = [
@@ -430,7 +431,10 @@ ecurr_dict = {
                      "VND": "Vietnamese Dong",
                      "YER": "Yemeni Rial",
                      "ZMK": "Zambian Kwacha",
-                     "ZWD": "Zimbabwe Dollar"
+                     "ZWD": "Zimbabwe Dollar",
+                     "£": "pound",
+                     "$": "dollar",
+                     "€": "euro"
                      }
 invariant_plural_curr = ['JPY', 'CNY', 'THB', 'ZAR']
 irregular_plural_curr = {'SEK': 'Swedish Kronor', 'NOK': 'Norwegian Kroner',
@@ -445,13 +449,13 @@ def expand_MONEY(n):
     ecurr = ''
     end = ''
     num = ''
-    if len(n) < 3:
+    if len(n) <= 3:
         if not n[0].isdigit():
             scurr += n[0]
-            num += n[1]
+            num += n[1:]
         else:
             num += n[0]
-            ecurr += n[1]
+            ecurr += n[1:]
     else:
         for i in range(len(n)-3):
             if not n[i].isdigit():
@@ -466,7 +470,7 @@ def expand_MONEY(n):
             end += n[-1]
         else:
             num += n[-3:]
-
+ 
     exp_num = expand_NUM(num)
     if num == '1' and not end:
         if ecurr:
@@ -548,7 +552,7 @@ def expand_NTIME(w):
 
 def expand_NYER(w):
     if w[-1] == 's':
-        if w[-2:] == "'s":
+        if len(w) > 1 and w[-2:] == "'s":
             str = ''
             str += expand_NYER(w[:-2])
             str += "'s"
@@ -575,10 +579,13 @@ def expand_NYER(w):
             a = w[:2]
             return expand_NUM(a) + " " + "hundred"
     else:
-        for i in range(len(w)):
-            a = w[:2]
-            b = w[2:]
-            return expand_NUM(a) + " " + expand_NUM(b)
+        if len(w) == 4:
+            for i in range(len(w)):
+                a = w[:2]
+                b = w[2:]
+                return expand_NUM(a) + " " + expand_NUM(b)
+        else:
+            return expand_NUM(w)
 
 
 def expand_PRCT(w):
