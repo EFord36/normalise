@@ -50,3 +50,18 @@ def normalise(text):
     expanded_MISC = expand_all(tagged_MISC, text)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
+
+def insert(text):
+    expanded_ALPHA, expanded_NUMB, expanded_MISC = normalise(text)
+    out = text
+    for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
+        for nsw in item.items():
+            if isinstance(nsw[0], int):
+                out[nsw[0]] = nsw[1][3]
+            elif out[int(nsw[0])] == text[int(nsw[0])]:
+                out[int(nsw[0])] = nsw[1][3]
+            elif text[int(nsw[0])].find(out[int(nsw[0])]) < text[int(nsw[0])].find(nsw[1][0]):
+                out[int(nsw[0])] = out[int(nsw[0])] + " " + nsw[1][3]
+            elif text[int(nsw[0])].find(out[int(nsw[0])]) > text[int(nsw[0])].find(nsw[1][0]):
+                out[int(nsw[0])] = nsw[1][3] + " " + out[int(nsw[0])]
+    return out
