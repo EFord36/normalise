@@ -15,6 +15,7 @@ from class_NUMB import run_clfNUMB
 from tag_MISC import tag_MISC
 from expand_all import expand_all
 
+
 def normalise(text):
     NSWs = create_NSW_dict(text)
     tagged = tag1(NSWs)
@@ -53,15 +54,25 @@ def normalise(text):
 
 def insert(text):
     expanded_ALPHA, expanded_NUMB, expanded_MISC = normalise(text)
-    out = text
+    out = text[:]
+    split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
         for nsw in item.items():
             if isinstance(nsw[0], int):
                 out[nsw[0]] = nsw[1][3]
-            elif out[int(nsw[0])] == text[int(nsw[0])]:
-                out[int(nsw[0])] = nsw[1][3]
-            elif text[int(nsw[0])].find(out[int(nsw[0])]) < text[int(nsw[0])].find(nsw[1][0]):
-                out[int(nsw[0])] = out[int(nsw[0])] + " " + nsw[1][3]
-            elif text[int(nsw[0])].find(out[int(nsw[0])]) > text[int(nsw[0])].find(nsw[1][0]):
-                out[int(nsw[0])] = nsw[1][3] + " " + out[int(nsw[0])]
+            else:
+                rind = int(nsw[0])
+                if rind in split_dict:
+                    split_dict[rind][100 * (nsw[0] - rind)] = nsw[1][3]
+                else:
+                    split_dict[rind] = {(100 * (nsw[0] - rind)): nsw[1][3]}
+                if out[rind] == text[rind]:
+                    out[rind] = nsw[1][3]
+                else:
+                    final = ''
+                    for it in sorted(split_dict[rind]):
+                        final += ' '
+                        final += split_dict[rind][it]
+                    final = final[1:]
+                    out[rind] = final
     return out
