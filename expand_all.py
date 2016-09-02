@@ -58,18 +58,15 @@ def expand_PROF(w):
     rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
             'dick' 'fuck', 'pussy', 'shit', 'tits', 'twat']
     candidates = [r for r in rude if len(r) == len(w)]
-    final = ''
-    ind = 0
-    while not final:
-        r = candidates[ind]
+    for c in candidates:
         match = True
-        for i in range(len(r)):
-            if r[i] != w[i] and w[i] != '*':
+        for i in range(len(c)):
+            if c[i] != w[i] and w[i] != '*':
                 match = False
+                break
         if match:
-            final += r
-        ind += 1
-    return final
+            return c
+    return w
 
 
 def expand_WDLK(word):
