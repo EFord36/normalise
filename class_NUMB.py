@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
 from tag1 import tag1
-from expand_MONEY import ecurr_dict
+from expand_NUMB import ecurr_dict
 from timezones import timezone_dict
 from splitter import split, retag1
 from measurements import meas_dict, meas_dict_pl

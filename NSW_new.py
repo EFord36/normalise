@@ -59,7 +59,7 @@ def ident_NSW(w):
     Return word if it satisfies all four above conditions.
     """
     return (cond1(w) and cond2(w) and cond3(w) and cond4(w) 
-            and not (w in contractions))
+            and not (w.lower() in contractions))
 
 
 def create_NSW_dict(text):

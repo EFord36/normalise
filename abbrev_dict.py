@@ -274,6 +274,7 @@ abbrev_dict = {
                "quots.": "quotations",
                "R.A.F.": "Royal Air Force",
                "R.C.": "Roman Catholic",
+               "Rd.": "road",
                "Ref.": "reference",
                "reg.": "regular",
                "Reg.": "register",
