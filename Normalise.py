@@ -50,3 +50,28 @@ def normalise(text):
     expanded_MISC = expand_all(tagged_MISC, text)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
+
+def insert(text):
+    expanded_ALPHA, expanded_NUMB, expanded_MISC = normalise(text)
+    out = text[:]
+    split_dict = {}
+    for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
+        for nsw in item.items():
+            if isinstance(nsw[0], int):
+                out[nsw[0]] = nsw[1][3]
+            else:
+                rind = int(nsw[0])
+                if rind in split_dict:
+                    split_dict[rind][100 * (nsw[0] - rind)] = nsw[1][3]
+                else:
+                    split_dict[rind] = {(100 * (nsw[0] - rind)): nsw[1][3]}
+                if out[rind] == text[rind]:
+                    out[rind] = nsw[1][3]
+                else:
+                    final = ''
+                    for it in sorted(split_dict[rind]):
+                        final += ' '
+                        final += split_dict[rind][it]
+                    final = final[1:]
+                    out[rind] = final
+    return out

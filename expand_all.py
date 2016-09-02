@@ -27,7 +27,7 @@ func_dict = {
              'URL': 'expand_URL(nsw)',
              'HTAG': 'expand_HTAG(nsw)',
              'NONE': 'expand_NONE(nsw)'
-            }
+             }
 
 
 def expand_all(dic, text):
