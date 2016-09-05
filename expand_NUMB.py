@@ -593,11 +593,11 @@ def expand_PRCT(w):
         m = percent_pattern2.match(w)
         a = m.group(1)
         b = m.group(3)
-        return [expand_NUM(a) + " point " + expand_NDIG(b) + "percent"]
+        return expand_NUM(a) + " point " + expand_NDIG(b) + "percent"
     else:
         m = percent_pattern1.match(w)
         a = m.group(1)
-        return [expand_NUM(a) + " percent"]
+        return expand_NUM(a) + " percent"
 
 
 
