@@ -18,6 +18,7 @@ func_dict = {
              'NUM': 'expand_NUM(nsw)',
              'NORD': 'expand_NORD(nsw)',
              'NRANGE': 'expand_NRANGE(nsw)',
+             'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
              'NDATE': 'expand_NDATE(nsw)',
              'NYER': 'expand_NYER(nsw)',
