@@ -28,6 +28,9 @@ with open('word_tokenized.pickle', mode='rb') as file:
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
+with open('clf_ALPHA.pickle', mode='rb') as file:
+    clf_ALPHA = pickle.load(file)
+
 # Store all ALPHA tags from training data in ALPHA_list, including SPLT-ALPHA
 tagged = tag1(NSWs)
 
@@ -55,7 +58,7 @@ def run_clfALPHA(dic, text):
     a more specific number tag assigned to it by the classifier.
     """
 
-    clf = fit_clf(third_ALPHA_dict, word_tokenized)
+    clf = clf_ALPHA
     int_tag_dict = {
                     1: 'EXPN',
                     2: 'LSEQ',
@@ -95,13 +98,13 @@ def seed_features(item, context):
            nsw in ['Mr.', 'Mrs.', 'Mr', 'Mrs'],
            nsw in ['i.e.', 'ie.', 'e.g.', 'eg.'],
            nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw),
-           (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and 
+           (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and
            is_digbased(context[1])) and not acr_pattern.match(nsw)),
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
            (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
            (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
-           (nsw.lower() in wordlist or 
+           (nsw.lower() in wordlist or
            (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
            and nsw not in ampm),
            triple_rep(nsw) and len(nsw) > 3,
@@ -153,7 +156,7 @@ def seed(dict_tup, text):
         return 2
     elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
         return 1
-    elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and 
+    elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and
          is_digbased(context[1]))):
              return 2
     elif nsw.endswith('s') and nsw[:-1].isupper():
@@ -167,7 +170,7 @@ def seed(dict_tup, text):
     elif nsw in element_dict:
         return 1
     elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
-         (nsw.lower() in wordlist or 
+         (nsw.lower() in wordlist or
          (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
          and nsw not in ampm):
              return 3
