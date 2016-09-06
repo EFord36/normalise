@@ -16,14 +16,14 @@
 ### Expansion
 
 ##### ALPHA
-- [ ] EXPN
-- [ ] LSEQ
-- [ ] WDLK
+- [x] EXPN
+- [x] LSEQ
+- [x] WDLK
 
 ##### NUMB
 - [x] NUM
 - [x] NORD
-- [ ] NRANGE
+- [x] NRANGE
 - [ ] NTEL
 - [x] NDIG
 - [ ] NADDR
@@ -36,9 +36,7 @@
 - [ ] NSCI
 
 ##### MISC
-- [ ] PROF
-- [ ] NSCI
-- [ ] PROF
+- [x] PROF
 - [ ] URL
 - [ ] HTAG
-- [ ] NONE
+- [x] NONE
