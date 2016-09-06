@@ -28,6 +28,10 @@ with open('word_tokenized_lowered.pickle', mode='rb') as file:
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
+
+with open('clf_NUMB.pickle', mode='rb') as file:
+    clf_NUMB = pickle.load(file)
+
 # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
 tagged = tag1(NSWs)
 
@@ -61,7 +65,7 @@ def run_clfNUMB(dic, text):
     The dictionary returned has the same entries with the tuple extended with
     a more specific number tag assigned to it by the classifier.
     """
-    clf = fit_clf(NUMB_dict, word_tokenized)
+    clf = clf_NUMB
     int_tag_dict = {
                     1: 'PRCT',
                     2: 'MONEY',
