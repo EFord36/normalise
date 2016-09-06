@@ -28,7 +28,7 @@ if __name__ == '__main__':
                               else w for w in word_tokenized]
 
 
-# Conditions for identificaiton of NSWs.
+# Conditions for identification of NSWs.
 def cond1(w):
     """ Return word if its lower-cased form is not in the wordlist."""
     return w.lower() not in wordlist
