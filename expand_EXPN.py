@@ -29,7 +29,7 @@ def expand_EXPN(w, i, text):
         for (w, tag) in tagged_cands:
             if abbrev_tag(i, text) == tag:
                 matches += [w]
-        if matches:        
+        if matches:
             best = 0
             current =[]
             for cand in matches:
@@ -104,7 +104,7 @@ def maximum_overlap(w, i, text):
         return w
     else:
         return curr
-        
+
 
 def overlap(i, word, text):
     overlap = 0
@@ -151,13 +151,13 @@ def gen_context(i, text):
     start = i
     end = i + 1
     sloop = True
-    while sloop:
+    while sloop and start >= 0:
         if text[start - 1] not in ['.', '!', '?']:
             start -= 1
         else:
             sloop = False
     eloop = True
-    while eloop:
+    while eloop and end <= len(text) - 1:
         if text[end] in ['.', '!', '?']:
             eloop = False
         else:
