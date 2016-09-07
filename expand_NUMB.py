@@ -53,7 +53,7 @@ def expand_NUM(n):
             return ones_C[n]
         elif n <= 99:
             q, r = divmod(n, 10)
-            return tens_C[q] + ("-" + subThousand(r) if r else "")
+            return tens_C[q] + (" " + subThousand(r) if r else "")
         else:
             q, r = divmod(n, 100)
             return (ones_C[q]
