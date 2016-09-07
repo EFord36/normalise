@@ -135,15 +135,16 @@ def gen_signature(word):
     inds = find_matches(word)
     signature = set()
     if word in wn.words():
-        define = (eval("wn.{}.definition()".format(
-                  str(wn.synsets(word)[0]).lower())))
-        examples = (eval("wn.{}.examples()".format(
-                    str(wn.synsets(word)[0]).lower())))
-        if examples:
-            for ex in examples:
-                    signature.update(wt(ex))
-        if define:
-            signature.update(wt(define))
+        if wn.synsets(word):
+            define = (eval("wn.{}.definition()".format(
+                      str(wn.synsets(word)[0]).lower())))
+            examples = (eval("wn.{}.examples()".format(
+                        str(wn.synsets(word)[0]).lower())))
+            if examples:
+                for ex in examples:
+                        signature.update(wt(ex))
+            if define:
+                signature.update(wt(define))
 
     for i in inds:
         signature.update(gen_context(i, brown))
