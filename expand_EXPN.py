@@ -6,14 +6,18 @@ from nltk.corpus import wordnet as wn
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
+
 from abbrev_dict import abbrev_dict, ambig_abbrevs, states
+from splitter import split
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
-brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_common(5000)[100:]}
+brown_common = {word: log(1161192 / freq) for
+                word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
+
 
 def expand_EXPN(w, i, text):
     if w in states:
@@ -29,9 +33,9 @@ def expand_EXPN(w, i, text):
         for (w, tag) in tagged_cands:
             if abbrev_tag(i, text) == tag:
                 matches += [w]
-        if matches:        
+        if matches:
             best = 0
-            current =[]
+            current = []
             for cand in matches:
                 olap = overlap(i, cand, text)
                 if olap > best and cand in brown_common:
@@ -104,7 +108,7 @@ def maximum_overlap(w, i, text):
         return w
     else:
         return curr
-        
+
 
 def overlap(i, word, text):
     overlap = 0
@@ -147,33 +151,42 @@ def gen_signature(word):
 
 
 def gen_context(i, text):
+    ind = i
     context = []
-    start = i
-    end = i + 1
+    text = text[:]
+    if not isinstance(i, int):
+        ind = int(i)
+        split_token = text[ind]
+        del text[ind]
+        parts = split({ind: (split_token, 'SPLT')})
+        for it in sorted(parts, reverse=True):
+            text.insert(ind, parts[it][0])
+    start = ind
+    end = ind + 1
     sloop = True
-    while sloop:
+    while sloop and start > 0:
         if text[start - 1] not in ['.', '!', '?']:
             start -= 1
         else:
             sloop = False
     eloop = True
-    while eloop:
+    while eloop and end <= len(text) - 1:
         if text[end] in ['.', '!', '?']:
             eloop = False
         else:
             end += 1
-    if i - start < 4:
+    if ind - start < 4:
         if end - start >= 9:
             context += text[start: start + 9]
         else:
             context += text[start: end]
-    elif end - i < 5:
+    elif end - ind < 5:
         if end - start >= 9:
             context += text[end - 9: end]
         else:
             context += text[start: end]
     else:
-        context += text[i - 4: i + 5]
+        context += text[ind - 4: ind + 5]
     return context
 
 
@@ -191,13 +204,21 @@ def tag_cands(abbrv):
 
 def abbrev_tag(i, text):
     for (cand, tag) in tag_sent(i, text):
-        if text[i] == cand:
-            return tag
+        if isinstance(i, int):
+            if text[i] == cand:
+                return tag
+        else:
+            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+                return tag
 
 
 def tag_matches(i, text):
     matches = []
-    for (cand, tag) in tag_cands(text[i]):
+    if isinstance(i, int):
+        abbrev = text[i]
+    else:
+        abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
+    for (cand, tag) in tag_cands(abbrev):
         if tag == abbrev_tag(i, text):
             matches += [cand]
     return matches
