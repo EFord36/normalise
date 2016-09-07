@@ -13,6 +13,7 @@ from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
 from nltk.corpus import names
+from contraction_list import contractions
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -27,7 +28,7 @@ if __name__ == '__main__':
                               else w for w in word_tokenized]
 
 
-# Conditions for identificaiton of NSWs.
+# Conditions for identification of NSWs.
 def cond1(w):
     """ Return word if its lower-cased form is not in the wordlist."""
     return w.lower() not in wordlist
@@ -57,7 +58,8 @@ def ident_NSW(w):
 
     Return word if it satisfies all four above conditions.
     """
-    return cond1(w) and cond2(w) and cond3(w) and cond4(w)
+    return (cond1(w) and cond2(w) and cond3(w) and cond4(w) 
+            and not (w.lower() in contractions))
 
 
 def create_NSW_dict(text):

@@ -9,7 +9,7 @@ from __future__ import division, print_function, unicode_literals
 import re
 import pickle
 
-from expand_MONEY import end_dict, ecurr_dict
+from expand_NUMB import end_dict, ecurr_dict
 
 with open('NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)

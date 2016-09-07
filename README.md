@@ -1,5 +1,9 @@
-# Normalise
-# Module for normalising text
+# Text-Normalisation: a module for normalising text
+
+### Preparing for NLTK compatible release
+- [ ] Learn Cloudbees/Jenkins integrated testing framework
+- [ ] Learn Sphinx Markup for documentation
+- [ ] Learn relevant package structure to mirror NLTK
 
 ### Pipeline
 - [ ] Tokenizer
@@ -16,18 +20,17 @@
 ### Expansion
 
 ##### ALPHA
-- [ ] EXPN
-- [ ] LSEQ
-- [ ] WDLK
+- [x] EXPN
+- [x] LSEQ
+- [x] WDLK
 
 ##### NUMB
 - [x] NUM
 - [x] NORD
-- [ ] NRANGE
+- [x] NRANGE
 - [ ] NTEL
 - [x] NDIG
 - [ ] NADDR
-- [ ] NZIP
 - [x] NTIME
 - [ ] NDATE
 - [x] NYER
@@ -36,9 +39,7 @@
 - [ ] NSCI
 
 ##### MISC
-- [ ] PROF
-- [ ] NSCI
-- [ ] PROF
+- [x] PROF
 - [ ] URL
 - [ ] HTAG
-- [ ] NONE
+- [x] NONE

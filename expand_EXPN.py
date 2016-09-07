@@ -1,0 +1,238 @@
+from math import log
+import re
+import pickle
+
+from nltk.corpus import wordnet as wn
+from nltk.tokenize import word_tokenize as wt
+from nltk import FreqDist as fd
+from nltk import pos_tag
+from abbrev_dict import abbrev_dict, ambig_abbrevs, states
+
+with open('word_tokenized_lowered.pickle', mode='rb') as file:
+    word_tokenized_lowered = pickle.load(file)
+
+brown = word_tokenized_lowered[:1161192]
+brown_common = {word: log(1161192 / freq) for word, freq in fd(brown).most_common(5000)[100:]}
+words = [w for w, freq in fd(brown).most_common()]
+
+def expand_EXPN(w, i, text):
+    if w in states:
+        exp = states[w]
+    elif w.lower() in abbrev_dict:
+        exp = abbrev_dict[w.lower()]
+    elif w.lower() in ambig_abbrevs:
+        cands = ambig_abbrevs[w.lower()]
+        tagged_cands = []
+        for cand in cands:
+            tagged_cands += pos_tag(wt(cand))
+            matches = []
+        for (w, tag) in tagged_cands:
+            if abbrev_tag(i, text) == tag:
+                matches += [w]
+        if matches:        
+            best = 0
+            current =[]
+            for cand in matches:
+                olap = overlap(i, cand, text)
+                if olap > best and cand in brown_common:
+                    best = olap
+                    current = [cand]
+                elif olap == best and best != 0:
+                    current.append(cand)
+            best = 0
+            exp = ''
+            for c in current:
+                if c in brown_common:
+                    freq = brown_common[c]
+                else:
+                    freq = 0
+                if freq > best:
+                    best = freq
+                    exp = c
+        else:
+            best = 0
+            for cand in cands:
+                if cand in brown_common:
+                    freq = brown_common[cand]
+                else:
+                    freq = 0
+                if freq > best:
+                    best = freq
+                    exp = cand
+    else:
+        exp = maximum_overlap(w, i, text)
+    if exp == '':
+        return w
+    else:
+        return exp
+
+
+def maximum_overlap(w, i, text):
+    best = 0
+    current = []
+    if tag_matches(i, text):
+        for cand in tag_matches(i, text):
+            olap = overlap(i, cand, text)
+            if olap > best and cand in brown_common:
+                best = olap
+                current = [cand]
+            elif olap == best and best != 0:
+                current.append(cand)
+        best = 0
+        curr = ''
+        for c in current:
+            if c in brown_common:
+                freq = brown_common[c]
+            else:
+                freq = 0
+            if freq > best:
+                best = freq
+                curr = c
+                return curr
+    else:
+        best = 0
+        curr = ''
+        for (cand, freq) in gen_best(w):
+            if cand in brown_common:
+                freq = brown_common[cand]
+            else:
+                freq = 0
+            if freq > best:
+                    best = freq
+                    curr = cand
+    if curr == '':
+        return w
+    else:
+        return curr
+        
+
+def overlap(i, word, text):
+    overlap = 0
+    sig = gen_signature(word)
+    context = gen_context(i, text)
+    for w in context:
+        if w in sig:
+            if w in brown_common:
+                overlap += brown_common[w]
+            else:
+                overlap += log(1161192 / 1)
+    return overlap
+
+
+def find_matches(word):
+    lst1 = []
+    for i in range(len(brown)):
+        if brown[i] == word:
+            lst1.append(i)
+    return lst1
+
+
+def gen_signature(word):
+    inds = find_matches(word)
+    signature = set()
+    if word in wn.words():
+        define = (eval("wn.{}.definition()".format(
+                  str(wn.synsets(word)[0]).lower())))
+        examples = (eval("wn.{}.examples()".format(
+                    str(wn.synsets(word)[0]).lower())))
+        if examples:
+            for ex in examples:
+                    signature.update(wt(ex))
+        if define:
+            signature.update(wt(define))
+
+    for i in inds:
+        signature.update(gen_context(i, brown))
+    return signature
+
+
+def gen_context(i, text):
+    context = []
+    start = i
+    end = i + 1
+    sloop = True
+    while sloop:
+        if text[start - 1] not in ['.', '!', '?']:
+            start -= 1
+        else:
+            sloop = False
+    eloop = True
+    while eloop:
+        if text[end] in ['.', '!', '?']:
+            eloop = False
+        else:
+            end += 1
+    if i - start < 4:
+        if end - start >= 9:
+            context += text[start: start + 9]
+        else:
+            context += text[start: end]
+    elif end - i < 5:
+        if end - start >= 9:
+            context += text[end - 9: end]
+        else:
+            context += text[start: end]
+    else:
+        context += text[i - 4: i + 5]
+    return context
+
+
+def tag_sent(i, text):
+    sent = gen_context(i, text)
+    return pos_tag(sent)
+
+
+def tag_cands(abbrv):
+    tagged_cands = []
+    for (cand, freq) in gen_best(abbrv):
+        tagged_cands += pos_tag(wt(cand))
+    return tagged_cands
+
+
+def abbrev_tag(i, text):
+    for (cand, tag) in tag_sent(i, text):
+        if text[i] == cand:
+            return tag
+
+
+def tag_matches(i, text):
+    matches = []
+    for (cand, tag) in tag_cands(text[i]):
+        if tag == abbrev_tag(i, text):
+            matches += [cand]
+    return matches
+
+
+def gen_candidates(word):
+    cands = []
+    reg = ''
+    for lt in word.lower():
+        if lt.isalpha():
+            reg += lt
+            reg += '[aeiou]*'
+    regex = re.compile(reg)
+    for w in words:
+        if regex.match(w):
+            cands.append(w)
+    return cands
+
+
+def distance(abbrv, word):
+    extras = [lt for lt in word if abbrv.count(lt) != word.count(lt)]
+    count = 0
+    for lt in extras:
+        if lt not in ['a', 'e', 'i', 'o', 'u']:
+            count += 1
+        else:
+            count += 0.2
+    return count
+
+
+def gen_best(abbrv):
+    cands = [(it, distance(abbrv, it)) for it in gen_candidates(abbrv)]
+    sorted_cands = sorted(cands, key=lambda cand: cand[1])
+    final = []
+    if len(sorted_cands) > 50:
+        return sorted_cands[:50]
+    else:
+        return sorted_cands

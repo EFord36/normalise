@@ -6,29 +6,25 @@ Created on Fri Jul 22 14:30:22 2016
 """
 
 import re
-from gold_standard_numbs import gs_numb_tagged
-
-def expand_NUMB(dic):
-    for ind, (nsw, tag, ntag) in dic.items():
-        if ntag == 'NUM':
-            dic.update({ind: (nsw, tag, ntag, (expand_NUM(nsw)))})  
-        elif ntag == 'NORD':
-            dic.update({ind: (nsw, tag, ntag, (expand_NORD(nsw)))})
-        elif ntag == 'NDIG':
-            dic.update({ind: (nsw, tag, ntag, (expand_NDIG(nsw)))})  
-        elif ntag == 'NTIME':
-            dic.update({ind: (nsw, tag, ntag, (expand_NTIME(nsw)))})  
-        elif ntag == 'NYER':
-            dic.update({ind: (nsw, tag, ntag, (expand_NYER(nsw)))}) 
-        elif ntag == 'MONEY':
-            dic.update({ind: (nsw, tag, ntag, (expand_MONEY(nsw)))})  
-        elif ntag == 'PRCT':
-            dic.update({ind: (nsw, tag, ntag, (expand_PRCT(nsw)))})  
-    return dic      
-    
 
 
 def expand_NUM(n):
+    if len(n) > 0:
+        if n[-1] == 's':
+            if len(n) > 1 and n[-2:] == "'s":
+                str = ''
+                str += expand_NUM(n[:-2])
+                str += "'s"
+            else:
+                str = ''
+                if expand_NUM(n[:-1])[-1] == 'y':
+                    str += expand_NUM(n[:-1])[:-1]
+                    str += 'ies'
+                else:
+                    str += expand_NUM(n[:-1])
+                    str += 's'
+            return str
+
     """Return n as an cardinal in words."""
     ones_C = [
              "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -114,6 +110,16 @@ def expand_NUM(n):
                 return w[:ind-1] + " and" + w[ind:]
             else:
                 return w
+
+
+def expand_NRANGE(n):
+    m = range_pattern.match(n)
+    str = ''
+    str += expand_NUM(m.group(1))
+    if m.group(2) in ['/', '-', '–']:
+        str += ' to '
+    str += expand_NUM(m.group(3))
+    return str
 
 
 def expand_NORD(n):
@@ -253,8 +259,8 @@ def expand_NORD(n):
             return pen + "th"
         else:
             return pen
-            
- 
+
+
 scurr_dict = {'$': 'dollar', 'Y': 'yen', '€': 'euro',
               '£': 'pound', 'HK$': 'Hong Kong Dollar',
               'US$': 'U S Dollar'}
@@ -425,7 +431,10 @@ ecurr_dict = {
                      "VND": "Vietnamese Dong",
                      "YER": "Yemeni Rial",
                      "ZMK": "Zambian Kwacha",
-                     "ZWD": "Zimbabwe Dollar"
+                     "ZWD": "Zimbabwe Dollar",
+                     "£": "pound",
+                     "$": "dollar",
+                     "€": "euro"
                      }
 invariant_plural_curr = ['JPY', 'CNY', 'THB', 'ZAR']
 irregular_plural_curr = {'SEK': 'Swedish Kronor', 'NOK': 'Norwegian Kroner',
@@ -440,13 +449,13 @@ def expand_MONEY(n):
     ecurr = ''
     end = ''
     num = ''
-    if len(n) < 3:
+    if len(n) <= 3:
         if not n[0].isdigit():
             scurr += n[0]
-            num += n[1]
-        else: 
+            num += n[1:]
+        else:
             num += n[0]
-            ecurr += n[1]
+            ecurr += n[1:]
     else:
         for i in range(len(n)-3):
             if not n[i].isdigit():
@@ -461,7 +470,7 @@ def expand_MONEY(n):
             end += n[-1]
         else:
             num += n[-3:]
-
+ 
     exp_num = expand_NUM(num)
     if num == '1' and not end:
         if ecurr:
@@ -493,7 +502,7 @@ def expand_MONEY(n):
     items.append(currency)
 
     return ' '.join(items)
-    
+
 
 def expand_NDIG(w):
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -503,7 +512,7 @@ def expand_NDIG(w):
         str2 += num_words[numbers.index(n)]
         str2 += ' '
     return str2
-    
+
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -539,9 +548,25 @@ def expand_NTIME(w):
     else:
         str2 += 'pm'
     return str2
-    
-    
+
+
 def expand_NYER(w):
+    if w[-1] == 's':
+        if len(w) > 1 and w[-2:] == "'s":
+            str = ''
+            str += expand_NYER(w[:-2])
+            str += "'s"
+        else:
+            str = ''
+            if expand_NYER(w[:-1])[-1] == 'y':
+                str += expand_NYER(w[:-1])[:-1]
+                str += 'ies'
+            else:
+                str += expand_NYER(w[:-1])
+                str += 's'
+        return str
+
+
     num_decades = ['00s', '10s', '20s', '30s', '40s', '50s', '60s', '70s', '80s', '90s']
     decades = ['hundreds', 'tens', 'twenties', 'thirties', 'forties', 'fifties',
                'sixties', 'seventies', 'eighties', 'nineties']
@@ -554,36 +579,39 @@ def expand_NYER(w):
             a = w[:2]
             return expand_NUM(a) + " " + "hundred"
     else:
-        for i in range(len(w)):
-            a = w[:2]
-            b = w[2:]
-            return expand_NUM(a) + " " + expand_NUM(b)
-            
+        if len(w) == 4:
+            for i in range(len(w)):
+                a = w[:2]
+                b = w[2:]
+                return expand_NUM(a) + " " + expand_NUM(b)
+        else:
+            return expand_NUM(w)
+
 
 def expand_PRCT(w):
     if '.' in w:
         m = percent_pattern2.match(w)
         a = m.group(1)
         b = m.group(3)
-        return [expand_NUM(a) + " point " + expand_NDIG(b) + "percent"]
+        return expand_NUM(a) + " point " + expand_NDIG(b) + "percent"
     else:
         m = percent_pattern1.match(w)
         a = m.group(1)
-        return [expand_NUM(a) + " percent"]
+        return expand_NUM(a) + " percent"
 
-  
-     
+
+
 percent_pattern1 = re.compile('''
-([0-9]+)                     
-(%)                       
+([0-9]+)
+(%)
 $
-''', re.VERBOSE) 
-     
+''', re.VERBOSE)
+
 percent_pattern2 = re.compile('''
 ([0-9]+)
-([\.]?)                       
-([0-9]+?)                        
-(%)                       
+([\.]?)
+([0-9]+?)
+(%)
 $
 ''', re.VERBOSE)
 
@@ -591,5 +619,16 @@ time_pattern = re.compile('''
 ([0-9]{1,2})
 ([\.|:])
 ([0-9]{2})
+$
+''', re.VERBOSE)
+
+range_pattern = re.compile('''
+([0-9]+                 # 1 or more digits
+\.?                     # optional '.'
+[0-9]*)                 # 0 or more digits
+(/|-|–)                   # hyphen or slash
+([0-9]+                 # same pattern as lines 1-3
+\.?
+[0-9]*)
 $
 ''', re.VERBOSE)
