@@ -24,6 +24,12 @@ def expand_NUM(n):
                     str += expand_NUM(n[:-1])
                     str += 's'
             return str
+    
+    if dec2_pattern.match(n):
+        str2 = ''
+        str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
+               + expand_NUM(dec2_pattern.match(n).group(2)))
+        return str2
 
     """Return n as an cardinal in words."""
     ones_C = [
@@ -686,5 +692,14 @@ range_pattern = re.compile('''
 ([0-9]+                 # same pattern as lines 1-3
 \.?
 [0-9]*)
+$
+''', re.VERBOSE)
+
+dec2_pattern = re.compile('''
+([0-9]+)
+\.
+([0-9]+
+\.
+[0-9]+)
 $
 ''', re.VERBOSE)

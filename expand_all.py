@@ -7,6 +7,7 @@ from expand_EXPN import expand_EXPN
 from expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD, expand_NYER,
                          expand_PRCT, expand_MONEY, expand_NTIME,
                          expand_NRANGE, expand_NTEL, expand_NDATE)
+from expand_HTAG import expand_HTAG, expand_URL
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -38,13 +39,6 @@ def expand_all(dic, text):
         out.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
     return out
 
-
-def expand_URL(word):
-    return word
-
-
-def expand_HTAG(word):
-    return word
 
 
 def expand_NONE(nsw):
