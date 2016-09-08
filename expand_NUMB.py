@@ -509,10 +509,23 @@ def expand_NDIG(w):
     num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     str2 = ''
     for n in w:
-        str2 += num_words[numbers.index(n)]
-        str2 += ' '
+        if n.isdigit():
+            str2 += num_words[numbers.index(n)]
+            str2 += ' '
+        else:
+            str2 += ''
     return str2
 
+
+def expand_NTEL(w):
+    str2 = ''
+    if w[0] == '+':
+        str2 += 'plus '
+        str2 += expand_NDIG(w[1:])
+    else:
+        str2 += expand_NDIG(w)
+    return str2
+    
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -598,7 +611,6 @@ def expand_PRCT(w):
         m = percent_pattern1.match(w)
         a = m.group(1)
         return expand_NUM(a) + " percent"
-
 
 
 percent_pattern1 = re.compile('''
