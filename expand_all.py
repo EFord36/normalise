@@ -22,6 +22,7 @@ func_dict = {
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
              'NDATE': 'expand_NDATE(nsw)',
+             'NADDR': 'expand_NYER(nsw)',
              'NTEL': 'expand_NTEL(nsw)',
              'NYER': 'expand_NYER(nsw)',
              'MONEY': 'expand_MONEY(nsw)',
