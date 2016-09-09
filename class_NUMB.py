@@ -65,8 +65,7 @@ def run_clfNUMB(dic, text):
     The dictionary returned has the same entries with the tuple extended with
     a more specific number tag assigned to it by the classifier.
     """
-    new_clf = fit_clf(NUMB_dict, word_tokenized)
-    clf = new_clf
+    clf = clf_NUMB
     int_tag_dict = {
                     1: 'PRCT',
                     2: 'MONEY',
@@ -244,7 +243,7 @@ def time_context(nsw, context):
             return False
     else:
         return False
-        
+
 def looks_datey(nsw, context):
     m = date_pattern.match(nsw)
     if date_pattern.match(nsw):
@@ -257,7 +256,7 @@ def looks_datey(nsw, context):
             return False
     else:
         return False
-    
+
 
 def in_features(nsw):
     """Return list of bools if specific punctuation is in nsw."""
@@ -398,6 +397,13 @@ def fit_clf(dic, text):
     return model
 
 
+def fit_and_store_clf(dic, text):
+    """fit a Label Propogation classifier, and store in clf_NUMB.pickle"""
+    clf = fit_clf(dic, text)
+    with open('clf_NUMB.pickle', 'wb') as file:
+        pickle.dump(clf, file)
+
+
 def seed(dict_tup, text):
     """Assign a seedset label to the input tuple.
 
@@ -495,4 +501,3 @@ date_pattern = re.compile('''
 ([0-9]{2,4})?
 $
 ''', re.VERBOSE)
-
