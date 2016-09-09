@@ -6,7 +6,8 @@ from spellcheck import correct
 from expand_EXPN import expand_EXPN
 from expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD, expand_NYER,
                          expand_PRCT, expand_MONEY, expand_NTIME,
-                         expand_NRANGE)
+                         expand_NRANGE, expand_NTEL, expand_NDATE)
+from expand_HTAG import expand_HTAG, expand_URL
 
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -21,6 +22,7 @@ func_dict = {
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
              'NDATE': 'expand_NDATE(nsw)',
+             'NTEL': 'expand_NTEL(nsw)',
              'NYER': 'expand_NYER(nsw)',
              'MONEY': 'expand_MONEY(nsw)',
              'PRCT': 'expand_PRCT(nsw)',
@@ -37,17 +39,6 @@ def expand_all(dic, text):
         out.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
     return out
 
-
-def expand_URL(word):
-    return word
-
-
-def expand_HTAG(word):
-    return word
-
-
-def expand_NDATE(word):
-    return word
 
 
 def expand_NONE(nsw):

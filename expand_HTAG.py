@@ -5,8 +5,15 @@ Created on Wed Sep  7 13:19:09 2016
 @author: emmaflint
 """
 import re
+import pickle
+
 from math import log
+from nltk import FreqDist as fd
 from NSW_new import wordlist
+from expand_NUMB import expand_NUM
+
+with open('word_tokenized_lowered.pickle', mode='rb') as file:
+    word_tokenized_lowered = pickle.load(file)
 
 
 def expand_HTAG(word):
@@ -17,11 +24,37 @@ def expand_HTAG(word):
         exp = exp + " " + string
     else:
         exp = exp + " " + infer_spaces(m.group(2))
+    if m.group(3):
+        exp = exp + " " + expand_NUM(m.group(3))
     return exp
+    
+    
+def expand_URL(word):
+    starts = ["http://", "https://", "www."]
+    starts_exp = ['', '', 'W W W dot']
+    ends = [".com", ".org", ".org.uk", ".co.uk"]
+    ends_exp = ["dot com", "dot org", "dot org dot U K", "dot co dot U K"]
+    m = urlstart_pattern.match(word)
+    n = urlend_pattern.match(word)
+    exp = ''
+    if m.group(1) and n:
+        start = m.group(1)
+        middle = urlend_pattern.match(m.group(2))
+        end = middle.group(2)
+        exp += (starts_exp[starts.index(start)] + " " + infer_spaces(middle.group(1))
+               + " " + ends_exp[ends.index(end)])
+    elif n:
+        middle = n.group(1)
+        end = n.group(2)
+        exp += infer_spaces(middle) + " " + ends_exp[ends.index(end)]
+    else:
+        return word
+    return exp    
    
 
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
-words = wordlist
+brown = word_tokenized_lowered[:1161192]
+words = [w for w, freq in fd(brown).most_common()]
 wordcost = dict((k, log((i+1)*log(len(words)))) for i,k in enumerate(words))
 maxword = max(len(x) for x in words)
 
@@ -55,8 +88,23 @@ def infer_spaces(s):
                 
 hashtag_pattern = re.compile('''
 (\#)
-([A-Za-z0-9]+
+([A-Za-z]+
 [_-]?
-[A-Za-z0-9]*)
+[A-Za-z]*)
+([0-9]*)
 ''', re.VERBOSE) 
-                
+
+urlstart_pattern = re.compile('''
+(https?://|            #'http' followed by optional 's', then '://' OR
+www\.|)
+(.*)              #'www.'
+''', re.VERBOSE | re.IGNORECASE)
+
+urlend_pattern = re.compile('''
+(.*)                      #any number of characters                      # '.'
+(\.com|                 # 'com' OR
+\.org| 
+\.org\.uk|          # 'org' followed optionally by '.uk' OR
+\.co\.uk)               # 'co.uk'
+$                       #end of string
+''', re.VERBOSE | re.IGNORECASE)

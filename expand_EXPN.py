@@ -77,7 +77,7 @@ def maximum_overlap(w, i, text):
     if tag_matches(i, text):
         for cand in tag_matches(i, text):
             olap = overlap(i, cand, text)
-            if olap > best and cand in brown_common:
+            if olap > best and cand in words:
                 best = olap
                 current = [cand]
             elif olap == best and best != 0:
@@ -92,7 +92,10 @@ def maximum_overlap(w, i, text):
             if freq > best:
                 best = freq
                 curr = c
-                return curr
+            elif freq == best and len(tag_matches(i, text)) == 1:
+                best = freq
+                curr = c
+            return curr
     else:
         best = 0
         curr = ''

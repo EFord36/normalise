@@ -24,6 +24,12 @@ def expand_NUM(n):
                     str += expand_NUM(n[:-1])
                     str += 's'
             return str
+    
+    if dec2_pattern.match(n):
+        str2 = ''
+        str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
+               + expand_NUM(dec2_pattern.match(n).group(2)))
+        return str2
 
     """Return n as an cardinal in words."""
     ones_C = [
@@ -509,10 +515,23 @@ def expand_NDIG(w):
     num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     str2 = ''
     for n in w:
-        str2 += num_words[numbers.index(n)]
-        str2 += ' '
+        if n.isdigit():
+            str2 += num_words[numbers.index(n)]
+            str2 += ' '
+        else:
+            str2 += ''
     return str2
 
+
+def expand_NTEL(w):
+    str2 = ''
+    if w[0] == '+':
+        str2 += 'plus '
+        str2 += expand_NDIG(w[1:])
+    else:
+        str2 += expand_NDIG(w)
+    return str2
+    
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -548,7 +567,7 @@ def expand_NTIME(w):
     else:
         str2 += 'pm'
     return str2
-
+    
 
 def expand_NYER(w):
     if w[-1] == 's':
@@ -588,6 +607,41 @@ def expand_NYER(w):
             return expand_NUM(w)
 
 
+def expand_NDATE(w):
+    numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06', 
+               '6', '07', '7', '08', '8', '09', '9', '10', '11', '12']
+    months = ['January', 'January', 'February', 'February', 'March', 'March',
+              'April', 'April', 'May', 'May', 'June', 'June', 'July', 'July',
+              'August', 'August', 'September', 'September', 'October',
+              'November', 'December']
+    m = date_pattern.match(w)
+    str2 = ''
+    if m.group(5):
+        if int(m.group(1)) > 12:
+            str2 += (expand_NORD(m.group(1)) + ' of ' 
+                    + months[numbers.index(m.group(3))] 
+                    + " " + expand_NYER(m.group(5)))
+        elif int(m.group(3)) > 12:
+            str2 += (expand_NORD(m.group(3)) + ' of ' 
+                    + months[numbers.index(m.group(1))] 
+                    + " " + expand_NYER(m.group(5)))
+        else:
+            str2 += (expand_NORD(m.group(1)) + ' of ' 
+                    + months[numbers.index(m.group(3))] 
+                    + " " + expand_NYER(m.group(5)))
+    else:
+        if int(m.group(1)) > 12:
+            str2 += (expand_NORD(m.group(1)) + ' of ' 
+                    + months[numbers.index(m.group(3))])
+        elif int(m.group(3)) > 12:
+            str2 += (expand_NORD(m.group(3)) + ' of ' 
+                    + months[numbers.index(m.group(1))])
+        else:
+            str2 += (expand_NORD(m.group(1)) + ' of ' 
+                    + months[numbers.index(m.group(3))])
+    return str2
+
+
 def expand_PRCT(w):
     if '.' in w:
         m = percent_pattern2.match(w)
@@ -598,7 +652,6 @@ def expand_PRCT(w):
         m = percent_pattern1.match(w)
         a = m.group(1)
         return expand_NUM(a) + " percent"
-
 
 
 percent_pattern1 = re.compile('''
@@ -622,6 +675,15 @@ time_pattern = re.compile('''
 $
 ''', re.VERBOSE)
 
+date_pattern = re.compile('''
+([0-9]{1,2})
+([\.|-|./])
+([0-9]{1,2})
+([\.|-|./]?)
+([0-9]{0,4})
+$
+''', re.VERBOSE)
+
 range_pattern = re.compile('''
 ([0-9]+                 # 1 or more digits
 \.?                     # optional '.'
@@ -630,5 +692,14 @@ range_pattern = re.compile('''
 ([0-9]+                 # same pattern as lines 1-3
 \.?
 [0-9]*)
+$
+''', re.VERBOSE)
+
+dec2_pattern = re.compile('''
+([0-9]+)
+\.
+([0-9]+
+\.
+[0-9]+)
 $
 ''', re.VERBOSE)
