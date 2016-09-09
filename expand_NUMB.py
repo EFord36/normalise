@@ -7,7 +7,6 @@ Created on Fri Jul 22 14:30:22 2016
 
 import re
 
-
 def expand_NUM(n):
     if len(n) > 0:
         if n[-1] == 's':
@@ -30,6 +29,7 @@ def expand_NUM(n):
         str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
                + expand_NUM(dec2_pattern.match(n).group(2)))
         return str2
+    
 
     """Return n as an cardinal in words."""
     ones_C = [

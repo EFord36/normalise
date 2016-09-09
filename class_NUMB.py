@@ -284,7 +284,7 @@ def seed_features(item, context):
             context[1] in months and len(nsw) == 4 and nsw.isdigit()),
            (nsw.isdigit() and context[1].isalpha() and context[1].isupper() and
           len(context[1]) > 1 and context[1].lower() not in wordlist and
-          len(nsw) > 1),
+          len(nsw) > 1) or nsw.count('.') > 2,
            (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
             ((context[1] in months or context[3] in months) and
             nsw.isdigit() and
@@ -422,7 +422,7 @@ def seed(dict_tup, text):
                 return 4
     elif (nsw.isdigit() and context[1].isalpha() and context[1].isupper() and
           len(context[1]) > 1 and context[1].lower() not in wordlist and
-          len(nsw) > 1):
+          len(nsw) > 1) or nsw.count('.') > 2:
         return 5
     elif (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
           ((context[1] in months or context[3] in months) and
