@@ -18,9 +18,13 @@ for w in words:
         for i in range(len(w) - 2):
             quadgram_count[w[i: i + 4]] += 1
 
+
 def quadgram_word(word):
-    test = '^' + word + '$'
-    for i in range(len(test) - 3):
-        if quadgram_count[test[i: i + 4]] == 0:
-            return False
-    return True
+    if word.endswith('.') or word.endswith("'"):
+        return quadgram_word(word[:-1])
+    else:
+        test = '^' + word.lower() + '$'
+        for i in range(len(test) - 3):
+            if quadgram_count[test[i: i + 4]] != 0:
+                return True
+        return False
