@@ -41,7 +41,8 @@ def gold_vs_pred_tuple():
 # Compute % accuracy by comparing gold standard tags to predicted tags.
 accuracy = accuracy_score(gold_vs_pred_tuple()[0], gold_vs_pred_tuple()[1])
 
-labels = ['PRCT', 'MONEY', 'NTIME', 'NYER', 'NDIG', 'NORD', 'NUM', 'NRANGE']
+labels = ['PRCT', 'MONEY', 'NTIME', 'NYER', 'NDIG', 'NORD', 'NUM', 'NRANGE',
+          'NDATE', 'NADDR', 'NTEL']
 
 # Return a confusion matrix.
 confusion = confusion_matrix(gold_vs_pred_tuple()[0], gold_vs_pred_tuple()[1],

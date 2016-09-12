@@ -28,7 +28,6 @@ with open('word_tokenized_lowered.pickle', mode='rb') as file:
 with open('wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
-
 with open('clf_NUMB.pickle', mode='rb') as file:
     clf_NUMB = pickle.load(file)
 
@@ -55,6 +54,7 @@ months = ["January", "Jan", "Jan.", "February", "Feb", "Feb.",
           "Aug", "Aug.", "September", "Sept", "Sept.", "October",
           "Oct", "Oct.", "November", "Nov", "Nov.", "December",
           "Dec", "Dec."]
+addr_words = ['Road', 'Rd.', 'Street', 'Avenue', 'Ave.']
 
 
 def run_clfNUMB(dic, text):
@@ -74,7 +74,10 @@ def run_clfNUMB(dic, text):
                     5: 'NDIG',
                     6: 'NORD',
                     7: 'NUM',
-                    8: 'NRANGE'
+                    8: 'NRANGE',
+                    9: 'NTEL',
+                    10: 'NDATE',
+                    11: 'NADDR'
                     }
     out = {}
     for (ind, (nsw, tag)) in dic.items():
@@ -241,6 +244,19 @@ def time_context(nsw, context):
     else:
         return False
 
+def looks_datey(nsw, context):
+    m = date_pattern.match(nsw)
+    if date_pattern.match(nsw):
+        if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32 or
+            12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
+                return True
+        elif context[1] == 'on':
+            return True
+        else:
+            return False
+    else:
+        return False
+
 
 def in_features(nsw):
     """Return list of bools if specific punctuation is in nsw."""
@@ -267,7 +283,7 @@ def seed_features(item, context):
             context[1] in months and len(nsw) == 4 and nsw.isdigit()),
            (nsw.isdigit() and context[1].isalpha() and context[1].isupper() and
           len(context[1]) > 1 and context[1].lower() not in wordlist and
-          len(nsw) > 1),
+          len(nsw) > 1) or nsw.count('.') > 2,
            (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
             ((context[1] in months or context[3] in months) and
             nsw.isdigit() and
@@ -276,9 +292,12 @@ def seed_features(item, context):
           ((context[3] in ['million', 'billion', 'thousand'] or
           (context[3] in meas_dict or context[3] in meas_dict_pl) and
           nsw.isdigit()))),
+          looks_datey(nsw, context),
+          (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'),
           looks_rangey(nsw),
-           (nsw.isdigit() and 1950 < int(nsw) < 2100
-            and not (context[3] in meas_dict or context[3] in meas_dict_pl))
+          (nsw.isdigit() and 1950 < int(nsw) < 2100
+            and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
+          len(nsw) < 5 and context[4] in addr_words,
            ]
     return out
 
@@ -378,6 +397,13 @@ def fit_clf(dic, text):
     return model
 
 
+def fit_and_store_clf(dic, text):
+    """fit a Label Propogation classifier, and store in clf_NUMB.pickle"""
+    clf = fit_clf(dic, text)
+    with open('clf_NUMB.pickle', 'wb') as file:
+        pickle.dump(clf, file)
+
+
 def seed(dict_tup, text):
     """Assign a seedset label to the input tuple.
 
@@ -402,7 +428,7 @@ def seed(dict_tup, text):
                 return 4
     elif (nsw.isdigit() and context[1].isalpha() and context[1].isupper() and
           len(context[1]) > 1 and context[1].lower() not in wordlist and
-          len(nsw) > 1):
+          len(nsw) > 1) or nsw.count('.') > 2:
         return 5
     elif (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
           ((context[1] in months or context[3] in months) and
@@ -414,13 +440,19 @@ def seed(dict_tup, text):
           (context[3] in meas_dict or context[3] in meas_dict_pl) and
           nsw.isdigit())):
         return 7
+    elif looks_datey(nsw, context):
+        return 10
     elif looks_rangey(nsw):
         return 8
+    elif (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'):
+        return 9
     elif '.' in nsw or ',' in nsw:
         return 7
     elif (nsw.isdigit() and 1950 < int(nsw) < 2100
             and not (context[3] in meas_dict or context[3] in meas_dict_pl)):
         return 4
+    elif len(nsw) < 5 and context[4] in addr_words:
+        return 11
     else:
         return - 1
 
@@ -458,5 +490,14 @@ range_pattern = re.compile('''
 ([0-9]+                 # same pattern as lines 1-3
 \.?
 [0-9]*)
+$
+''', re.VERBOSE)
+
+date_pattern = re.compile('''
+([0-9]{1,2})
+(/)
+([0-9]{1,2})
+(/)?
+([0-9]{2,4})?
 $
 ''', re.VERBOSE)

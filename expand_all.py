@@ -22,6 +22,7 @@ func_dict = {
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
              'NDATE': 'expand_NDATE(nsw)',
+             'NADDR': 'expand_NYER(nsw)',
              'NTEL': 'expand_NTEL(nsw)',
              'NYER': 'expand_NYER(nsw)',
              'MONEY': 'expand_MONEY(nsw)',
@@ -48,7 +49,7 @@ def expand_NONE(nsw):
 def expand_PROF(w):
     """Return 'original' rude word from asterisked FNSP."""
     rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
-            'dick' 'fuck', 'pussy', 'shit', 'tits', 'twat']
+            'dick', 'fuck', 'pussy', 'shit', 'tits', 'twat']
     candidates = [r for r in rude if len(r) == len(w)]
     final = ''
     ind = 0

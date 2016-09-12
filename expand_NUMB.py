@@ -7,8 +7,37 @@ Created on Fri Jul 22 14:30:22 2016
 
 import re
 
+def expand_fraction(n):
+    slash = n.find('/')
+    first = n[:slash]
+    second = n[slash+1:]
+    exp = ''
+    if first.isdigit() and second.isdigit():
+        if second == '100':
+            if first == '1':
+                exp += "one hundredth"
+            else:
+                exp += expand_NUM(first)  + " hundredths"
+        elif ((int(first) >= int(second)) or int(second) > 10 
+               or second in ['1', '2']):
+                   exp += expand_NUM(first) + " over " + expand_NUM(second)
+        else: 
+            numbers = ['3', '4', '5', '6', '7', '8', '9']
+            fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh', 'eighth',
+                         'ninth']
+            if first == '1':
+                exp += "one " + fractions[numbers.index(second)]
+            else:
+                exp += expand_NUM(first) + " " + fractions[numbers.index(second)] + "s"
+    else: 
+        return n
+    return exp
+        
 
 def expand_NUM(n):
+    if '/' in n:
+        return expand_fraction(n)
+        
     if len(n) > 0:
         if n[-1] == 's':
             if len(n) > 1 and n[-2:] == "'s":
@@ -30,6 +59,7 @@ def expand_NUM(n):
         str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
                + expand_NUM(dec2_pattern.match(n).group(2)))
         return str2
+    
 
     """Return n as an cardinal in words."""
     ones_C = [
@@ -121,10 +151,16 @@ def expand_NUM(n):
 def expand_NRANGE(n):
     m = range_pattern.match(n)
     str = ''
-    str += expand_NUM(m.group(1))
+    if 1800 <= int(m.group(1)) < 2050:
+        str += expand_NYER(m.group(1))
+    else:
+        str += expand_NUM(m.group(1))
     if m.group(2) in ['/', '-', '–']:
         str += ' to '
-    str += expand_NUM(m.group(3))
+    if 1800 <= int(m.group(3)) < 2050:
+        str += expand_NYER(m.group(3))
+    else:
+        str += expand_NUM(m.group(3))
     return str
 
 
@@ -518,6 +554,9 @@ def expand_NDIG(w):
         if n.isdigit():
             str2 += num_words[numbers.index(n)]
             str2 += ' '
+        elif n == '.':
+            str2 += 'dot'
+            str2 += ' '
         else:
             str2 += ''
     return str2
@@ -645,13 +684,19 @@ def expand_NDATE(w):
 def expand_PRCT(w):
     if '.' in w:
         m = percent_pattern2.match(w)
-        a = m.group(1)
-        b = m.group(3)
-        return expand_NUM(a) + " point " + expand_NDIG(b) + "percent"
+        if m:
+            a = m.group(1)
+            b = m.group(3)
+            return expand_NUM(a) + " point " + expand_NDIG(b) + "percent"
+        else:
+            return w
     else:
         m = percent_pattern1.match(w)
-        a = m.group(1)
-        return expand_NUM(a) + " percent"
+        if m:
+            a = m.group(1)
+            return expand_NUM(a) + " percent"
+        else: 
+            return w
 
 
 percent_pattern1 = re.compile('''

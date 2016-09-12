@@ -142,6 +142,13 @@ def fit_clf(dic, text):
     return model
 
 
+def fit_and_store_clf(dic, text):
+    """fit a Label Propogation classifier, and store in clf_ALPHA.pickle"""
+    clf = fit_clf(dic, text)
+    with open('clf_ALPHA.pickle', 'wb') as file:
+        pickle.dump(clf, file)
+
+
 def seed(dict_tup, text):
     """Assign a seedset label to the input tuple.
 
