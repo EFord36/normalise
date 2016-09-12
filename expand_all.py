@@ -49,7 +49,7 @@ def expand_NONE(nsw):
 def expand_PROF(w):
     """Return 'original' rude word from asterisked FNSP."""
     rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
-            'dick' 'fuck', 'pussy', 'shit', 'tits', 'twat']
+            'dick', 'fuck', 'pussy', 'shit', 'tits', 'twat']
     candidates = [r for r in rude if len(r) == len(w)]
     final = ''
     ind = 0

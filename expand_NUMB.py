@@ -12,22 +12,25 @@ def expand_fraction(n):
     first = n[:slash]
     second = n[slash+1:]
     exp = ''
-    if second == '100':
-        if first == '1':
-            exp += "one hundredth"
-        else:
-            exp += expand_NUM(first)  + " hundredths"
-    elif ((int(first) >= int(second)) or int(second) > 10 
-         or second in ['1', '2']):
-        exp += expand_NUM(first) + " over " + expand_NUM(second)
+    if first.isdigit() and second.isdigit():
+        if second == '100':
+            if first == '1':
+                exp += "one hundredth"
+            else:
+                exp += expand_NUM(first)  + " hundredths"
+        elif ((int(first) >= int(second)) or int(second) > 10 
+               or second in ['1', '2']):
+                   exp += expand_NUM(first) + " over " + expand_NUM(second)
+        else: 
+            numbers = ['3', '4', '5', '6', '7', '8', '9']
+            fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh', 'eighth',
+                         'ninth']
+            if first == '1':
+                exp += "one " + fractions[numbers.index(second)]
+            else:
+                exp += expand_NUM(first) + " " + fractions[numbers.index(second)] + "s"
     else: 
-        numbers = ['3', '4', '5', '6', '7', '8', '9']
-        fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh', 'eighth',
-                     'ninth']
-        if first == '1':
-            exp += "one " + fractions[numbers.index(second)]
-        else:
-            exp += expand_NUM(first) + " " + fractions[numbers.index(second)] + "s"
+        return n
     return exp
         
 
