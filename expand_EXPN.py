@@ -11,6 +11,8 @@ from nltk import pos_tag
 
 from abbrev_dict import states
 from splitter import split
+from tag1 import is_digbased
+from measurements import meas_dict, meas_dict_pl
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
@@ -28,6 +30,17 @@ words = [w for w, freq in fd(brown).most_common()]
 
 
 def expand_EXPN(nsw, i, text):
+    if nsw in meas_dict and is_digbased(text[i - 1]):
+        if text[i - 1] == '1':
+            return meas_dict[nsw]
+        else:
+            return meas_dict_pl[nsw]
+    elif (nsw.endswith('.') and nsw[:-1] in meas_dict
+          and is_digbased(text[i - 1])):
+        if text[i - 1] == '1':
+            return meas_dict[nsw[:-1]]
+        else:
+            return meas_dict_pl[nsw[:-1]]
     if nsw.endswith('.') and nsw[:-1].lower() in abbrevs:
         w = nsw[:-1]
     else:
