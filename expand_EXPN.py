@@ -138,7 +138,7 @@ def gen_signature(word):
     inds = find_matches(word)
     signature = set()
     if word in wn.words():
-        if wn.synsets(word):
+        if wn.synsets(word) and "'" not in str(wn.synsets(word)[0]):
             define = (eval("wn.{}.definition()".format(
                       str(wn.synsets(word)[0]).lower())))
             examples = (eval("wn.{}.examples()".format(
