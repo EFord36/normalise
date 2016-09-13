@@ -73,6 +73,9 @@ def expand_NUM(n):
                + expand_NUM(dec2_pattern.match(n).group(2)))
         return str2
     
+    if n.startswith('.'):
+        return "point " + expand_NDIG(n[1:])
+    
 
     """Return n as an cardinal in words."""
     ones_C = [
@@ -515,7 +518,7 @@ def expand_MONEY(n):
             ecurr += n[1:]
     else:
         for i in range(len(n)-3):
-            if not n[i].isdigit():
+            if not n[i].isdigit() and not n[i] == '.':
                 scurr += n[i]
             else:
                 num = n[i:-3]
@@ -563,18 +566,18 @@ def expand_MONEY(n):
 
 def expand_NDIG(w):
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     str2 = ''
     for n in w:
         if n.isdigit():
             str2 += num_words[numbers.index(n)]
-            str2 += ' '
+            str2 += " "
         elif n == '.':
             str2 += 'dot'
             str2 += ' '
         else:
             str2 += ''
-    return str2
+    return str2[:-1]
 
 
 def expand_NTEL(w):
