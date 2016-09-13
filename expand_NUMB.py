@@ -13,7 +13,9 @@ def expand_fraction(n):
     second = n[slash+1:]
     exp = ''
     if first.isdigit() and second.isdigit():
-        if second == '100':
+        if n == "1/2":
+            exp = 'half'
+        elif second == '100':
             if first == '1':
                 exp += "one hundredth"
             else:
@@ -36,7 +38,18 @@ def expand_fraction(n):
 
 def expand_NUM(n):
     if '/' in n:
-        return expand_fraction(n)
+        if whole_and_fract_pattern.match(n):
+            m = whole_and_fract_pattern.match(n)
+            exp = ''
+            exp += expand_NUM(m.group(1))
+            if m.group(2) == '1/2':
+                exp += " and a "
+            else:
+                exp += " and "
+            exp += expand_fraction(m.group(2))
+            return exp
+        else:
+            return expand_fraction(n)
         
     if len(n) > 0:
         if n[-1] == 's':
@@ -59,6 +72,9 @@ def expand_NUM(n):
         str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
                + expand_NUM(dec2_pattern.match(n).group(2)))
         return str2
+    
+    if n.startswith('.'):
+        return "point " + expand_NDIG(n[1:])
     
 
     """Return n as an cardinal in words."""
@@ -151,16 +167,18 @@ def expand_NUM(n):
 def expand_NRANGE(n):
     m = range_pattern.match(n)
     str = ''
-    if 1800 <= int(m.group(1)) < 2050:
-        str += expand_NYER(m.group(1))
+    if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+        if 1800 <= int(m.group(1)) < 2050:
+            str += expand_NYER(m.group(1))
     else:
         str += expand_NUM(m.group(1))
     if m.group(2) in ['/', '-', '–']:
         str += ' to '
-    if 1800 <= int(m.group(3)) < 2050:
-        str += expand_NYER(m.group(3))
-    else:
-        str += expand_NUM(m.group(3))
+        if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+            if 1800 <= int(m.group(3)) < 2050:
+                str += expand_NYER(m.group(3))
+        else:
+            str += expand_NUM(m.group(3))
     return str
 
 
@@ -500,7 +518,7 @@ def expand_MONEY(n):
             ecurr += n[1:]
     else:
         for i in range(len(n)-3):
-            if not n[i].isdigit():
+            if not n[i].isdigit() and not n[i] == '.':
                 scurr += n[i]
             else:
                 num = n[i:-3]
@@ -548,18 +566,18 @@ def expand_MONEY(n):
 
 def expand_NDIG(w):
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    num_words = ['oh', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
+    num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
     str2 = ''
     for n in w:
         if n.isdigit():
             str2 += num_words[numbers.index(n)]
-            str2 += ' '
+            str2 += " "
         elif n == '.':
             str2 += 'dot'
             str2 += ' '
         else:
             str2 += ''
-    return str2
+    return str2[:-1]
 
 
 def expand_NTEL(w):
@@ -601,10 +619,6 @@ def expand_NTIME(w):
     else:
         str2 += expand_NUM(m.group(3))
         str2 += ' '
-    if int(m.group(1)) <= 12:
-        str2 += 'am'
-    else:
-        str2 += 'pm'
     return str2
     
 
@@ -695,6 +709,13 @@ def expand_PRCT(w):
         if m:
             a = m.group(1)
             return expand_NUM(a) + " percent"
+        elif whole_and_fract_pattern.match(w[:-1]):
+            return expand_NUM(w[:-1]) + " percent"
+        elif "/" in w:
+            if w[:-1] == '1/2':
+                return expand_fraction(w[:-1]) + " a percent"
+            else:
+                return expand_fraction(w[:-1]) + " of a percent"
         else: 
             return w
 
@@ -746,5 +767,13 @@ dec2_pattern = re.compile('''
 ([0-9]+
 \.
 [0-9]+)
+$
+''', re.VERBOSE)
+
+whole_and_fract_pattern = re.compile('''
+([0-9]+)
+[-]
+([0-9]+
+/[0-9]+)
 $
 ''', re.VERBOSE)

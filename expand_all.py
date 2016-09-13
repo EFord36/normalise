@@ -53,16 +53,22 @@ def expand_PROF(w):
     candidates = [r for r in rude if len(r) == len(w)]
     final = ''
     ind = 0
-    while not final:
-        r = candidates[ind]
-        match = True
-        for i in range(len(r)):
-            if r[i] != w[i] and w[i] != '*':
-                match = False
-        if match:
-            final += r
-        ind += 1
-    return final
+    if not candidates:
+        return w
+    else:
+        while not final and ind < len(candidates):
+            r = candidates[ind]
+            match = True
+            for i in range(len(r)):
+                if r[i] != w[i] and w[i] != '*':
+                    match = False
+            if match:
+                final += r
+            ind += 1
+        if final:
+            return final
+        else:
+            return w
 
 
 def expand_WDLK(word):
