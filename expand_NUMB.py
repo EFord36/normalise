@@ -138,9 +138,12 @@ def expand_NUM(n):
     
         def decimal(n):
             """Returns pronounced words with n as rhs of a decimal"""
-            out = ' point'
-            for lt in n:
-                out += ' {}'.format(ones_C[int(lt)])
+            if n == '00':
+                out = ''
+            else:
+                out = ' point'
+                for lt in n:
+                    out += ' {}'.format(ones_C[int(lt)])
             return out
     
         n_clean = ''
