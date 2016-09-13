@@ -9,7 +9,7 @@ from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
-from abbrev_dict import abbrev_dict, ambig_abbrevs, states
+from abbrev_dict import states
 from splitter import split
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
@@ -18,32 +18,37 @@ with open('word_tokenized_lowered.pickle', mode='rb') as file:
 with open('pos_dicts.pickle', mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
 
+with open('abbrev_dict.pickle', mode='rb') as file:
+    abbrevs = pickle.load(file)
+
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
                 word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
 
 
-def expand_EXPN(w, i, text):
-    if w in states:
-        exp = states[w]
-    elif w.lower() in abbrev_dict:
-        exp = abbrev_dict[w.lower()]
-    elif w.lower() in ambig_abbrevs:
-        cands = ambig_abbrevs[w.lower()]
+def expand_EXPN(nsw, i, text):
+    if nsw.endswith('.') and nsw[:-1].lower() in abbrevs:
+        w = nsw[:-1]
+    else:
+        w = nsw
+    if w.lower() in abbrevs:
+        cands = abbrevs[w.lower()]
         true_tag = abbrev_tag(i, text)
         matches = []
         for cand in cands:
-            if true_tag in pos_tag_dict[cand]:
+            if true_tag in pos_tag_dict[cand.lower()]:
                 matches += [cand]
         if not matches:
             true_tag_univ = abbrev_tag_univ(i, text)
             for cand in cands:
-                if true_tag_univ in pos_tag_dict_univ[cand]:
+                if true_tag_univ in pos_tag_dict_univ[cand.lower()]:
                     matches += [cand]
         if matches:
             best = 0
             current = []
+            if len(matches) == 1:
+                return matches[0]
             for cand in matches:
                 olap = overlap(i, cand, text)
                 if olap > best and cand in brown_common:
@@ -51,10 +56,14 @@ def expand_EXPN(w, i, text):
                     current = [cand]
                 elif olap == best and best != 0:
                     current.append(cand)
+                elif cand in states.values() and not current:
+                    current.append(cand)
             best = 0
             exp = ''
             for c in current:
-                if c in brown_common:
+                if c in states.values():
+                    return c
+                elif c in brown_common:
                     freq = brown_common[c]
                 else:
                     freq = 0
