@@ -136,7 +136,13 @@ def find_matches(word):
 
 def gen_signature(word):
     inds = find_matches(word)
-    signature = set()
+    signature = defaultdict(int)
+    for i in inds:
+        for w in gen_context(i, brown):
+            signature[w] += 1
+    sig = {w for w in signature
+           if signature[w] > 1
+           and w not in stopwords.words('english') and w != ','}
     if word in wn.words():
         if wn.synsets(word) and "'" not in str(wn.synsets(word)[0]):
             define = (eval("wn.{}.definition()".format(
@@ -145,13 +151,10 @@ def gen_signature(word):
                         str(wn.synsets(word)[0]).lower())))
             if examples:
                 for ex in examples:
-                        signature.update(wt(ex))
+                        sig.update(wt(ex))
             if define:
-                signature.update(wt(define))
-
-    for i in inds:
-        signature.update(gen_context(i, brown))
-    return signature
+                        sig.update(wt(define))
+    return sig
 
 
 def gen_context(i, text):
