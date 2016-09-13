@@ -13,7 +13,9 @@ def expand_fraction(n):
     second = n[slash+1:]
     exp = ''
     if first.isdigit() and second.isdigit():
-        if second == '100':
+        if n == "1/2":
+            exp = 'half'
+        elif second == '100':
             if first == '1':
                 exp += "one hundredth"
             else:
@@ -36,7 +38,18 @@ def expand_fraction(n):
 
 def expand_NUM(n):
     if '/' in n:
-        return expand_fraction(n)
+        if whole_and_fract_pattern.match(n):
+            m = whole_and_fract_pattern.match(n)
+            exp = ''
+            exp += expand_NUM(m.group(1))
+            if m.group(2) == '1/2':
+                exp += " and a "
+            else:
+                exp += " and "
+            exp += expand_fraction(m.group(2))
+            return exp
+        else:
+            return expand_fraction(n)
         
     if len(n) > 0:
         if n[-1] == 's':
@@ -151,16 +164,18 @@ def expand_NUM(n):
 def expand_NRANGE(n):
     m = range_pattern.match(n)
     str = ''
-    if 1800 <= int(m.group(1)) < 2050:
-        str += expand_NYER(m.group(1))
+    if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+        if 1800 <= int(m.group(1)) < 2050:
+            str += expand_NYER(m.group(1))
     else:
         str += expand_NUM(m.group(1))
     if m.group(2) in ['/', '-', '–']:
         str += ' to '
-    if 1800 <= int(m.group(3)) < 2050:
-        str += expand_NYER(m.group(3))
-    else:
-        str += expand_NUM(m.group(3))
+        if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+            if 1800 <= int(m.group(3)) < 2050:
+                str += expand_NYER(m.group(3))
+        else:
+            str += expand_NUM(m.group(3))
     return str
 
 
@@ -601,10 +616,6 @@ def expand_NTIME(w):
     else:
         str2 += expand_NUM(m.group(3))
         str2 += ' '
-    if int(m.group(1)) <= 12:
-        str2 += 'am'
-    else:
-        str2 += 'pm'
     return str2
     
 
@@ -695,6 +706,13 @@ def expand_PRCT(w):
         if m:
             a = m.group(1)
             return expand_NUM(a) + " percent"
+        elif whole_and_fract_pattern.match(w[:-1]):
+            return expand_NUM(w[:-1]) + " percent"
+        elif "/" in w:
+            if w[:-1] == '1/2':
+                return expand_fraction(w[:-1]) + " a percent"
+            else:
+                return expand_fraction(w[:-1]) + " of a percent"
         else: 
             return w
 
@@ -746,5 +764,13 @@ dec2_pattern = re.compile('''
 ([0-9]+
 \.
 [0-9]+)
+$
+''', re.VERBOSE)
+
+whole_and_fract_pattern = re.compile('''
+([0-9]+)
+[-]
+([0-9]+
+/[0-9]+)
 $
 ''', re.VERBOSE)
