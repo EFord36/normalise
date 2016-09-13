@@ -1,8 +1,10 @@
 from math import log
+from collections import defaultdict
 import re
 import pickle
 
 from nltk.corpus import wordnet as wn
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
@@ -30,8 +32,9 @@ def expand_EXPN(w, i, text):
         for cand in cands:
             tagged_cands += pos_tag(wt(cand))
             matches = []
+        true_tag = abbrev_tag(i, text)
         for (w, tag) in tagged_cands:
-            if abbrev_tag(i, text) == tag:
+            if tag == true_tag:
                 matches += [w]
         if matches:
             best = 0
@@ -54,15 +57,7 @@ def expand_EXPN(w, i, text):
                     best = freq
                     exp = c
         else:
-            best = 0
-            for cand in cands:
-                if cand in brown_common:
-                    freq = brown_common[cand]
-                else:
-                    freq = 0
-                if freq > best:
-                    best = freq
-                    exp = cand
+            exp = maximum_overlap(w, i, text)
     else:
         exp = maximum_overlap(w, i, text)
     if exp == '':
@@ -74,6 +69,7 @@ def expand_EXPN(w, i, text):
 def maximum_overlap(w, i, text):
     best = 0
     current = []
+    curr = ''
     if tag_matches(i, text):
         for cand in tag_matches(i, text):
             olap = overlap(i, cand, text)
@@ -83,7 +79,6 @@ def maximum_overlap(w, i, text):
             elif olap == best and best != 0:
                 current.append(cand)
         best = 0
-        curr = ''
         for c in current:
             if c in brown_common:
                 freq = brown_common[c]
@@ -96,17 +91,14 @@ def maximum_overlap(w, i, text):
                 best = freq
                 curr = c
             return curr
-    else:
-        best = 0
-        curr = ''
-        for (cand, freq) in gen_best(w):
-            if cand in brown_common:
-                freq = brown_common[cand]
-            else:
-                freq = 0
-            if freq > best:
-                    best = freq
-                    curr = cand
+    #else:
+    #    best = 0
+    #    curr = ''
+    #    for (cand, freq) in gen_best(w):
+    #        lesk = overlap(i, cand, text)
+    #        if lesk > best:
+    #                best = lesk
+    #                curr = cand
     if curr == '':
         return w
     else:
@@ -225,8 +217,9 @@ def tag_matches(i, text):
         abbrev = text[i]
     else:
         abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
+    true_tag = abbrev_tag(i, text)
     for (cand, tag) in tag_cands(abbrev):
-        if tag == abbrev_tag(i, text):
+        if tag == true_tag:
             matches += [cand]
     return matches
 
