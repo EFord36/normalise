@@ -138,9 +138,12 @@ def expand_NUM(n):
     
         def decimal(n):
             """Returns pronounced words with n as rhs of a decimal"""
-            out = ' point'
-            for lt in n:
-                out += ' {}'.format(ones_C[int(lt)])
+            if n == '00':
+                out = ''
+            else:
+                out = ' point'
+                for lt in n:
+                    out += ' {}'.format(ones_C[int(lt)])
             return out
     
         n_clean = ''
@@ -177,21 +180,29 @@ def expand_NUM(n):
 
 def expand_NRANGE(n):
     try:
-        m = range_pattern.match(n)
-        str = ''
-        if isinstance(m.group(1), int) and isinstance(m.group(3), int):
-            if 1800 <= int(m.group(1)) < 2050:
-                str += expand_NYER(m.group(1))
-        else:
-            str += expand_NUM(m.group(1))
-        if m.group(2) in ['/', '-', '–']:
-            str += ' to '
+        if range_pattern.match(n):
+            m = range_pattern.match(n)
+            str = ''
             if isinstance(m.group(1), int) and isinstance(m.group(3), int):
-                if 1800 <= int(m.group(3)) < 2050:
-                    str += expand_NYER(m.group(3))
+                if 1800 <= int(m.group(1)) < 2050:
+                    str += expand_NYER(m.group(1))
             else:
-                str += expand_NUM(m.group(3))
-        return str
+                str += expand_NUM(m.group(1))
+            if m.group(2) in ['/', '-', '–']:
+                str += ' to '
+                if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+                    if 1800 <= int(m.group(3)) < 2050:
+                        str += expand_NYER(m.group(3))
+                else:
+                    str += expand_NUM(m.group(3))
+            return str
+        elif ',' in n:
+            hyph = n.find('-')
+            one = n[:hyph]
+            two = n[hyph+1:]
+            str = ''
+            str += expand_NUM(one) + " to " + expand_NUM(two)
+            return str
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
@@ -553,7 +564,10 @@ def expand_MONEY(n):
             else:
                 num += n[-3:]
      
-        exp_num = expand_NUM(num)
+        if '-' in num:
+            exp_num = expand_NRANGE(num)
+        else:
+            exp_num = expand_NUM(num)
         if num == '1' and not end:
             if ecurr:
                 currency = ecurr_dict[ecurr]
@@ -753,7 +767,7 @@ def expand_PRCT(w):
             if m:
                 a = m.group(1)
                 b = m.group(3)
-                return expand_NUM(a) + " point " + expand_NDIG(b) + "percent"
+                return expand_NUM(a) + " point " + expand_NDIG(b) + " percent"
             else:
                 return w
         else:
@@ -819,7 +833,7 @@ $
 
 dec2_pattern = re.compile('''
 ([0-9]+)
-\.
+[\.|:]
 ([0-9]+
 \.
 [0-9]+)
