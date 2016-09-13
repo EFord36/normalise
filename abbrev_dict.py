@@ -4,6 +4,8 @@ Created on Tue Aug 30 15:39:00 2016
 
 @author: emmaflint
 """
+import pickle
+from collections import defaultdict
 
 abbrev_dict = {
                "abbrev.": "abbreviation",
@@ -187,7 +189,6 @@ abbrev_dict = {
                "naut.": "nautical",
                "nav.": "naval",
                "navig.": "navigation",
-               "n.e.": "north-east, north-eastern",
                "neurol.": "neurology",
                "no.": "number",
                "norweg.": "Norwegian",
@@ -234,7 +235,6 @@ abbrev_dict = {
                "Q.": "queen",
                "quot.": "quotation",
                "quots.": "quotations",
-               "R.A.F.": "Royal Air Force",
                "R.C.": "Roman Catholic",
                "rd.": "road",
                "ref.": "reference",
@@ -272,10 +272,8 @@ abbrev_dict = {
                "syst.": "system",
                "techn.": "technical",
                "telecomm.": "telecommunications",
-               "teleph.": "telephony, telephonic",
                "test.": "testament",
                "textbk.": "textbook",
-               "theol.": "theology, theological",
                "thes.": "thesaurus",
                "trag.": "tragedy",
                "transf.": "transfer",
@@ -288,8 +286,6 @@ abbrev_dict = {
                "univ.": "university",
                "unkn.": "unknown",
                "unoffic.": "unofficial",
-               "U.S.": "United States",
-               "U.S.S.R.": "Union of Soviet Socialist Republics",
                "vac.": "vacation",
                "var.": "variant",
                "vb.": "verb",
@@ -311,8 +307,8 @@ abbrev_dict = {
                "yr.": "year",
                "yrs.": "years"
                }
-               
-               
+
+
 ambig_abbrevs = {
                  "acad.": ["academia", "academy", "academic"],
                  "acc.": ["according", "account"],
@@ -407,6 +403,8 @@ ambig_abbrevs = {
                  "s.w.": ["south-west", "south-western"],
                  "technol.": ["technology", "technological"],
                  "tel.": ["telegraph", "telephone"],
+                 "teleph.": ["telephone", "telephony", "telephonic"],
+                 "theol.": ["theology", "theological"],
                  "tr.": ["translation", "translating"],
                  "trad.": ["tradition", "traditional"],
                  "transl.": ["translation", "translating"],
@@ -414,8 +412,8 @@ ambig_abbrevs = {
                  "w.": ["west", "western"],
                  "wk.": ["week", "work"]
                  }
-                 
-                 
+
+
 states = {
           "Ala.": "Alabama",
           "Alaska": "Alaska",
@@ -465,3 +463,34 @@ states = {
           "Wis.": "Wisconsin",
           "Wyo.": "Wyoming"
           }
+
+
+def build_abbrevs(dictionary):
+    abbrevs = defaultdict(list)
+    for key in dictionary:
+        if key.endswith('.'):
+            k = key[:-1].lower()
+        else:
+            k = key.lower()
+        if type(dictionary[key]) == list:
+            abbrevs[k].extend(dictionary[key])
+        elif type(dictionary[key]) == str:
+            abbrevs[k].append(dictionary[key])
+    return abbrevs
+
+
+def add_to_pickled_abbrev(dictionary):
+    with open('abbrev_dict.pickle', mode='rb') as f:
+        abbrevs = pickle.load(f)
+    for key in dictionary:
+        if key.endswith('.'):
+            k = key[:-1].lower()
+        else:
+            k = key.lower()
+        if type(dictionary[key]) == list:
+            abbrevs[k].extend(dictionary[key])
+        elif type(dictionary[key]) == str:
+            abbrevs[k].append(dictionary[key])
+    with open('abbrev_dict.pickle', mode='wb') as f:
+        pickle.dump(abbrevs, f)
+    print(abbrevs)
