@@ -15,6 +15,9 @@ from splitter import split
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
+with open('pos_dicts.pickle', mode='rb') as file:
+    pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
+
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
                 word, freq in fd(brown).most_common(5000)[100:]}
@@ -28,14 +31,16 @@ def expand_EXPN(w, i, text):
         exp = abbrev_dict[w.lower()]
     elif w.lower() in ambig_abbrevs:
         cands = ambig_abbrevs[w.lower()]
-        tagged_cands = []
-        for cand in cands:
-            tagged_cands += pos_tag(wt(cand))
-            matches = []
         true_tag = abbrev_tag(i, text)
-        for (w, tag) in tagged_cands:
-            if tag == true_tag:
-                matches += [w]
+        matches = []
+        for cand in cands:
+            if true_tag in pos_tag_dict[cand]:
+                matches += [cand]
+        if not matches:
+            true_tag_univ = abbrev_tag_univ(i, text)
+            for cand in cands:
+                if true_tag_univ in pos_tag_dict_univ[cand]:
+                    matches += [cand]
         if matches:
             best = 0
             current = []
@@ -91,14 +96,6 @@ def maximum_overlap(w, i, text):
                 best = freq
                 curr = c
             return curr
-    #else:
-    #    best = 0
-    #    curr = ''
-    #    for (cand, freq) in gen_best(w):
-    #        lesk = overlap(i, cand, text)
-    #        if lesk > best:
-    #                best = lesk
-    #                curr = cand
     if curr == '':
         return w
     else:
@@ -203,6 +200,21 @@ def tag_cands(abbrv):
 
 def abbrev_tag(i, text):
     for (cand, tag) in tag_sent(i, text):
+        if isinstance(i, int):
+            if text[i] == cand:
+                return tag
+        else:
+            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+                return tag
+
+
+def tag_sent_univ(i, text):
+    sent = gen_context(i, text)
+    return pos_tag(sent, tagset='universal')
+
+
+def abbrev_tag_univ(i, text):
+    for (cand, tag) in tag_sent_univ(i, text):
         if isinstance(i, int):
             if text[i] == cand:
                 return tag
