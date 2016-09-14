@@ -168,9 +168,11 @@ def gen_signature(word):
                         str(wn.synsets(word)[0]).lower())))
             if examples:
                 for ex in examples:
-                        sig.update(wt(ex))
+                        sig.update([w for w in wt(ex)
+                                   if w not in stopwords.words('english')])
             if define:
-                        sig.update(wt(define))
+                        sig.update([w for w in wt(define)
+                                   if w not in stopwords.words('english')])
     return sig
 
 
