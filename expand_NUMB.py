@@ -788,6 +788,32 @@ def expand_PRCT(w):
         raise
     except:
         return w
+        
+def expand_NSCI(w):
+    try:
+        m = coord_pattern.match(w)
+        exp = ''
+        if m.group(1):
+            exp += expand_NUM(m.group(1)[:-1]) + " degrees, "
+        if m.group(2):
+            exp += expand_NUM(m.group(2)[:-1]) + " minutes, "
+        if m.group(3):
+            exp += expand_NUM(m.group(3)[:-1]) + " seconds, "
+        if m.group(4):
+            if m.group(4) == "N":
+                exp += "North"
+            if m.group(4) == "S":
+                exp += "South"
+            if m.group(4) == "W":
+                exp += "West"
+            if m.group(4) == "E":
+                exp += "East"
+        return exp
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return w
+            
 
 
 percent_pattern1 = re.compile('''
@@ -845,6 +871,23 @@ whole_and_fract_pattern = re.compile('''
 [-]
 ([0-9]+
 /[0-9]+)
+$
+''', re.VERBOSE)
+
+coord_pattern = re.compile('''
+([0-9]+
+\.?
+[0-9]*
+°)?
+([0-9]+
+\.?
+[0-9]*
+[\'|\’])?
+([0-9]+
+\.?
+[0-9]*
+["|″])?
+([N|S|E|W])?
 $
 ''', re.VERBOSE)
                     
