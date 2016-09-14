@@ -38,17 +38,17 @@ def expand_EXPN(nsw, i, text):
                 else:
                     return meas_dict_pl[nsw]
         else:
-            full = text[int(ind)]
+            full = text[int(i)]
             index = full.find(nsw)
             if index == 0:
-                if is_digbased(text[int(ind) - 1]):
-                    if text[int(ind) - 1] == '1':
+                if is_digbased(text[int(i) - 1]):
+                    if text[int(i) - 1] == '1':
                         return meas_dict[nsw]
                     else:
                         return meas_dict_pl[nsw]
             else:
                 if is_digbased(full[:index]):
-                    if text[int(ind) - 1] == '1':
+                    if text[int(i) - 1] == '1':
                         return meas_dict[nsw]
                     else:
                         return meas_dict_pl[nsw]
