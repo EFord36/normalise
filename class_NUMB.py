@@ -324,13 +324,15 @@ def gen_frame(dict_tup, text):
     end = 0
     if isinstance(ind, int):
         for i in range(ind - 2, ind + 3):
-            if i + 2 > len(text):
+            if i < 0:
+                tup += ('<END>',)
+            elif i + 2 > len(text):
                 tup += (text[i],)
                 rem = 5 - len(tup)
                 tup += rem * ('<END>',)
                 break
             elif (text[i] == '.' and
-                    text[i+1].istitle()):
+                    text[i + 1].istitle()):
                 if len(tup) > 2:
                     end = 1
                     tup += ('<END>',)
@@ -349,25 +351,25 @@ def gen_frame(dict_tup, text):
         start = ''
         end = ''
         index = full.find(word)
-        if index > 0:
-            start = full[:index]
+        start = full[:index]
         end = full[index + len(word):]
+        potential_context = gen_frame((rind, (word, tag)), text)
         if start and end:
-            tup = (text[rind - 1],
-                   start, word, end, text[rind + 1])
+            tup = (potential_context[1],
+                   start, word, end, potential_context[-2])
         elif start:
-            tup = (text[rind - 1],
+            tup = (potential_context[1],
                    start, word,
-                   text[rind + 1], text[rind + 2])
+                   potential_context[-2], potential_context[-1])
         elif end:
-            tup = (text[rind - 2],
-                   text[rind - 1], word,
-                   end, text[rind + 1])
+            tup = (potential_context[0],
+                   potential_context[1], word,
+                   end, potential_context[-2])
         else:
-            tup = (text[rind - 2],
-                   text[rind - 1], word,
-                   text[rind + 1],
-                   text[rind + 2])
+            tup = (potential_context[0],
+                   potential_context[1], word,
+                   potential_context[-2],
+                   potential_context[-1])
     return tup
 
 
