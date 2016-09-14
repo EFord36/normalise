@@ -38,7 +38,7 @@ def expand_EXPN(nsw, i, text):
                 else:
                     return meas_dict_pl[nsw]
         else:
-            full = text[rind]
+            full = text[int(ind)]
             index = full.find(nsw)
             if index == 0:
                 if is_digbased(text[int(ind) - 1]):
