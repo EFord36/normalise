@@ -85,6 +85,10 @@ def expand_EXPN(nsw, i, text):
                     exp = c
         else:
             exp = maximum_overlap(w, i, text)
+    elif w.lower().endswith('s.') and w.lower()[:-2] in abbrevs:
+        return expand_EXPN(w.lower()[:-2], i, text) + 's'
+    elif w.lower().endswith('s') and w.lower()[:-1] in abbrevs:
+        return expand_EXPN(w.lower()[:-1], i, text) + 's'
     else:
         exp = maximum_overlap(w, i, text)
     if exp == '':
