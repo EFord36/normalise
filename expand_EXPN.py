@@ -161,7 +161,7 @@ def gen_signature(word):
            if signature[w] > 1
            and w not in stopwords.words('english') and w != ','}
     if word in wn.words():
-        if wn.synsets(word) and "'" not in str(wn.synsets(word)[0]):
+        if wn.synsets(word) and str(wn.synsets(word)[0]).count("'") == 2:
             define = (eval("wn.{}.definition()".format(
                       str(wn.synsets(word)[0]).lower())))
             examples = (eval("wn.{}.examples()".format(
