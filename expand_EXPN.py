@@ -88,7 +88,7 @@ def expand_EXPN(nsw, i, text):
     else:
         exp = maximum_overlap(w, i, text)
     if exp == '':
-        return w
+        return nsw
     else:
         return exp
 
@@ -100,8 +100,11 @@ def maximum_overlap(w, i, text):
     t_matches = tag_matches(i, text)
     if t_matches:
         if len(t_matches) == 1:
-            return t_matches[0]
-        for cand in tag_matches(i, text):
+            if t_matches[0] in brown_common:
+                return t_matches[0]
+            else:
+                return w
+        for cand in t_matches:
             olap = overlap(i, cand, text)
             if olap > best and cand in words:
                 best = olap
@@ -270,7 +273,10 @@ def tag_matches(i, text):
         for (cand, tags) in tag_cands_univ(abbrev):
             if true_tag_univ in tags:
                 matches += [cand]
-    return matches
+    if len(matches) <= 10:
+        return matches
+    else:
+        return matches[:10]
 
 
 def find_last_letter(w):
@@ -299,7 +305,7 @@ def gen_candidates(word):
     regex_start = re.compile(reg_start)
     last = find_last_letter(word)
     if last == 's':
-        last = find_last_letter(w[:word.rfind(last)]) + last
+        last = find_last_letter(word[:word.rfind(last)]) + last
     for lt in word[:word.rfind(last)].lower():
         if lt.isalpha():
             reg_start_and_end += lt
@@ -345,11 +351,11 @@ def gen_best(abbrv):
     start_ind = 0
     while (start_and_end_ind < len(start_and_end_freqs) - 1
            and start_ind < len(start_freqs)):
-        ordered_cands += start_and_end_freqs[start_and_end_ind]
+        ordered_cands += [start_and_end_freqs[start_and_end_ind]]
         start_and_end_ind += 1
-        ordered_cands += start_and_end_freqs[start_and_end_ind]
+        ordered_cands += [start_and_end_freqs[start_and_end_ind]]
         start_and_end_ind += 1
-        ordered_cands += start_freqs[start_ind]
+        ordered_cands += [start_freqs[start_ind]]
         start_ind += 1
     if start_and_end_ind < len(start_and_end_freqs):
         ordered_cands.extend([(word, freq) for word, freq
@@ -357,7 +363,10 @@ def gen_best(abbrv):
     if start_ind < len(start_freqs):
         ordered_cands.extend([(word, freq) for word, freq
                              in start_freqs[start_ind:]])
-    if len(ordered_cands) < 20:
+    for word in start_and_end_cands + start_cands:
+        if word not in [w for w, f in ordered_cands]:
+            ordered_cands += [(word, 0)]
+    if len(ordered_cands) <= 50:
         return ordered_cands
     else:
-        return ordered_cands[:20]
+        return ordered_cands[:50]
