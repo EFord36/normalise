@@ -97,7 +97,10 @@ def maximum_overlap(w, i, text):
     best = 0
     current = []
     curr = ''
-    if tag_matches(i, text):
+    t_matches = tag_matches(i, text)
+    if t_matches:
+        if len(t_matches) == 1:
+            return t_matches[0]
         for cand in tag_matches(i, text):
             olap = overlap(i, cand, text)
             if olap > best and cand in words:
@@ -216,7 +219,7 @@ def tag_sent(i, text):
 def tag_cands(abbrv):
     tagged_cands = []
     for (cand, freq) in gen_best(abbrv):
-        tagged_cands += pos_tag(wt(cand))
+        tagged_cands += [(cand, pos_tag_dict[cand])]
     return tagged_cands
 
 
@@ -233,6 +236,13 @@ def abbrev_tag(i, text):
 def tag_sent_univ(i, text):
     sent = gen_context(i, text)
     return pos_tag(sent, tagset='universal')
+
+
+def tag_cands_univ(abbrv):
+    tagged_cands = []
+    for (cand, freq) in gen_best(abbrv):
+        tagged_cands += [(cand, pos_tag_dict_univ[cand])]
+    return tagged_cands
 
 
 def abbrev_tag_univ(i, text):
@@ -252,9 +262,14 @@ def tag_matches(i, text):
     else:
         abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
     true_tag = abbrev_tag(i, text)
-    for (cand, tag) in tag_cands(abbrev):
-        if tag == true_tag:
+    for (cand, tags) in tag_cands(abbrev):
+        if true_tag in tags:
             matches += [cand]
+    if not matches:
+        true_tag_univ = abbrev_tag_univ(i, text)
+        for (cand, tags) in tag_cands_univ(abbrev):
+            if true_tag_univ in tags:
+                matches += [cand]
     return matches
 
 
@@ -325,22 +340,22 @@ def gen_best(abbrv):
                          for it in start_cands
                          if it in brown_common],
                          key=lambda cand: cand[1])
-    ordered_cands = [word for word, freq in vowel_freqs]
+    ordered_cands = [(word, freq) for word, freq in vowel_freqs]
     start_and_end_ind = 0
     start_ind = 0
     while (start_and_end_ind < len(start_and_end_freqs) - 1
            and start_ind < len(start_freqs)):
-        ordered_cands += start_and_end_freqs[start_and_end_ind][0]
+        ordered_cands += start_and_end_freqs[start_and_end_ind]
         start_and_end_ind += 1
-        ordered_cands += start_and_end_freqs[start_and_end_ind][0]
+        ordered_cands += start_and_end_freqs[start_and_end_ind]
         start_and_end_ind += 1
-        ordered_cands += start_freqs[start_ind][0]
+        ordered_cands += start_freqs[start_ind]
         start_ind += 1
     if start_and_end_ind < len(start_and_end_freqs):
-        ordered_cands.extend([word for word, freq
+        ordered_cands.extend([(word, freq) for word, freq
                              in start_and_end_freqs[start_and_end_ind:]])
     if start_ind < len(start_freqs):
-        ordered_cands.extend([word for word, freq
+        ordered_cands.extend([(word, freq) for word, freq
                              in start_freqs[start_ind:]])
     if len(ordered_cands) < 20:
         return ordered_cands
