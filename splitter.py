@@ -51,8 +51,17 @@ def split(dic):
         hyph_list = []
         for nsw in emph_list:
             hyph_list.extend(nsw.split('-'))
-        mixedalnum_list = []
+        slash_list = []
         for nsw in hyph_list:
+            slash_list.extend(nsw.split('/'))
+        space_list = []
+        for nsw in slash_list:
+            space_list.extend(nsw.split(' '))
+        underscore_list = []
+        for nsw in space_list:
+            underscore_list.extend(nsw.split('_'))
+        mixedalnum_list = []
+        for nsw in underscore_list:
             mixedalnum_list.extend(mixedalnum_split(nsw))
         updown_list = []
         for nsw in mixedalnum_list:
