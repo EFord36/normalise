@@ -172,6 +172,7 @@ meas_dict_pl = {
                 "%": "percent",
                 "°C": "degrees Celsius",
                 "°F": "degrees Fahrenheit",
+                "F": "Fahrenheit",
                 "°Re": "degrees Reaumur",
                 "amu": "atomic mass units",
                 "atm": "atmospheres",
