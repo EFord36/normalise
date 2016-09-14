@@ -30,11 +30,28 @@ words = [w for w, freq in fd(brown).most_common()]
 
 
 def expand_EXPN(nsw, i, text):
-    if nsw in meas_dict and is_digbased(text[i - 1]):
-        if text[i - 1] == '1':
-            return meas_dict[nsw]
+    if nsw in meas_dict:
+        if isinstance(i, int):
+            if is_digbased(text[i - 1]):
+                if text[i - 1] == '1':
+                    return meas_dict[nsw]
+                else:
+                    return meas_dict_pl[nsw]
         else:
-            return meas_dict_pl[nsw]
+            full = text[rind]
+            index = full.find(nsw)
+            if index == 0:
+                if is_digbased(text[int(ind) - 1]):
+                    if text[int(ind) - 1] == '1':
+                        return meas_dict[nsw]
+                    else:
+                        return meas_dict_pl[nsw]
+            else:
+                if is_digbased(full[:index]):
+                    if text[int(ind) - 1] == '1':
+                        return meas_dict[nsw]
+                    else:
+                        return meas_dict_pl[nsw]
     elif (nsw.endswith('.') and nsw[:-1] in meas_dict
           and is_digbased(text[i - 1])):
         if text[i - 1] == '1':
