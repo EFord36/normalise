@@ -1,17 +1,27 @@
 from math import log
+from collections import defaultdict
 import re
 import pickle
 
 from nltk.corpus import wordnet as wn
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
-from abbrev_dict import abbrev_dict, ambig_abbrevs, states
+from abbrev_dict import states
 from splitter import split
+from tag1 import is_digbased
+from measurements import meas_dict, meas_dict_pl
 
 with open('word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
+
+with open('pos_dicts.pickle', mode='rb') as file:
+    pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
+
+with open('abbrev_dict.pickle', mode='rb') as file:
+    abbrevs = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
@@ -19,23 +29,39 @@ brown_common = {word: log(1161192 / freq) for
 words = [w for w, freq in fd(brown).most_common()]
 
 
-def expand_EXPN(w, i, text):
-    if w in states:
-        exp = states[w]
-    elif w.lower() in abbrev_dict:
-        exp = abbrev_dict[w.lower()]
-    elif w.lower() in ambig_abbrevs:
-        cands = ambig_abbrevs[w.lower()]
-        tagged_cands = []
+def expand_EXPN(nsw, i, text):
+    if nsw in meas_dict and is_digbased(text[i - 1]):
+        if text[i - 1] == '1':
+            return meas_dict[nsw]
+        else:
+            return meas_dict_pl[nsw]
+    elif (nsw.endswith('.') and nsw[:-1] in meas_dict
+          and is_digbased(text[i - 1])):
+        if text[i - 1] == '1':
+            return meas_dict[nsw[:-1]]
+        else:
+            return meas_dict_pl[nsw[:-1]]
+    if nsw.endswith('.') and nsw[:-1].lower() in abbrevs:
+        w = nsw[:-1]
+    else:
+        w = nsw
+    if w.lower() in abbrevs:
+        cands = abbrevs[w.lower()]
+        true_tag = abbrev_tag(i, text)
+        matches = []
         for cand in cands:
-            tagged_cands += pos_tag(wt(cand))
-            matches = []
-        for (w, tag) in tagged_cands:
-            if abbrev_tag(i, text) == tag:
-                matches += [w]
+            if true_tag in pos_tag_dict[cand.lower()]:
+                matches += [cand]
+        if not matches:
+            true_tag_univ = abbrev_tag_univ(i, text)
+            for cand in cands:
+                if true_tag_univ in pos_tag_dict_univ[cand.lower()]:
+                    matches += [cand]
         if matches:
             best = 0
             current = []
+            if len(matches) == 1:
+                return matches[0]
             for cand in matches:
                 olap = overlap(i, cand, text)
                 if olap > best and cand in brown_common:
@@ -43,10 +69,14 @@ def expand_EXPN(w, i, text):
                     current = [cand]
                 elif olap == best and best != 0:
                     current.append(cand)
+                elif cand in states.values() and not current:
+                    current.append(cand)
             best = 0
             exp = ''
             for c in current:
-                if c in brown_common:
+                if c in states.values():
+                    return c
+                elif c in brown_common:
                     freq = brown_common[c]
                 else:
                     freq = 0
@@ -54,15 +84,7 @@ def expand_EXPN(w, i, text):
                     best = freq
                     exp = c
         else:
-            best = 0
-            for cand in cands:
-                if cand in brown_common:
-                    freq = brown_common[cand]
-                else:
-                    freq = 0
-                if freq > best:
-                    best = freq
-                    exp = cand
+            exp = maximum_overlap(w, i, text)
     else:
         exp = maximum_overlap(w, i, text)
     if exp == '':
@@ -74,6 +96,7 @@ def expand_EXPN(w, i, text):
 def maximum_overlap(w, i, text):
     best = 0
     current = []
+    curr = ''
     if tag_matches(i, text):
         for cand in tag_matches(i, text):
             olap = overlap(i, cand, text)
@@ -83,7 +106,6 @@ def maximum_overlap(w, i, text):
             elif olap == best and best != 0:
                 current.append(cand)
         best = 0
-        curr = ''
         for c in current:
             if c in brown_common:
                 freq = brown_common[c]
@@ -96,17 +118,6 @@ def maximum_overlap(w, i, text):
                 best = freq
                 curr = c
             return curr
-    else:
-        best = 0
-        curr = ''
-        for (cand, freq) in gen_best(w):
-            if cand in brown_common:
-                freq = brown_common[cand]
-            else:
-                freq = 0
-            if freq > best:
-                    best = freq
-                    curr = cand
     if curr == '':
         return w
     else:
@@ -136,22 +147,25 @@ def find_matches(word):
 
 def gen_signature(word):
     inds = find_matches(word)
-    signature = set()
+    signature = defaultdict(int)
+    for i in inds:
+        for w in gen_context(i, brown):
+            signature[w] += 1
+    sig = {w for w in signature
+           if signature[w] > 1
+           and w not in stopwords.words('english') and w != ','}
     if word in wn.words():
-        if wn.synsets(word):
+        if wn.synsets(word) and "'" not in str(wn.synsets(word)[0]):
             define = (eval("wn.{}.definition()".format(
                       str(wn.synsets(word)[0]).lower())))
             examples = (eval("wn.{}.examples()".format(
                         str(wn.synsets(word)[0]).lower())))
             if examples:
                 for ex in examples:
-                        signature.update(wt(ex))
+                        sig.update(wt(ex))
             if define:
-                signature.update(wt(define))
-
-    for i in inds:
-        signature.update(gen_context(i, brown))
-    return signature
+                        sig.update(wt(define))
+    return sig
 
 
 def gen_context(i, text):
@@ -216,14 +230,30 @@ def abbrev_tag(i, text):
                 return tag
 
 
+def tag_sent_univ(i, text):
+    sent = gen_context(i, text)
+    return pos_tag(sent, tagset='universal')
+
+
+def abbrev_tag_univ(i, text):
+    for (cand, tag) in tag_sent_univ(i, text):
+        if isinstance(i, int):
+            if text[i] == cand:
+                return tag
+        else:
+            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+                return tag
+
+
 def tag_matches(i, text):
     matches = []
     if isinstance(i, int):
         abbrev = text[i]
     else:
         abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
+    true_tag = abbrev_tag(i, text)
     for (cand, tag) in tag_cands(abbrev):
-        if tag == abbrev_tag(i, text):
+        if tag == true_tag:
             matches += [cand]
     return matches
 
