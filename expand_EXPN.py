@@ -30,90 +30,93 @@ words = [w for w, freq in fd(brown).most_common()]
 
 
 def expand_EXPN(nsw, i, text):
-    if nsw in meas_dict:
-        if isinstance(i, int):
-            if is_digbased(text[i - 1]):
-                if text[i - 1] == '1':
-                    return meas_dict[nsw]
-                else:
-                    return meas_dict_pl[nsw]
-        else:
-            full = text[int(i)]
-            index = full.find(nsw)
-            if index == 0:
-                if is_digbased(text[int(i) - 1]):
-                    if text[int(i) - 1] == '1':
+    try:
+        if nsw in meas_dict:
+            if isinstance(i, int):
+                if is_digbased(text[i - 1]):
+                    if text[i - 1] == '1':
                         return meas_dict[nsw]
                     else:
                         return meas_dict_pl[nsw]
             else:
-                if is_digbased(full[:index]):
-                    if text[int(i) - 1] == '1':
-                        return meas_dict[nsw]
-                    else:
-                        return meas_dict_pl[nsw]
-    elif (nsw.endswith('.') and nsw[:-1] in meas_dict
-          and is_digbased(text[i - 1])):
-        if text[i - 1] == '1':
-            return meas_dict[nsw[:-1]]
-        else:
-            return meas_dict_pl[nsw[:-1]]
-    if nsw.endswith('.') and nsw[:-1].lower() in abbrevs:
-        w = nsw[:-1]
-    else:
-        w = nsw
-    if w.lower() in abbrevs:
-        cands = abbrevs[w.lower()]
-        true_tag = abbrev_tag(i, text)
-        matches = []
-        for cand in cands:
-            if true_tag in pos_tag_dict[cand.lower()]:
-                matches += [cand]
-        if not matches:
-            true_tag_univ = abbrev_tag_univ(i, text)
-            for cand in cands:
-                if true_tag_univ in pos_tag_dict_univ[cand.lower()]:
-                    matches += [cand]
-        if matches:
-            best = 0
-            current = []
-            if len(matches) == 1:
-                return matches[0]
-            for cand in matches:
-                olap = overlap(i, cand, text)
-                if olap > best and cand in brown_common:
-                    best = olap
-                    current = [cand]
-                elif olap == best and best != 0:
-                    current.append(cand)
-                elif cand in states.values() and not current:
-                    current.append(cand)
-            best = 0
-            exp = ''
-            for c in current:
-                if c in states.values():
-                    return c
-                elif c in brown_common:
-                    freq = brown_common[c]
+                full = text[int(i)]
+                index = full.find(nsw)
+                if index == 0:
+                    if is_digbased(text[int(i) - 1]):
+                        if text[int(i) - 1] == '1':
+                            return meas_dict[nsw]
+                        else:
+                            return meas_dict_pl[nsw]
                 else:
-                    freq = 0
-                if freq > best:
-                    best = freq
-                    exp = c
+                    if is_digbased(full[:index]):
+                        if text[int(i) - 1] == '1':
+                            return meas_dict[nsw]
+                        else:
+                            return meas_dict_pl[nsw]
+        elif (nsw.endswith('.') and nsw[:-1] in meas_dict
+              and is_digbased(text[i - 1])):
+            if text[i - 1] == '1':
+                return meas_dict[nsw[:-1]]
+            else:
+                return meas_dict_pl[nsw[:-1]]
+        if nsw.endswith('.') and nsw[:-1].lower() in abbrevs:
+            w = nsw[:-1]
+        else:
+            w = nsw
+        if w.lower() in abbrevs:
+            cands = abbrevs[w.lower()]
+            true_tag = abbrev_tag(i, text)
+            matches = []
+            for cand in cands:
+                if true_tag in pos_tag_dict[cand.lower()]:
+                    matches += [cand]
+            if not matches:
+                true_tag_univ = abbrev_tag_univ(i, text)
+                for cand in cands:
+                    if true_tag_univ in pos_tag_dict_univ[cand.lower()]:
+                        matches += [cand]
+            if matches:
+                best = 0
+                current = []
+                if len(matches) == 1:
+                    return matches[0]
+                for cand in matches:
+                    olap = overlap(i, cand, text)
+                    if olap > best and cand in brown_common:
+                        best = olap
+                        current = [cand]
+                    elif olap == best and best != 0:
+                        current.append(cand)
+                    elif cand in states.values() and not current:
+                        current.append(cand)
+                best = 0
+                exp = ''
+                for c in current:
+                    if c in states.values():
+                        return c
+                    elif c in brown_common:
+                        freq = brown_common[c]
+                    else:
+                        freq = 0
+                    if freq > best:
+                        best = freq
+                        exp = c
+            else:
+                exp = maximum_overlap(w, i, text)
+        elif w.lower().endswith('s.') and w.lower()[:-2] in abbrevs:
+            return expand_EXPN(w.lower()[:-2], i, text) + 's'
+        elif w.lower().endswith('s') and w.lower()[:-1] in abbrevs:
+            return expand_EXPN(w.lower()[:-1], i, text) + 's'
         else:
             exp = maximum_overlap(w, i, text)
-    elif w.lower().endswith('s.') and w.lower()[:-2] in abbrevs:
-        return expand_EXPN(w.lower()[:-2], i, text) + 's'
-    elif w.lower().endswith('s') and w.lower()[:-1] in abbrevs:
-        return expand_EXPN(w.lower()[:-1], i, text) + 's'
-    else:
-        exp = maximum_overlap(w, i, text)
-    if exp == '':
-        return nsw
-    else:
-        return exp
-
-
+        if exp == '':
+            return nsw
+        else:
+            return exp
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return w
 def maximum_overlap(w, i, text):
     best = 0
     current = []
