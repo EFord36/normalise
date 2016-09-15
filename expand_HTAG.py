@@ -17,39 +17,48 @@ with open('word_tokenized_lowered.pickle', mode='rb') as file:
 
 
 def expand_HTAG(word):
-    m = hashtag_pattern.match(word)
-    string = m.group(2)
-    exp = 'hashtag'
-    if string in wordlist:
-        exp = exp + " " + string
-    else:
-        exp = exp + " " + infer_spaces(m.group(2))
-    if m.group(3):
-        exp = exp + " " + expand_NUM(m.group(3))
-    return exp
-    
-    
-def expand_URL(word):
-    starts = ["http://", "https://", "www."]
-    starts_exp = ['', '', 'W W W dot']
-    ends = [".com", ".org", ".org.uk", ".co.uk"]
-    ends_exp = ["dot com", "dot org", "dot org dot U K", "dot co dot U K"]
-    m = urlstart_pattern.match(word)
-    n = urlend_pattern.match(word)
-    exp = ''
-    if m.group(1) and n:
-        start = m.group(1)
-        middle = urlend_pattern.match(m.group(2))
-        end = middle.group(2)
-        exp += (starts_exp[starts.index(start)] + " " + infer_spaces(middle.group(1))
-               + " " + ends_exp[ends.index(end)])
-    elif n:
-        middle = n.group(1)
-        end = n.group(2)
-        exp += infer_spaces(middle) + " " + ends_exp[ends.index(end)]
-    else:
+    try:
+        m = hashtag_pattern.match(word)
+        string = m.group(2)
+        exp = 'hashtag'
+        if string in wordlist:
+            exp = exp + " " + string
+        else:
+            exp = exp + " " + infer_spaces(m.group(2))
+        if m.group(3):
+            exp = exp + " " + expand_NUM(m.group(3))
+        return exp
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
         return word
-    return exp    
+
+def expand_URL(word):
+    try:
+        starts = ["http://", "https://", "www."]
+        starts_exp = ['', '', 'W W W dot']
+        ends = [".com", ".org", ".org.uk", ".co.uk"]
+        ends_exp = ["dot com", "dot org", "dot org dot U K", "dot co dot U K"]
+        m = urlstart_pattern.match(word)
+        n = urlend_pattern.match(word)
+        exp = ''
+        if m.group(1) and n:
+            start = m.group(1)
+            middle = urlend_pattern.match(m.group(2))
+            end = middle.group(2)
+            exp += (starts_exp[starts.index(start)] + " " + infer_spaces(middle.group(1))
+                   + " " + ends_exp[ends.index(end)])
+        elif n:
+            middle = n.group(1)
+            end = n.group(2)
+            exp += infer_spaces(middle) + " " + ends_exp[ends.index(end)]
+        else:
+            return word
+        return exp
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return word
    
 
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
@@ -85,14 +94,14 @@ def infer_spaces(s):
         i -= k
 
     return " ".join(reversed(out))
-                
+
 hashtag_pattern = re.compile('''
 (\#)
 ([A-Za-z]+
 [_-]?
 [A-Za-z]*)
 ([0-9]*)
-''', re.VERBOSE) 
+''', re.VERBOSE)
 
 urlstart_pattern = re.compile('''
 (https?://|            #'http' followed by optional 's', then '://' OR
@@ -103,7 +112,7 @@ www\.|)
 urlend_pattern = re.compile('''
 (.*)                      #any number of characters                      # '.'
 (\.com|                 # 'com' OR
-\.org| 
+\.org|
 \.org\.uk|          # 'org' followed optionally by '.uk' OR
 \.co\.uk)               # 'co.uk'
 $                       #end of string
