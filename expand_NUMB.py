@@ -544,8 +544,13 @@ def expand_MONEY(n):
         num = ''
         if len(n) <= 3:
             if not n[0].isdigit():
-                scurr += n[0]
-                num += n[1:]
+                if len(n) == 3 and not n[2].isdigit():
+                    scurr += n[0]
+                    num += n[1]
+                    end += n[2]
+                else:
+                    scurr += n[0]
+                    num += n[1:]
             else:
                 num += n[0]
                 ecurr += n[1:]
@@ -762,7 +767,9 @@ def expand_NDATE(w):
 
 def expand_PRCT(w):
     try:
-        if '.' in w:
+        if '-' in w:
+            return expand_NRANGE(w[:-1]) + " percent"
+        elif '.' in w:
             m = percent_pattern2.match(w)
             if m:
                 a = m.group(1)
