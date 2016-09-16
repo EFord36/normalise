@@ -49,7 +49,7 @@ def cond4(w):
     """ Return word if its non-possessive form (with 's/s' removed) is not in
     the wordlist.
     """
-    return (not (w.endswith("'s") or w.endswith("s'") and
+    return (not ((w.endswith("'s") or w.endswith("s'")) and
             w.lower()[:-2] in wordlist))
 
 

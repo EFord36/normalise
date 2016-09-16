@@ -47,56 +47,71 @@ def expand_NONE(nsw):
 
 
 def expand_PROF(w):
-    """Return 'original' rude word from asterisked FNSP."""
-    rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
-            'dick', 'fuck', 'pussy', 'shit', 'tits', 'twat']
-    candidates = [r for r in rude if len(r) == len(w)]
-    final = ''
-    ind = 0
-    if not candidates:
-        return w
-    else:
-        while not final and ind < len(candidates):
-            r = candidates[ind]
-            match = True
-            for i in range(len(r)):
-                if r[i] != w[i] and w[i] != '*':
-                    match = False
-            if match:
-                final += r
-            ind += 1
-        if final:
-            return final
-        else:
+    try:
+        """Return 'original' rude word from asterisked FNSP."""
+        rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap', 'cum',
+                'dick', 'fuck', 'pussy', 'shit', 'tits', 'twat']
+        candidates = [r for r in rude if len(r) == len(w)]
+        final = ''
+        ind = 0
+        if not candidates:
             return w
+        else:
+            while not final and ind < len(candidates):
+                r = candidates[ind]
+                match = True
+                for i in range(len(r)):
+                    if r[i] != w[i] and w[i] != '*':
+                        match = False
+                if match:
+                    final += r
+                ind += 1
+            if final:
+                return final
+            else:
+                return w
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return w
 
 
 def expand_WDLK(word):
-    if word in wordlist:
+    try:
+        if word in wordlist:
+            return word
+        elif triple_rep(word):
+            return expand_FNSP(word)
+        else:
+            return correct(word)
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
         return word
-    elif triple_rep(word):
-        return expand_FNSP(word)
-    else:
-        return correct(word)
 
 
 def expand_FNSP(w):
     """Return 'original' word from FNSP."""
-    reg = create_regexp(w)
-    final = ''
-    for e in wordlist:
-        m = re.match(reg, e)
-        if m:
-            final = m.string
-            break
-    if final:
-        return final
-    else:
-        red_word = w[0]
-        for i in range(1, len(w)):
-            if w[i] != w[i - 1]:
-                red_word += w[i]
-        return red_word
+    try:
+        reg = create_regexp(w)
+        final = ''
+        for e in wordlist:
+            m = re.match(reg, e)
+            if m:
+                final = m.string
+                break
+        if final:
+            return final
+        else:
+            red_word = w[0]
+            for i in range(1, len(w)):
+                if w[i] != w[i - 1]:
+                    red_word += w[i]
+            return red_word
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return w
 
 
 def create_regexp(w):
@@ -114,11 +129,17 @@ def create_regexp(w):
 
 
 def expand_LSEQ(word):
-    out = ''
-    if word[0].isalpha():
-        out += word[0].upper()
-    for c in word[1:]:
-        if c.isalpha():
-            out += ' '
-            out += c.upper()
-    return out
+    try:
+        out = ''
+        if word[0].isalpha():
+            out += word[0].upper()
+        for c in word[1:]:
+            if c.isalpha():
+                out += ' '
+                out += c.upper()
+        return out
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return word
+        
