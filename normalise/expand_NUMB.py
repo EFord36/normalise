@@ -897,4 +897,3 @@ coord_pattern = re.compile('''
 ([N|S|E|W])?
 $
 ''', re.VERBOSE)
-]       
