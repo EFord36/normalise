@@ -26,6 +26,7 @@ if __name__ == '__main__':
     wordlist = brown_lower | names_lower | words_lower | {'I', 'i', 'a', 'A'}
     word_tokenized_lowered = [w.lower() if w.lower() in wordlist
                               else w for w in word_tokenized]
+    word_tokenized = list(word_tokenized)
 
 
 # Conditions for identification of NSWs.
@@ -58,7 +59,7 @@ def ident_NSW(w):
 
     Return word if it satisfies all four above conditions.
     """
-    return (cond1(w) and cond2(w) and cond3(w) and cond4(w) 
+    return (cond1(w) and cond2(w) and cond3(w) and cond4(w)
             and not (w.lower() in contractions))
 
 
