@@ -13,9 +13,9 @@ from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
 from nltk.corpus import names
-from contraction_list import contractions
+from normalise.contraction_list import contractions
 
-with open('wordlist.pickle', mode='rb') as file:
+with open('data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
 if __name__ == '__main__':

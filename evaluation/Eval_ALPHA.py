@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 recall_score)
 
-from class_ALPHA import *
+from context import normalise
+from normalise.tag1 import tag1
 from gs_ALPHA_dict import gs_ALPHA_dict, gs_ALPHA_tagged
 from gold_standard_full import gold_standard
 

@@ -9,10 +9,10 @@ import pickle
 
 from math import log
 from nltk import FreqDist as fd
-from NSW_new import wordlist
-from expand_NUMB import expand_NUM
+from normalise.NSW_new import wordlist
+from normalise.expand_NUMB import expand_NUM
 
-with open('word_tokenized_lowered.pickle', mode='rb') as file:
+with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
 
@@ -59,7 +59,7 @@ def expand_URL(word):
         raise
     except:
         return word
-   
+
 
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
 brown = word_tokenized_lowered[:1161192]

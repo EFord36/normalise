@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 recall_score)
 
-from class_NUMB import *
+from context import normalise
+from normalise.class_NUMB import *
 from gold_standard_numbs import gs_numb_dict, gs_numb_tagged
 from gold_standard_full import gold_standard
 

@@ -10,25 +10,25 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from tag1 import tag1, is_digbased, acr_pattern
-from class_NUMB import gen_frame
-from splitter import split, retag1
-from measurements import meas_dict, meas_dict_pl
-from element_dict import element_dict
+from normalise.tag1 import tag1, is_digbased, acr_pattern
+from normalise.class_NUMB import gen_frame
+from normalise.splitter import split, retag1
+from normalise.measurements import meas_dict, meas_dict_pl
+from normalise.element_dict import element_dict
 
-with open('wordlist.pickle', mode='rb') as file:
+with open('data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('NSW_dict.pickle', mode='rb') as file:
+with open('data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('word_tokenized.pickle', mode='rb') as file:
+with open('data/word_tokenized.pickle', mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('word_tokenized_lowered.pickle', mode='rb') as file:
+with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
-with open('clf_ALPHA.pickle', mode='rb') as file:
+with open('data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
 # Store all ALPHA tags from training data in ALPHA_list, including SPLT-ALPHA
@@ -145,7 +145,7 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_ALPHA.pickle"""
     clf = fit_clf(dic, text)
-    with open('clf_ALPHA.pickle', 'wb') as file:
+    with open('data/clf_ALPHA.pickle', 'wb') as file:
         pickle.dump(clf, file)
 
 

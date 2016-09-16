@@ -21,10 +21,10 @@ def expand_fraction(n):
                     exp += "one hundredth"
                 else:
                     exp += expand_NUM(first)  + " hundredths"
-            elif ((int(first) >= int(second)) or int(second) > 10 
+            elif ((int(first) >= int(second)) or int(second) > 10
                    or second in ['1', '2']):
                        exp += expand_NUM(first) + " over " + expand_NUM(second)
-            else: 
+            else:
                 numbers = ['3', '4', '5', '6', '7', '8', '9']
                 fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh', 'eighth',
                              'ninth']
@@ -32,14 +32,14 @@ def expand_fraction(n):
                     exp += "one " + fractions[numbers.index(second)]
                 else:
                     exp += expand_NUM(first) + " " + fractions[numbers.index(second)] + "s"
-        else: 
+        else:
             return n
-        return exp 
+        return exp
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         return n
-        
+
 
 def expand_NUM(n):
     try:
@@ -56,7 +56,7 @@ def expand_NUM(n):
                 return exp
             else:
                 return expand_fraction(n)
-        
+
         if len(n) > 0:
             if n[-1] == 's':
                 if len(n) > 1 and n[-2:] == "'s":
@@ -72,16 +72,16 @@ def expand_NUM(n):
                         str += expand_NUM(n[:-1])
                         str += 's'
                 return str
-    
+
         if dec2_pattern.match(n):
             str2 = ''
-            str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " " 
+            str2 += (expand_NUM(dec2_pattern.match(n).group(1)) + " "
                    + expand_NUM(dec2_pattern.match(n).group(2)))
             return str2
-    
+
         if n.startswith('.'):
             return "point " + expand_NDIG(n[1:])
-    
+
 
         """Return n as an cardinal in words."""
         ones_C = [
@@ -90,12 +90,12 @@ def expand_NUM(n):
                  "fourteen", "fifteen", "sixteen", "seventeen", "eighteen",
                  "nineteen"
                  ]
-    
+
         tens_C = [
                  "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty",
                  "seventy", "eighty", "ninety"
                  ]
-    
+
         large = [
                   "", "thousand", "million", "billion", "trillion", "quadrillion",
                   "quintillion", "sextillion", "septillion", "octillion",
@@ -104,7 +104,7 @@ def expand_NUM(n):
                   "septendecillion", "octodecillion", "novemdecillion",
                   "vigintillion"
                   ]
-    
+
         def subThousand(n):
             """Convert a cardinal to words for numbers less than a thousand."""
             if n <= 19:
@@ -135,7 +135,7 @@ def expand_NUM(n):
                 elif z:
                         list1.insert(0, subThousand(z))
             return ", ".join(list1)
-    
+
         def decimal(n):
             """Returns pronounced words with n as rhs of a decimal"""
             if n == '00':
@@ -145,7 +145,7 @@ def expand_NUM(n):
                 for lt in n:
                     out += ' {}'.format(ones_C[int(lt)])
             return out
-    
+
         n_clean = ''
         for i in range(len(n)):
             if not i:
@@ -171,12 +171,12 @@ def expand_NUM(n):
                     return w[:ind-1] + " and" + w[ind:]
                 else:
                     return w
-    
+
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         return n
-    
+
 
 def expand_NRANGE(n):
     try:
@@ -225,7 +225,7 @@ def expand_NORD(n):
                   "thirteenth", "fourteenth", "fifteenth", "sixteenth",
                   "seventeenth", "eighteenth", "nineteenth"
                   ]
-    
+
         tens_C = [
                   "zero", "ten", "twenty", "thirty", "forty", "fifty", "sixty",
                   "seventy", "eighty", "ninety"
@@ -235,7 +235,7 @@ def expand_NORD(n):
                   "zero", "tenth", "twentieth", "thirtieth", "fortieth",
                   "fiftieth", "sixtieth", "seventieth", "eightieth", "ninetieth"
                   ]
-    
+
         large = [
                  "", "thousand", "million", "billion", "trillion", "quadrillion",
                  "quintillion", "sextillion", "septillion", "octillion",
@@ -274,7 +274,7 @@ def expand_NORD(n):
                 return (ones_C[q] +
                         " hundred" +
                         (" and " + subThousand_C(r) if r else ""))
-    
+
         def thousandUp(n):
             """Return cardinal greater than a thousand in words."""
             list1 = []
@@ -284,7 +284,7 @@ def expand_NORD(n):
                 elif z:
                         list1.insert(0, subThousand_C(z))
             return ", ".join(list1)
-    
+
         def splitByThousands(n):
             "Return reversed digits of n in groups of 3."""
             res = []
@@ -292,7 +292,7 @@ def expand_NORD(n):
                 n, r = divmod(n, 1000)
                 res.append(r)
             return res
-    
+
         n_clean = ''
         for i in range(len(n)):
             if i == 0:
@@ -347,7 +347,7 @@ def expand_NORD(n):
                 return pen + "th"
             else:
                 return pen
-    
+
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
@@ -568,7 +568,7 @@ def expand_MONEY(n):
                 end += n[-1]
             else:
                 num += n[-3:]
-     
+
         if '-' in num:
             exp_num = expand_NRANGE(num)
         else:
@@ -590,7 +590,7 @@ def expand_MONEY(n):
                     currency = ecurr_dict[ecurr] + 's'
             elif scurr:
                 currency = scurr_dict_pl[scurr]
-    
+
             else:
                 currency = ''
         if end:
@@ -601,7 +601,7 @@ def expand_MONEY(n):
         if large:
             items.append(large)
         items.append(currency)
-    
+
         return ' '.join(items)
     except (KeyboardInterrupt, SystemExit):
         raise
@@ -642,7 +642,7 @@ def expand_NTEL(w):
         raise
     except:
         return w
-    
+
 
 numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 num_words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
@@ -679,7 +679,7 @@ def expand_NTIME(w):
         raise
     except:
         return w
-    
+
 
 def expand_NYER(w):
     try:
@@ -718,16 +718,16 @@ def expand_NYER(w):
                     return expand_NUM(a) + " " + expand_NUM(b)
             else:
                 return expand_NUM(w)
-    
+
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         return w
-    
+
 
 def expand_NDATE(w):
     try:
-        numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06', 
+        numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06',
                    '6', '07', '7', '08', '8', '09', '9', '10', '11', '12']
         months = ['January', 'January', 'February', 'February', 'March', 'March',
                   'April', 'April', 'May', 'May', 'June', 'June', 'July', 'July',
@@ -737,26 +737,26 @@ def expand_NDATE(w):
         str2 = ''
         if m.group(5):
             if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of ' 
-                        + months[numbers.index(m.group(3))] 
+                str2 += (expand_NORD(m.group(1)) + ' of '
+                        + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
             elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of ' 
-                        + months[numbers.index(m.group(1))] 
+                str2 += (expand_NORD(m.group(3)) + ' of '
+                        + months[numbers.index(m.group(1))]
                         + " " + expand_NYER(m.group(5)))
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of ' 
-                        + months[numbers.index(m.group(3))] 
+                str2 += (expand_NORD(m.group(1)) + ' of '
+                        + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
         else:
             if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of ' 
+                str2 += (expand_NORD(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
             elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of ' 
+                str2 += (expand_NORD(m.group(3)) + ' of '
                         + months[numbers.index(m.group(1))])
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of ' 
+                str2 += (expand_NORD(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
         return str2
     except (KeyboardInterrupt, SystemExit):
@@ -789,13 +789,13 @@ def expand_PRCT(w):
                     return expand_fraction(w[:-1]) + " a percent"
                 else:
                     return expand_fraction(w[:-1]) + " of a percent"
-            else: 
+            else:
                 return w
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         return w
-        
+
 def expand_NSCI(w):
     try:
         m = coord_pattern.match(w)
@@ -820,7 +820,7 @@ def expand_NSCI(w):
         raise
     except:
         return w
-            
+
 
 
 percent_pattern1 = re.compile('''
@@ -897,4 +897,4 @@ coord_pattern = re.compile('''
 ([N|S|E|W])?
 $
 ''', re.VERBOSE)
-                    
+]       

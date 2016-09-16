@@ -1,15 +1,15 @@
 import re
 import pickle
 
-from class_ALPHA import triple_rep
-from spellcheck import correct
-from expand_EXPN import expand_EXPN
-from expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD, expand_NYER,
+from normalise.class_ALPHA import triple_rep
+from normalise.spellcheck import correct
+from normalise.expand_EXPN import expand_EXPN
+from normalise.expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD, expand_NYER,
                          expand_PRCT, expand_MONEY, expand_NTIME,
                          expand_NRANGE, expand_NTEL, expand_NDATE)
-from expand_HTAG import expand_HTAG, expand_URL
+from normalise.expand_HTAG import expand_HTAG, expand_URL
 
-with open('wordlist.pickle', mode='rb') as file:
+with open('data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
 func_dict = {
@@ -142,4 +142,3 @@ def expand_LSEQ(word):
         raise
     except:
         return word
-        

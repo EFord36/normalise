@@ -6,10 +6,10 @@ import re
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans as mb
 
-from expand_MONEY import end_dict, ecurr_dict
+from normalise.expand_MONEY import end_dict, ecurr_dict
 
 
-with open('NSW_list.txt', encoding='utf-8') as a_file:
+with open('data/NSW_list.txt', encoding='utf-8') as a_file:
     data = a_file.read()
     data = data.split(' ')
 

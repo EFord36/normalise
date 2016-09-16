@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 recall_score)
 
+from context import normalise
 from gold_standard_dict import gold_standard_dict, gold_standard_tagged
-from tag1 import tag1
+from normalise.tag1 import tag1
 
 # Tag gold standard NSW tokens, return dictionary of predicted tags.
 gold_standard_predicted = tag1(gold_standard_dict)

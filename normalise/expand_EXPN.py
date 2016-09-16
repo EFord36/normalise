@@ -9,18 +9,18 @@ from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
-from abbrev_dict import states
-from splitter import split
-from tag1 import is_digbased
-from measurements import meas_dict, meas_dict_pl
+from normalise.abbrev_dict import states
+from normalise.splitter import split
+from normalise.tag1 import is_digbased
+from normalise.measurements import meas_dict, meas_dict_pl
 
-with open('word_tokenized_lowered.pickle', mode='rb') as file:
+with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
-with open('pos_dicts.pickle', mode='rb') as file:
+with open('data/pos_dicts.pickle', mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
 
-with open('abbrev_dict.pickle', mode='rb') as file:
+with open('data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]

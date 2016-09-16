@@ -7,13 +7,13 @@ Created on Thu Sep  1 15:18:06 2016
 
 from __future__ import division, print_function, unicode_literals
 
-from NSW_new import create_NSW_dict
-from tag1 import tag1
-from splitter import split, retag1
-from class_ALPHA import run_clfALPHA
-from class_NUMB import run_clfNUMB
-from tag_MISC import tag_MISC
-from expand_all import expand_all
+from normalise.NSW_new import create_NSW_dict
+from normalise.tag1 import tag1
+from normalise.splitter import split, retag1
+from normalise.class_ALPHA import run_clfALPHA
+from normalise.class_NUMB import run_clfNUMB
+from normalise.tag_MISC import tag_MISC
+from normalise.expand_all import expand_all
 
 def normalise(text):
     NSWs = create_NSW_dict(text)
