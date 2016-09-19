@@ -9,9 +9,9 @@ from __future__ import division, print_function, unicode_literals
 import re
 import pickle
 
-from expand_NUMB import end_dict, ecurr_dict
+from normalise.expand_NUMB import end_dict, ecurr_dict
 
-with open('NSW_dict.pickle', mode='rb') as file:
+with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
 curr_list = ['£', '$', '€']

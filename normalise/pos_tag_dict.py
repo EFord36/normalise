@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from nltk.corpus import brown
 
-from abbrev_dict import states
+from normalise.abbrev_dict import states
 
 
 def store_pos_tag_dicts():
@@ -24,5 +24,5 @@ def store_pos_tag_dicts():
         pos_tag_dict[word.lower()] += ('NNP',)
         pos_tag_dict_univ[word.lower()] += ('NOUN',)
     dicts = (pos_tag_dict, pos_tag_dict_univ)
-    with open('pos_dicts.pickle', 'wb') as file:
+    with open('../normalise/data/pos_dicts.pickle', 'wb') as file:
         pickle.dump(dicts, file)

@@ -10,41 +10,43 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from tag1 import tag1
-from expand_NUMB import ecurr_dict
-from timezones import timezone_dict
-from splitter import split, retag1
-from measurements import meas_dict, meas_dict_pl
+from normalise.tag1 import tag1
+from normalise.expand_NUMB import ecurr_dict
+from normalise.timezones import timezone_dict
+from normalise.splitter import split, retag1
+from normalise.measurements import meas_dict, meas_dict_pl
 
-with open('NSW_dict.pickle', mode='rb') as file:
+with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('word_tokenized.pickle', mode='rb') as file:
+with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('word_tokenized_lowered.pickle', mode='rb') as file:
-    word_tokenized_lowered = pickle.load(file)
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+    word_tokenized_lowered = pickle.load(f)
 
-with open('wordlist.pickle', mode='rb') as file:
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('clf_NUMB.pickle', mode='rb') as file:
+with open('../normalise/data/clf_NUMB.pickle', mode='rb') as file:
     clf_NUMB = pickle.load(file)
 
-# Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
-tagged = tag1(NSWs)
+if __name__ == "__main__":
+    # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
+    tagged = tag1(NSWs)
 
-NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-             if tag == 'NUMB'}
+    NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                 if tag == 'NUMB'}
 
-SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-             if tag == 'SPLT'}
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                 if tag == 'SPLT'}
 
-splitted = split(SPLT_dict)
-retagged = retag1(splitted)
-retagged_NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
-                      if tag == 'SPLT-NUMB'}
-NUMB_dict.update(retagged_NUMB_dict)
+    splitted = split(SPLT_dict)
+    retagged = retag1(splitted)
+    retagged_NUMB_dict = {ind: (nsw, tag)
+                          for ind, (nsw, tag) in retagged.items()
+                          if tag == 'SPLT-NUMB'}
+    NUMB_dict.update(retagged_NUMB_dict)
 
 curr_list = ['£', '$', '€', 'Y']
 ampm = ['am', 'pm', 'AM', 'PM', 'a.m.', 'p.m.', 'A.M.', 'P.M.', 'pm.', 'am.']
@@ -244,11 +246,12 @@ def time_context(nsw, context):
     else:
         return False
 
+
 def looks_datey(nsw, context):
     m = date_pattern.match(nsw)
     if date_pattern.match(nsw):
-        if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32 or
-            12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
+        if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32
+            or 12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
                 return True
         elif context[1] == 'on':
             return True
@@ -271,32 +274,32 @@ def seed_features(item, context):
     ind, nsw, tag = item[0], item[1][0], item[1][1]
     out = [
            nsw.endswith('%'),
-           (nsw[0] in curr_list or nsw[-3:] in ecurr_dict or
-            nsw[:3] in ecurr_dict),
-           ('.' in nsw and
-            (context[3] in timezone_dict or
-             context[3] in ampm) or
-            bool(time_pattern.match(nsw))),
-           ((context[1] == 'in' and len(nsw) == 4 and nsw.isdigit()) or
-            (nsw.endswith('s') and len(nsw) == 5 and
-            nsw[:2] in ['19', '20']) or
-            context[1] in months and len(nsw) == 4 and nsw.isdigit()),
-           (nsw.isdigit() and context[1].isalpha() and context[1].isupper() and
-          len(context[1]) > 1 and context[1].lower() not in wordlist and
-          len(nsw) > 1) or nsw.count('.') > 2,
-           (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
-            ((context[1] in months or context[3] in months) and
-            nsw.isdigit() and
-            int(nsw) < 31)),
-           ((float_pattern.match(nsw) and float(nsw) > 31) or
-          ((context[3] in ['million', 'billion', 'thousand'] or
-          (context[3] in meas_dict or context[3] in meas_dict_pl) and
-          nsw.isdigit()))),
+           (nsw[0] in curr_list or nsw[-3:] in ecurr_dict
+            or nsw[:3] in ecurr_dict),
+           ('.' in nsw
+            and (context[3] in timezone_dict
+             or context[3] in ampm)
+             or bool(time_pattern.match(nsw))),
+           ((context[1] == 'in' and len(nsw) == 4 and nsw.isdigit())
+            or (nsw.endswith('s') and len(nsw) == 5
+            and nsw[:2] in ['19', '20'])
+            or context[1] in months and len(nsw) == 4 and nsw.isdigit()),
+           (nsw.isdigit() and context[1].isalpha() and context[1].isupper()
+            and len(context[1]) > 1 and context[1].lower() not in wordlist
+            and len(nsw) > 1) or nsw.count('.') > 2,
+           (nsw[-2:] in ['st', 'nd', 'rd', 'th']
+            or ((context[1] in months or context[3] in months)
+            and nsw.isdigit()
+            and int(nsw) < 31)),
+           ((float_pattern.match(nsw) and float(nsw) > 31)
+           or ((context[3] in ['million', 'billion', 'thousand']
+          or (context[3] in meas_dict or context[3] in meas_dict_pl)
+          and nsw.isdigit()))),
           looks_datey(nsw, context),
           (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'),
           looks_rangey(nsw),
           (nsw.isdigit() and 1950 < int(nsw) < 2100
-            and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
+           and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
           len(nsw) < 5 and context[4] in addr_words,
            ]
     return out
@@ -402,7 +405,7 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_NUMB.pickle"""
     clf = fit_clf(dic, text)
-    with open('clf_NUMB.pickle', 'wb') as file:
+    with open('data/clf_NUMB.pickle', 'wb') as file:
         pickle.dump(clf, file)
 
 
@@ -451,7 +454,7 @@ def seed(dict_tup, text):
     elif '.' in nsw or ',' in nsw:
         return 7
     elif (nsw.isdigit() and 1950 < int(nsw) < 2100
-            and not (context[3] in meas_dict or context[3] in meas_dict_pl)):
+          and not (context[3] in meas_dict or context[3] in meas_dict_pl)):
         return 4
     elif len(nsw) < 5 and context[4] in addr_words:
         return 11

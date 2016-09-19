@@ -1,4 +1,4 @@
-# Text-Normalisation: a module for normalising text
+# normalise: a module for normalising text
 
 ### Preparing for NLTK compatible release
 - [ ] Learn Cloudbees/Jenkins integrated testing framework

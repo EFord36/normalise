@@ -480,7 +480,7 @@ def build_abbrevs(dictionary):
 
 
 def add_to_pickled_abbrev(dictionary):
-    with open('abbrev_dict.pickle', mode='rb') as f:
+    with open('../normalise/data/abbrev_dict.pickle', mode='rb') as f:
         abbrevs = pickle.load(f)
     for key in dictionary:
         if key.endswith('.'):
@@ -491,6 +491,6 @@ def add_to_pickled_abbrev(dictionary):
             abbrevs[k].extend(dictionary[key])
         elif type(dictionary[key]) == str:
             abbrevs[k].append(dictionary[key])
-    with open('abbrev_dict.pickle', mode='wb') as f:
+    with open('../normalise/data/abbrev_dict.pickle', mode='wb') as f:
         pickle.dump(abbrevs, f)
     print(abbrevs)
