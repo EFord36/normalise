@@ -6,10 +6,10 @@ import re
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans as mb
 
-from expand_MONEY import end_dict, ecurr_dict
+from normalise.expand_MONEY import end_dict, ecurr_dict
 
 
-with open('NSW_list.txt', encoding='utf-8') as a_file:
+with open('../normalise/data/NSW_list.txt', encoding='utf-8') as a_file:
     data = a_file.read()
     data = data.split(' ')
 
@@ -101,6 +101,8 @@ alpha_pattern = re.compile('''
 ([A-Za-z]+\'?)*         #(1 or more letter, optional apostrophe) repeated
 $                       # end of string
     ''', re.VERBOSE)
+
+
 def only_alpha(w):
     if len(w) == 0:
         return False
@@ -165,16 +167,16 @@ def is_url(w):
 
 
 def has_lrep(w):
-    for i in range(len(w)-2):
-        if w[i] == w[i+1] and w[i] == w[i+2] and w[i].isalpha():
+    for i in range(len(w) - 2):
+        if w[i] == w[i + 1] and w[i] == w[i + 2] and w[i].isalpha():
             return True
             break
     return False
 
 
 def has_prep(w):
-    for i in range(len(w)-2):
-        if w[i] == w[i+1] and w[i] in punct:
+    for i in range(len(w) - 2):
+        if w[i] == w[i + 1] and w[i] in punct:
             return True
             break
     return False
@@ -222,7 +224,7 @@ def is_digbased(w):
     for lt in w:
         if not lt.isdigit() and lt not in ['/', '.', ',',
                                            '-', '%', ':',
-                                           "'",  '"', "°"]:
+                                           "'", '"', "°"]:
             return False
     else:
         return True and has_digit(w)

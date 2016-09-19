@@ -4,7 +4,8 @@ from collections import defaultdict
 from nltk import FreqDist as fd
 from nltk.corpus import brown as brown
 from nltk.util import ngrams
-with open('wordlist.pickle', mode='rb') as file:
+
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
 words = {'^' + w.lower() + '$'

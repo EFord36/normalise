@@ -9,11 +9,11 @@ import pickle
 
 from math import log
 from nltk import FreqDist as fd
-from NSW_new import wordlist
-from expand_NUMB import expand_NUM
+from normalise.NSW_new import wordlist
+from normalise.expand_NUMB import expand_NUM
 
-with open('word_tokenized_lowered.pickle', mode='rb') as file:
-    word_tokenized_lowered = pickle.load(file)
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+    word_tokenized_lowered = pickle.load(f)
 
 
 def expand_HTAG(word):
@@ -33,6 +33,7 @@ def expand_HTAG(word):
     except:
         return word
 
+
 def expand_URL(word):
     try:
         starts = ["http://", "https://", "www."]
@@ -46,8 +47,9 @@ def expand_URL(word):
             start = m.group(1)
             middle = urlend_pattern.match(m.group(2))
             end = middle.group(2)
-            exp += (starts_exp[starts.index(start)] + " " + infer_spaces(middle.group(1))
-                   + " " + ends_exp[ends.index(end)])
+            exp += (starts_exp[starts.index(start)] + " "
+                    + infer_spaces(middle.group(1))
+                    + " " + ends_exp[ends.index(end)])
         elif n:
             middle = n.group(1)
             end = n.group(2)
@@ -59,13 +61,15 @@ def expand_URL(word):
         raise
     except:
         return word
-   
 
-# Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
+
+# Build a cost dict, assuming Zipf's law and cost = -math.log(probability).
 brown = word_tokenized_lowered[:1161192]
 words = [w for w, freq in fd(brown).most_common()]
-wordcost = dict((k, log((i+1)*log(len(words)))) for i,k in enumerate(words))
+wordcost = dict((k, log((i + 1) * log(len(words))))
+                for i, k in enumerate(words))
 maxword = max(len(x) for x in words)
+
 
 def infer_spaces(s):
     """Uses dynamic programming to infer the location of spaces in a string
@@ -75,22 +79,23 @@ def infer_spaces(s):
     # been built for the i-1 first characters.
     # Returns a pair (match_cost, match_length).
     def best_match(i):
-        candidates = enumerate(reversed(cost[max(0, i-maxword):i]))
-        return min((c + wordcost.get(s[i-k-1:i], 9e999), k+1) for k,c in candidates)
+        candidates = enumerate(reversed(cost[max(0, i - maxword):i]))
+        return min((c + wordcost.get(s[i - k - 1:i], 9e999), k + 1)
+                   for k, c in candidates)
 
     # Build the cost array.
     cost = [0]
-    for i in range(1,len(s)+1):
-        c,k = best_match(i)
+    for i in range(1, len(s) + 1):
+        c, k = best_match(i)
         cost.append(c)
 
     # Backtrack to recover the minimal-cost string.
     out = []
     i = len(s)
-    while i>0:
-        c,k = best_match(i)
+    while i > 0:
+        c, k = best_match(i)
         assert c == cost[i]
-        out.append(s[i-k:i])
+        out.append(s[i - k: i])
         i -= k
 
     return " ".join(reversed(out))
