@@ -44,6 +44,7 @@ def expand_fraction(n):
 
 
 def expand_NUM(n):
+    """Return n as an cardinal in words."""
     try:
         if '/' in n:
             if whole_and_fract_pattern.match(n):
@@ -84,8 +85,6 @@ def expand_NUM(n):
         if n.startswith('.'):
             return "point " + expand_NDIG(n[1:])
 
-
-        """Return n as an cardinal in words."""
         ones_C = [
                  "zero", "one", "two", "three", "four", "five", "six", "seven",
                  "eight", "nine", "ten", "eleven", "twelve", "thirteen",
@@ -171,8 +170,8 @@ def expand_NUM(n):
                 return w
             else:
                 if n[-3] == '0' and n[-1] != '0':
-                    ind = w.rfind(" ")
-                    return w[:ind - 1] + " and" + w[ind:]
+                    ind = w.rfind(",")
+                    return w[:ind] + " and" + w[ind + 1:]
                 else:
                     return w
 
