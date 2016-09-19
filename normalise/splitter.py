@@ -17,11 +17,9 @@ with open('data/wordlist.pickle', mode='rb') as file:
 
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
-SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
-             if tag == 'SPLT'}
-
-
-
+if __name__ == "__main__":
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
+                 if tag == 'SPLT'}
 
 
 def tag_SPLT(lst):
@@ -33,7 +31,7 @@ def tag_SPLT(lst):
     ind = lst[0]
     out = {}
     for i in range(1, len(lst)):
-        out.update({ind+inc*i: (lst[i], 'SPLT-')})
+        out.update({ind + inc * i: (lst[i], 'SPLT-')})
     return out
 
 

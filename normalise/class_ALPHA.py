@@ -31,23 +31,38 @@ with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
 with open('data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
-# Store all ALPHA tags from training data in ALPHA_list, including SPLT-ALPHA
-tagged = tag1(NSWs)
+if __name__ == "__main__":
+    # Store all ALPHA tags from training data in ALPHA_list, including SPLT-ALPHA
+    tagged = tag1(NSWs)
 
-ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-              if tag == 'ALPHA'}
+    ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                  if tag == 'ALPHA'}
 
-SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-             if tag == 'SPLT'}
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                 if tag == 'SPLT'}
 
-splitted = split(SPLT_dict)
-retagged = retag1(splitted)
-retagged_ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
-                       if tag == 'SPLT-ALPHA'}
-ALPHA_dict.update(retagged_ALPHA_dict)
+    splitted = split(SPLT_dict)
+    retagged = retag1(splitted)
+    retagged_ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
+                           if tag == 'SPLT-ALPHA'}
+    ALPHA_dict.update(retagged_ALPHA_dict)
+
+    ALPHAs_context = []
+    for item in ALPHA_dict.items():
+        if item[0] < 1206200:
+            for word in gen_frame(item, word_tokenized):
+                ALPHAs_context.append(' {} '.format(word))
+
+    third_ALPHA_dict = {}
+    count = 0
+    for item in ALPHA_dict.items():
+        count += 1
+        if count % 3 == 0:
+            third_ALPHA_dict.update((item,))
 
 ampm = ['am', 'pm', 'AM', 'PM', 'a.m.', 'p.m.', 'A.M.', 'P.M.', 'pm.', 'am.']
 adbc = ['AD', 'A.D.', 'ad', 'a.d.', 'BC', 'B.C.', 'bc', 'B.C.']
+
 
 def run_clfALPHA(dic, text):
     """Train classifier on training data, return dictionary with added tag.
@@ -207,16 +222,3 @@ def triple_rep(w):
         if w[i] == w[i+1] and w[i] == w[i+2] and w[i].isalpha():
             return True
     return False
-
-ALPHAs_context = []
-for item in ALPHA_dict.items():
-    if item[0] < 1206200:
-        for word in gen_frame(item, word_tokenized):
-            ALPHAs_context.append(' {} '.format(word))
-
-third_ALPHA_dict = {}
-count = 0
-for item in ALPHA_dict.items():
-    count += 1
-    if count % 3 == 0:
-        third_ALPHA_dict.update((item,))

@@ -31,20 +31,21 @@ with open('data/wordlist.pickle', mode='rb') as file:
 with open('data/clf_NUMB.pickle', mode='rb') as file:
     clf_NUMB = pickle.load(file)
 
-# Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
-tagged = tag1(NSWs)
+if __name__ == "__main__":
+    # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
+    tagged = tag1(NSWs)
 
-NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-             if tag == 'NUMB'}
+    NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                 if tag == 'NUMB'}
 
-SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
-             if tag == 'SPLT'}
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
+                 if tag == 'SPLT'}
 
-splitted = split(SPLT_dict)
-retagged = retag1(splitted)
-retagged_NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
-                      if tag == 'SPLT-NUMB'}
-NUMB_dict.update(retagged_NUMB_dict)
+    splitted = split(SPLT_dict)
+    retagged = retag1(splitted)
+    retagged_NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
+                          if tag == 'SPLT-NUMB'}
+    NUMB_dict.update(retagged_NUMB_dict)
 
 curr_list = ['£', '$', '€', 'Y']
 ampm = ['am', 'pm', 'AM', 'PM', 'a.m.', 'p.m.', 'A.M.', 'P.M.', 'pm.', 'am.']
