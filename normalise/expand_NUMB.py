@@ -32,8 +32,8 @@ def expand_fraction(n):
                 if first == '1':
                     exp += "one " + fractions[numbers.index(second)]
                 else:
-                    exp += expand_NUM(first) + " "
-                           + fractions[numbers.index(second)] + "s"
+                    exp += (expand_NUM(first) + " "
+                           + fractions[numbers.index(second)] + "s")
         else:
             return n
         return exp
@@ -153,6 +153,8 @@ def expand_NUM(n):
             if not i:
                 if n[i].isdigit() or n[i] == '-':
                     n_clean += n[i]
+                elif n[i] == '+':
+                    return "plus " + expand_NUM(n[1:])
             else:
                 if n[i].isdigit() or n[i] == '.':
                     n_clean += n[i]
