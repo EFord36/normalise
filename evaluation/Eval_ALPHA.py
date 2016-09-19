@@ -7,7 +7,7 @@ Created on Thu Jul 21 15:24:25 2016
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
-recall_score)
+                             recall_score)
 
 from context import normalise
 from normalise.class_ALPHA import run_clfALPHA, gen_frame
@@ -17,6 +17,7 @@ from gold_standard_full import gold_standard
 
 text = gold_standard
 
+
 def create_ALPHA_ex():
     ALPHA_ex = []
     for ind, (word, tag) in gs_ALPHA_dict.items():
@@ -25,6 +26,7 @@ def create_ALPHA_ex():
         file.write(str(ALPHA_ex))
 
 gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text)
+
 
 def gold_vs_pred_tuple():
     """ Return list of predicted tags and list of gold standard tags"""
@@ -64,8 +66,12 @@ def plot_confusion_matrix(r):
     plt.ylabel('True')
     plt.show()
 
+
 def list_errors():
     for ind, (txt, tag, ntag) in gold_standard_predicted.items():
         if ntag != gs_ALPHA_tagged[ind][2]:
-            print("Ind: {0}, Item: {1}, Predicted Tag: {2}, True Tag: {3}, /n, {4}"
-            .format(ind, txt, ntag, gs_ALPHA_tagged[ind][2], gen_frame((ind, (txt, tag)), text)))
+            print("Ind: {0}, Item: {1}, ".format(ind, txt)
+                  + "Predicted Tag: {}, ".format(ntag)
+                  + "True Tag: {}, ".format(gs_ALPHA_tagged[ind][2])
+                  + "/n, {}".format(gen_frame((ind, (txt, tag)), text))
+                  )

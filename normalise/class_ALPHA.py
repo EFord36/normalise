@@ -25,14 +25,13 @@ with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
 with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as file:
-    word_tokenized_lowered = pickle.load(file)
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+    word_tokenized_lowered = pickle.load(f)
 
 with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
 if __name__ == "__main__":
-    # Store all ALPHA tags from training data in ALPHA_list, including SPLT-ALPHA
     tagged = tag1(NSWs)
 
     ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
@@ -43,7 +42,8 @@ if __name__ == "__main__":
 
     splitted = split(SPLT_dict)
     retagged = retag1(splitted)
-    retagged_ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in retagged.items()
+    retagged_ALPHA_dict = {ind: (nsw, tag)
+                           for ind, (nsw, tag) in retagged.items()
                            if tag == 'SPLT-ALPHA'}
     ALPHA_dict.update(retagged_ALPHA_dict)
 
@@ -113,15 +113,15 @@ def seed_features(item, context):
            nsw in ['Mr.', 'Mrs.', 'Mr', 'Mrs'],
            nsw in ['i.e.', 'ie.', 'e.g.', 'eg.'],
            nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw),
-           (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and
-           is_digbased(context[1])) and not acr_pattern.match(nsw)),
+           (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict
+            and is_digbased(context[1])) and not acr_pattern.match(nsw)),
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
            (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
-           (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
-           (nsw.lower() in wordlist or
-           (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
-           and nsw not in ampm),
+           (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
+            and (nsw.lower() in wordlist
+            or (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
+            and nsw not in ampm),
            triple_rep(nsw) and len(nsw) > 3,
            bool(acr_pattern.match(nsw) and nsw not in meas_dict),
            nsw.islower() and len(nsw) > 3,
@@ -178,9 +178,9 @@ def seed(dict_tup, text):
         return 2
     elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
         return 1
-    elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict and
-         is_digbased(context[1]))):
-             return 2
+    elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict
+          and is_digbased(context[1]))):
+            return 2
     elif nsw.endswith('s') and nsw[:-1].isupper():
         return 2
     elif (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]):
@@ -191,16 +191,16 @@ def seed(dict_tup, text):
         return 3
     elif nsw in element_dict:
         return 1
-    elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper()) and
-         (nsw.lower() in wordlist or
-         (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
+    elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
+          and (nsw.lower() in wordlist
+          or (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
          and nsw not in ampm):
-             return 3
+            return 3
     elif triple_rep(nsw) and len(nsw) > 3:
         return 3
     elif nsw.islower() and len(nsw) > 3:
         return 3
-    elif acr_pattern.match(nsw) and not nsw in meas_dict:
+    elif acr_pattern.match(nsw) and nsw not in meas_dict:
         return 2
     elif len(nsw) == 1:
         return 2
@@ -218,7 +218,7 @@ def is_cons(w):
 
 def triple_rep(w):
     """Return 'True' if w has a letter repeated 3 times consecutively."""
-    for i in range(len(w)-2):
-        if w[i] == w[i+1] and w[i] == w[i+2] and w[i].isalpha():
+    for i in range(len(w) - 2):
+        if w[i] == w[i + 1] and w[i] == w[i + 2] and w[i].isalpha():
             return True
     return False

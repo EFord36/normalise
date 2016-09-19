@@ -101,6 +101,8 @@ alpha_pattern = re.compile('''
 ([A-Za-z]+\'?)*         #(1 or more letter, optional apostrophe) repeated
 $                       # end of string
     ''', re.VERBOSE)
+
+
 def only_alpha(w):
     if len(w) == 0:
         return False
@@ -165,16 +167,16 @@ def is_url(w):
 
 
 def has_lrep(w):
-    for i in range(len(w)-2):
-        if w[i] == w[i+1] and w[i] == w[i+2] and w[i].isalpha():
+    for i in range(len(w) - 2):
+        if w[i] == w[i + 1] and w[i] == w[i + 2] and w[i].isalpha():
             return True
             break
     return False
 
 
 def has_prep(w):
-    for i in range(len(w)-2):
-        if w[i] == w[i+1] and w[i] in punct:
+    for i in range(len(w) - 2):
+        if w[i] == w[i + 1] and w[i] in punct:
             return True
             break
     return False
@@ -222,7 +224,7 @@ def is_digbased(w):
     for lt in w:
         if not lt.isdigit() and lt not in ['/', '.', ',',
                                            '-', '%', ':',
-                                           "'",  '"', "°"]:
+                                           "'", '"', "°"]:
             return False
     else:
         return True and has_digit(w)

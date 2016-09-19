@@ -20,7 +20,8 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 
 if __name__ == '__main__':
     word_tokenized = brown.words() + nps_chat.words()
-    brown_lower = {w.lower() for w in brown.words() if len(w) > 4 and w.isalpha()}
+    brown_lower = {w.lower() for w in brown.words()
+                   if len(w) > 4 and w.isalpha()}
     names_lower = {w.lower() for w in names.words()}
     words_lower = {w.lower() for w in words.words('en') if len(w) > 1}
     wordlist = brown_lower | names_lower | words_lower | {'I', 'i', 'a', 'A'}

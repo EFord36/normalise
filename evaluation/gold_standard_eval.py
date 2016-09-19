@@ -7,10 +7,10 @@ Created on Mon Jul 18 09:44:25 2016
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
-recall_score)
+                             recall_score)
 
 from context import normalise
-from normalise.class_NUMB import *
+from normalise.class_NUMB import run_clfNUMB, gen_frame
 from gold_standard_numbs import gs_numb_dict, gs_numb_tagged
 from gold_standard_full import gold_standard
 
@@ -74,5 +74,8 @@ def plot_confusion_matrix(r):
 def list_errors():
     for ind, (txt, tag, ntag) in gold_standard_predicted.items():
         if ntag != gs_numb_tagged[ind][2]:
-            print("Ind: {0}, Item: {1}, Predicted Tag: {2}, True Tag: {3}, /n, {4}"
-            .format(ind, txt, ntag, gs_numb_tagged[ind][2], gen_frame((ind, (txt, tag)), text)))
+            print("Ind: {0}, Item: {1}, ".format(ind, txt)
+                  + "Predicted Tag: {}, ".format(ntag)
+                  + "True Tag: {}, ".format(gs_numb_tagged[ind][2])
+                  + "/n, {}".format(gen_frame((ind, (txt, tag)), text))
+                  )

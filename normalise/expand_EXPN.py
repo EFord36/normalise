@@ -14,8 +14,8 @@ from normalise.splitter import split
 from normalise.tag1 import is_digbased
 from normalise.measurements import meas_dict, meas_dict_pl
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as file:
-    word_tokenized_lowered = pickle.load(file)
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+    word_tokenized_lowered = pickle.load(f)
 
 with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
@@ -117,6 +117,8 @@ def expand_EXPN(nsw, i, text):
         raise
     except:
         return w
+
+
 def maximum_overlap(w, i, text):
     best = 0
     current = []

@@ -15,6 +15,7 @@ from normalise.class_NUMB import run_clfNUMB
 from normalise.tag_MISC import tag_MISC
 from normalise.expand_all import expand_all
 
+
 def normalise(text):
     NSWs = create_NSW_dict(text)
     tagged = tag1(NSWs)
