@@ -26,7 +26,7 @@ func_dict = {
              'NADDR': 'expand_NYER(nsw)',
              'NTEL': 'expand_NTEL(nsw)',
              'NYER': 'expand_NYER(nsw)',
-             'MONEY': 'expand_MONEY(nsw)',
+             'MONEY': 'expand_MONEY((ind, (nsw, tag, ntag)), text)',
              'PRCT': 'expand_PRCT(nsw)',
              'PROF': 'expand_PROF(nsw)',
              'URL': 'expand_URL(nsw)',

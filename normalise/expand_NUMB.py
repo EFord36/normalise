@@ -7,6 +7,7 @@ Created on Fri Jul 22 14:30:22 2016
 
 import re
 
+from normalise.class_NUMB import gen_frame
 
 def expand_fraction(n):
     try:
@@ -538,13 +539,34 @@ irregular_plural_curr = {'SEK': 'Swedish Kronor', 'NOK': 'Norwegian Kroner',
                          'LVL': 'Latu', 'RON': 'Lei'}
 
 
-def expand_MONEY(n):
+def expand_MONEY(dict_tup, text):
     try:
         """Return number and currency of input in words."""
+        ind, (n, tag, ntag) = dict_tup
         scurr = ''
         ecurr = ''
         end = ''
         num = ''
+        rcontext = gen_frame(dict_tup, text)[3]
+        if rcontext in bmoney:
+            s1 = expand_MONEY((1, (n, tag, ntag)), ['the', n, 'drop'])
+            inds = [ind + 1 for ind in range(len(s1)) if s1[ind] == ' ']
+            inds = sorted(inds, reverse=True)
+            split = len(s1)
+            currency = ''
+            possibles = (set(scurr_dict.values()) | set(scurr_dict_pl.values())
+                         | set(ecurr_dict.values())
+                         | set(irregular_plural_curr.values())
+                         | {it + 's' for it in ecurr_dict.values()})
+            for i in inds:
+                curr_cand = s1[i:]
+                if curr_cand in possibles:
+                    split = i
+                    currency = curr_cand
+                else:
+                    pass
+            return s1[:split] + rcontext + " " + currency
+
         if len(n) <= 3:
             if not n[0].isdigit():
                 if len(n) == 3 and not n[2].isdigit():
@@ -905,3 +927,12 @@ coord_pattern = re.compile('''
 ([N|S|E|W])?
 $
 ''', re.VERBOSE)
+
+bmoney = [
+        "thousand", "million", "billion", "trillion", "quadrillion",
+        "quintillion", "sextillion", "septillion", "octillion",
+        "nonillion", "decillion", "undecillion", "duodecillion",
+        "tredecillion", "quattuordecillion", "sexdecillion",
+        "septendecillion", "octodecillion", "novemdecillion",
+        "vigintillion"
+        ]
