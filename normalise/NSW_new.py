@@ -44,7 +44,13 @@ def cond2(w):
 
 def cond3(w):
     """ Return word if it is not single punctuation."""
-    return not(len(w) <= 2 and not w.isalnum())
+    if len(w) > 2:
+        return True
+    bools = [l.isalnum() for l in w]
+    if True in bools:
+        return True
+    else:
+        return False
 
 
 def cond4(w):
