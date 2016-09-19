@@ -14,13 +14,13 @@ from normalise.splitter import split
 from normalise.tag1 import is_digbased
 from normalise.measurements import meas_dict, meas_dict_pl
 
-with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
-with open('data/pos_dicts.pickle', mode='rb') as file:
+with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
 
-with open('data/abbrev_dict.pickle', mode='rb') as file:
+with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]

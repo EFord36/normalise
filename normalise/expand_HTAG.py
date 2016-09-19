@@ -12,7 +12,7 @@ from nltk import FreqDist as fd
 from normalise.NSW_new import wordlist
 from normalise.expand_NUMB import expand_NUM
 
-with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
 

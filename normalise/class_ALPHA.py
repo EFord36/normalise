@@ -16,19 +16,19 @@ from normalise.splitter import split, retag1
 from normalise.measurements import meas_dict, meas_dict_pl
 from normalise.element_dict import element_dict
 
-with open('data/wordlist.pickle', mode='rb') as file:
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('data/NSW_dict.pickle', mode='rb') as file:
+with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('data/word_tokenized.pickle', mode='rb') as file:
+with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('data/word_tokenized_lowered.pickle', mode='rb') as file:
+with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as file:
     word_tokenized_lowered = pickle.load(file)
 
-with open('data/clf_ALPHA.pickle', mode='rb') as file:
+with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
 if __name__ == "__main__":

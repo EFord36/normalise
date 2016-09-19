@@ -12,7 +12,7 @@ import pickle
 
 from normalise.tag1 import tag1, NSWs, is_digbased, only_alpha
 
-with open('data/wordlist.pickle', mode='rb') as file:
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']

@@ -11,7 +11,7 @@ import pickle
 
 from normalise.expand_NUMB import end_dict, ecurr_dict
 
-with open('data/NSW_dict.pickle', mode='rb') as file:
+with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
 curr_list = ['£', '$', '€']
@@ -201,5 +201,3 @@ hashtag_pattern = re.compile('''
 [_-]?
 [A-Za-z0-9]*
 ''', re.VERBOSE)
-
-print('tag1 imported')

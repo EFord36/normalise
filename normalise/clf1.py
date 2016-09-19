@@ -9,7 +9,7 @@ from sklearn.cluster import MiniBatchKMeans as mb
 from normalise.expand_MONEY import end_dict, ecurr_dict
 
 
-with open('data/NSW_list.txt', encoding='utf-8') as a_file:
+with open('../normalise/data/NSW_list.txt', encoding='utf-8') as a_file:
     data = a_file.read()
     data = data.split(' ')
 

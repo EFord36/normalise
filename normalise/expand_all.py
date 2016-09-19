@@ -9,7 +9,7 @@ from normalise.expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD, expand_
                          expand_NRANGE, expand_NTEL, expand_NDATE)
 from normalise.expand_HTAG import expand_HTAG, expand_URL
 
-with open('data/wordlist.pickle', mode='rb') as file:
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
 func_dict = {
