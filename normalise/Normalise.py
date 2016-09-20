@@ -7,6 +7,9 @@ Created on Thu Sep  1 15:18:06 2016
 
 from __future__ import division, print_function, unicode_literals
 
+import pickle
+from nltk.corpus import names
+
 from normalise.NSW_new import create_NSW_dict
 from normalise.tag1 import tag1
 from normalise.splitter import split, retag1
@@ -15,6 +18,11 @@ from normalise.class_NUMB import run_clfNUMB, gen_frame
 from normalise.tag_MISC import tag_MISC
 from normalise.expand_all import expand_all
 from normalise.expand_NUMB import bmoney
+
+with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+    wordlist = pickle.load(file)
+
+names_lower = {w.lower() for w in names.words()}
 
 
 def normalise(text):
@@ -51,6 +59,58 @@ def normalise(text):
     expanded_NUMB = expand_all(tagged_NUMB, text)
     expanded_MISC = expand_all(tagged_MISC, text)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
+
+
+def tokenize_basic(text):
+    guess = text.split(' ')
+    out = []
+    for i in range(len(guess) - 1):
+        if guess[i].isalpha():
+            out.append(guess[i])
+        elif guess[i][-1] == '.' and guess[i][:-1].isalpha():
+            following = guess[i + 1]
+            if following.istitle() and following.lower() in wordlist:
+                if following.lower() in names_lower:
+                    if guess[i][:-1] in wordlist:
+                        out.append(guess[i][:-1])
+                        out.append('.')
+                    else:
+                        out.append(guess[i])
+                else:
+                    out.append(guess[i][:-1])
+                    out.append('.')
+            else:
+                out.append(guess[i])
+        elif guess[i].endswith((',', ':', ';')):
+            out.append(guess[i][:-1])
+            out.append(guess[i][-1])
+
+        else:
+            out.append(guess[i])
+    if guess[-1].isalpha():
+        out.append(guess[i])
+    elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
+        out.append(guess[-1][:-1])
+        out.append('.')
+    elif guess[-1].endswith((',', ':', ';')):
+        out.append(guess[-1][:-1])
+        out.append(guess[-1][-1])
+    else:
+        out.append(guess[-1])
+    return out
+
+
+def standardize(text, tokenizer=tokenize_basic):
+    if type(text) == str:
+        if tokenizer == tokenize_basic:
+            print("NOTE: using basic tokenizer.\n"
+                  "For better results, input tokenized text,"
+                  " or use a custom tokenizer")
+            return insert(tokenizer(text))
+        else:
+            return insert(tokenizer(text))
+    else:
+        return insert(text)
 
 
 def insert(text):
