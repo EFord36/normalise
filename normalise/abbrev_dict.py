@@ -164,6 +164,7 @@ abbrev_dict = {
                "letts.": "letters",
                "libr.": "library",
                "ling.": "linguistic",
+               "lt.": "Lieutenant", 
                "m.": "masculine",
                "mag.": "magazine",
                "man.": "manual",
