@@ -187,18 +187,18 @@ def expand_NRANGE(n):
         if range_pattern.match(n):
             m = range_pattern.match(n)
             str = ''
-            if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+            if m.group(1).isdigit() and m.group(3).isdigit():
                 if 1800 <= int(m.group(1)) < 2050:
                     str += expand_NYER(m.group(1))
-            else:
-                str += expand_NUM(m.group(1))
+                else:
+                    str += expand_NUM(m.group(1))
             if m.group(2) in ['/', '-', '–']:
                 str += ' to '
-                if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+                if m.group(1).isdigit() and m.group(3).isdigit():
                     if 1800 <= int(m.group(3)) < 2050:
                         str += expand_NYER(m.group(3))
-                else:
-                    str += expand_NUM(m.group(3))
+                    else:
+                        str += expand_NUM(m.group(3))
             return str
         elif ',' in n:
             hyph = n.find('-')
