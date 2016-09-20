@@ -61,10 +61,8 @@ def insert(text):
         for nsw in item.items():
             if isinstance(nsw[0], int):
                 out[nsw[0]] = nsw[1][3]
-            if nsw[1][2] == 'MONEY' and gen_frame(nsw, text)[3] in bmoney:
-                out[nsw[0] + 1] = ''
-            if nsw[1][2] == 'NORD' and gen_frame(nsw, text)[3] in months:
-                out[nsw[0]] += ' of'
+                if nsw[1][2] == 'MONEY' and gen_frame(nsw, text)[3] in bmoney:
+                    out[nsw[0] + 1] = ''
             else:
                 rind = int(nsw[0])
                 if rind in split_dict:
@@ -81,9 +79,3 @@ def insert(text):
                     final = final[1:]
                     out[rind] = final
     return out
-
-months = ['Jan', 'Jan.', 'January', 'Feb', 'Feb.', 'February', 'Mar',
-                  'Mar.', 'March', 'Apr', 'Apr.', 'April', 'May', 'Jun', 'Jun.',
-                  'June', 'Jul', 'Jul.', 'July', 'Aug', 'Aug.', 'August', 
-                  'Sept', 'Sept.', 'September', 'Oct', 'Oct.', 'October',
-                  'Nov', 'Nov.', 'November', 'Dec', 'Dec.', 'December']

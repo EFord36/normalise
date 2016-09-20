@@ -18,7 +18,7 @@ func_dict = {
              'LSEQ': 'expand_LSEQ(nsw)',
              'WDLK': 'expand_WDLK(nsw)',
              'NUM': 'expand_NUM(nsw)',
-             'NORD': 'expand_NORD(nsw)',
+             'NORD': 'expand_NORD((ind, (nsw, tag, ntag)), text)',
              'NRANGE': 'expand_NRANGE(nsw)',
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',

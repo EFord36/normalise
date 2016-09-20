@@ -213,7 +213,22 @@ def expand_NRANGE(n):
         return n
 
 
-def expand_NORD(n):
+def expand_NORD(dict_tup, text):
+    try:
+        ind, (nsw, tag, ntag) = dict_tup
+        out = expand_ordinal(nsw)
+        if gen_frame(dict_tup, text)[3] in months:
+            out += ' of'
+            if gen_frame(dict_tup, text)[1] not in ['The', 'the', 'A', 'a']:
+                out = 'the ' + out
+        return out
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return out
+
+
+def expand_ordinal(n):
     try:
         """Return n as an ordinal in words."""
         ones_C = [
@@ -936,3 +951,9 @@ bmoney = [
         "septendecillion", "octodecillion", "novemdecillion",
         "vigintillion"
         ]
+
+months = ['Jan', 'Jan.', 'January', 'Feb', 'Feb.', 'February', 'Mar',
+          'Mar.', 'March', 'Apr', 'Apr.', 'April', 'May', 'Jun', 'Jun.',
+          'June', 'Jul', 'Jul.', 'July', 'Aug', 'Aug.', 'August',
+          'Sept', 'Sept.', 'September', 'Oct', 'Oct.', 'October',
+          'Nov', 'Nov.', 'November', 'Dec', 'Dec.', 'December']
