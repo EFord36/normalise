@@ -10,8 +10,7 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from normalise.tag1 import tag1
-from normalise.expand_NUMB import ecurr_dict
+from normalise.tag1 import tag1, ecurr_dict
 from normalise.timezones import timezone_dict
 from normalise.splitter import split, retag1
 from normalise.measurements import meas_dict, meas_dict_pl

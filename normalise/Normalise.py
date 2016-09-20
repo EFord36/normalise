@@ -11,9 +11,10 @@ from normalise.NSW_new import create_NSW_dict
 from normalise.tag1 import tag1
 from normalise.splitter import split, retag1
 from normalise.class_ALPHA import run_clfALPHA
-from normalise.class_NUMB import run_clfNUMB
+from normalise.class_NUMB import run_clfNUMB, gen_frame
 from normalise.tag_MISC import tag_MISC
 from normalise.expand_all import expand_all
+from normalise.expand_NUMB import bmoney
 
 
 def normalise(text):
@@ -60,6 +61,10 @@ def insert(text):
         for nsw in item.items():
             if isinstance(nsw[0], int):
                 out[nsw[0]] = nsw[1][3]
+            if nsw[1][2] == 'MONEY' and gen_frame(nsw, text)[3] in bmoney:
+                out[nsw[0] + 1] = ''
+            if nsw[1][2] == 'NORD' and gen_frame(nsw, text)[3] in months:
+                out[nsw[0]] += ' of'
             else:
                 rind = int(nsw[0])
                 if rind in split_dict:
@@ -76,3 +81,9 @@ def insert(text):
                     final = final[1:]
                     out[rind] = final
     return out
+
+months = ['Jan', 'Jan.', 'January', 'Feb', 'Feb.', 'February', 'Mar',
+                  'Mar.', 'March', 'Apr', 'Apr.', 'April', 'May', 'Jun', 'Jun.',
+                  'June', 'Jul', 'Jul.', 'July', 'Aug', 'Aug.', 'August', 
+                  'Sept', 'Sept.', 'September', 'Oct', 'Oct.', 'October',
+                  'Nov', 'Nov.', 'November', 'Dec', 'Dec.', 'December']
