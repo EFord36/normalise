@@ -15,6 +15,7 @@ from normalise.timezones import timezone_dict
 from normalise.splitter import split, retag1
 from normalise.measurements import meas_dict, meas_dict_pl
 
+
 with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
@@ -78,7 +79,8 @@ def run_clfNUMB(dic, text):
                     8: 'NRANGE',
                     9: 'NTEL',
                     10: 'NDATE',
-                    11: 'NADDR'
+                    11: 'NADDR',
+                    12: 'NSCI'
                     }
     out = {}
     for (ind, (nsw, tag)) in dic.items():
@@ -113,7 +115,6 @@ def give_featuresNUM(item, text):
            context[1] in ['around', 'about', 'approximately'],
            context[1] in ['over', 'under'],
            context[1] == 'on',
-           context[1] == 'at',
            context[1] == 'in',
            context[1] == 'of'
            ]
@@ -300,6 +301,7 @@ def seed_features(item, context):
           (nsw.isdigit() and 1950 < int(nsw) < 2100
            and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
           len(nsw) < 5 and context[4] in addr_words,
+          bool(coord_pattern.match(nsw)) or bool(feet_pattern.match(nsw))
            ]
     return out
 
@@ -421,6 +423,8 @@ def seed(dict_tup, text):
     elif (nsw[0] in curr_list or nsw[-3:] in ecurr_dict or
             nsw[:3] in ecurr_dict):
         return 2
+    elif coord_pattern.match(nsw) or feet_pattern.match(nsw):
+        return 12
     elif ('.' in nsw and
           (context[3] in timezone_dict or
            context[3] in ampm) or
@@ -503,5 +507,31 @@ date_pattern = re.compile('''
 ([0-9]{1,2})
 (/)?
 ([0-9]{2,4})?
+$
+''', re.VERBOSE)
+
+coord_pattern = re.compile('''
+([0-9]+
+\.?
+[0-9]*
+°)
+([0-9]+
+\.?
+[0-9]*
+[\'|\’|′])?
+([0-9]+
+\.?
+[0-9]*
+["|″]?)?
+([N|S|E|W])?
+$
+''', re.VERBOSE)
+
+feet_pattern = re.compile('''
+([0-9]+
+[\'|\’|′])
+(\.?
+[0-9]+
+["|″]?)?
 $
 ''', re.VERBOSE)
