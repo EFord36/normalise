@@ -9,7 +9,7 @@ import pickle
 
 from math import log
 from nltk import FreqDist as fd
-from normalise.NSW_new import wordlist
+from normalise.detect import wordlist
 from normalise.expand_NUMB import expand_NUM
 
 with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:

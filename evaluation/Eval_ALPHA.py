@@ -11,7 +11,7 @@ from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 
 from context import normalise
 from normalise.class_ALPHA import run_clfALPHA, gen_frame
-from normalise.tag1 import tag1
+from normalise.tagger import tagify
 from gs_ALPHA_dict import gs_ALPHA_dict, gs_ALPHA_tagged
 from gold_standard_full import gold_standard
 

@@ -16,7 +16,7 @@ curr_list = ['£', '$', '€']
 AlPHA_dict, NUMB_dict, MISC_dict = {}, {}, {}
 
 
-def tag1(dic):
+def tagify(dic):
     """Return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value

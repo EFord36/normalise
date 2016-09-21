@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from nltk.corpus import brown
 
-from normalise.abbrev_dict import states
+from normalise.data.abbrev_dict import states
 
 
 def store_pos_tag_dicts():

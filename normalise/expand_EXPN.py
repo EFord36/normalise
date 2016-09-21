@@ -9,10 +9,10 @@ from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
-from normalise.abbrev_dict import states
+from normalise.data.abbrev_dict import states
 from normalise.splitter import split
-from normalise.tag1 import is_digbased
-from normalise.measurements import meas_dict, meas_dict_pl
+from normalise.tagger import is_digbased
+from normalise.data.measurements import meas_dict, meas_dict_pl
 
 with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)

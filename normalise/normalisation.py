@@ -10,9 +10,9 @@ from __future__ import division, print_function, unicode_literals
 import pickle
 from nltk.corpus import names
 
-from normalise.NSW_new import create_NSW_dict
-from normalise.tag1 import tag1
-from normalise.splitter import split, retag1
+from normalise.detect import create_NSW_dict
+from normalise.tagger import tagify
+from normalise.splitter import split, retagify
 from normalise.class_ALPHA import run_clfALPHA
 from normalise.class_NUMB import run_clfNUMB, gen_frame
 from normalise.tag_MISC import tag_MISC
@@ -27,7 +27,7 @@ names_lower = {w.lower() for w in names.words()}
 
 def normalise(text):
     NSWs = create_NSW_dict(text)
-    tagged = tag1(NSWs)
+    tagged = tagify(NSWs)
     ALPHA_dict = {}
     NUMB_dict = {}
     MISC_dict = {}
@@ -43,7 +43,7 @@ def normalise(text):
         elif tag == 'SPLT':
             SPLT_dict.update((item,))
     splitted = split(SPLT_dict)
-    retagged = retag1(splitted)
+    retagged = retagify(splitted)
     for item in retagged.items():
         tag = item[1][1]
         if tag == 'SPLT-ALPHA':
@@ -100,7 +100,7 @@ def tokenize_basic(text):
     return out
 
 
-def standardize(text, tokenizer=tokenize_basic):
+def standardise(text, tokenizer=tokenize_basic):
     if type(text) == str:
         if tokenizer == tokenize_basic:
             print("NOTE: using basic tokenizer.\n"

@@ -10,7 +10,7 @@ from __future__ import division, print_function, unicode_literals
 import re
 import pickle
 
-from normalise.tag1 import tag1, NSWs, is_digbased, only_alpha
+from normalise.tagger import tagify, NSWs, is_digbased, only_alpha
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -18,7 +18,7 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 if __name__ == "__main__":
-    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagify(NSWs).items()
                  if tag == 'SPLT'}
 
 
@@ -72,7 +72,7 @@ def split(dic):
     return split_dict
 
 
-def retag1(dic):
+def retagify(dic):
     """ Retag each part of a SPLT token as 'SPLT-ALPHA', 'SPLT-NUMB' or
     'SPLT-MISC'.
     """

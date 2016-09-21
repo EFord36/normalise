@@ -10,10 +10,10 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from normalise.tag1 import tag1, ecurr_dict
-from normalise.timezones import timezone_dict
-from normalise.splitter import split, retag1
-from normalise.measurements import meas_dict, meas_dict_pl
+from normalise.tagger import tagify, ecurr_dict
+from normalise.data.timezones import timezone_dict
+from normalise.splitter import split, retagify
+from normalise.data.measurements import meas_dict, meas_dict_pl
 
 
 with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
@@ -33,7 +33,7 @@ with open('../normalise/data/clf_NUMB.pickle', mode='rb') as file:
 
 if __name__ == "__main__":
     # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
-    tagged = tag1(NSWs)
+    tagged = tagify(NSWs)
 
     NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'NUMB'}
@@ -42,7 +42,7 @@ if __name__ == "__main__":
                  if tag == 'SPLT'}
 
     splitted = split(SPLT_dict)
-    retagged = retag1(splitted)
+    retagged = retagify(splitted)
     retagged_NUMB_dict = {ind: (nsw, tag)
                           for ind, (nsw, tag) in retagged.items()
                           if tag == 'SPLT-NUMB'}
