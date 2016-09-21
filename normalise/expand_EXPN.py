@@ -301,6 +301,9 @@ def tag_matches(i, text):
         for (cand, tags) in tag_cands_univ(abbrev):
             if true_tag_univ in tags:
                 matches += [cand]
+    if not matches and len(tag_cands_univ(abbrev)) == 1:
+        if tag_cands_univ(abbrev)[0][1] == tuple():
+            return [tag_cands_univ(abbrev)[0][0]]
     if len(matches) <= 10:
         return matches
     else:
