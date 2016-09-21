@@ -464,6 +464,14 @@ states = {
           "Wis.": "Wisconsin",
           "Wyo.": "Wyoming"
           }
+          
+titles = {
+          "lt.": "Lieutenant",
+          "rt.": "right",
+          "hon.": "Honourable",
+          "supt.": "Superintendent",
+          "sr.": "senior"
+          }
 
 
 def build_abbrevs(dictionary):
