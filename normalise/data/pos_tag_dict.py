@@ -1,7 +1,7 @@
 import pickle
 from collections import defaultdict
 
-from nltk.corpus import brown
+from nltk.corpus import treebank, brown
 from nltk.tag.mapping import map_tag
 
 from normalise.data.abbrev_dict import states
@@ -9,23 +9,25 @@ from normalise.data.abbrev_dict import states
 
 def store_pos_tag_dicts():
     pos_tag_dict = defaultdict(tuple)
-    tagged = brown.tagged_sents()
+    tagged = treebank.tagged_sents()
     for sent in tagged:
         for tup in sent:
             if not tup[1] in pos_tag_dict[tup[0].lower()]:
                 pos_tag_dict[tup[0].lower()] += (tup[1],)
 
     pos_tag_dict_univ = defaultdict(tuple)
-    tagged_univ = brown.tagged_sents(tagset='universal')
-    for sent in tagged_univ:
-        for tup in sent:
-            if not tup[1] in pos_tag_dict_univ[tup[0].lower()]:
-                pos_tag_dict_univ[tup[0].lower()] += (tup[1],)
+    penn_tagged_univ = treebank.tagged_sents(tagset='universal')
+    brown_tagged_univ = brown.tagged_sents(tagset='universal')
+    for text in [penn_tagged_univ, brown_tagged_univ]:
+        for sent in text:
+            for tup in sent:
+                if not tup[1] in pos_tag_dict_univ[tup[0].lower()]:
+                    pos_tag_dict_univ[tup[0].lower()] += (tup[1],)
     for word in states.values():
         pos_tag_dict[word.lower()] += ('NNP',)
         pos_tag_dict_univ[word.lower()] += ('NOUN',)
     dicts = (pos_tag_dict, pos_tag_dict_univ)
-    with open('../normalise/data/pos_dicts.pickle', 'wb') as file:
+    with open('pos_dicts.pickle', 'wb') as file:
         pickle.dump(dicts, file)
 
 
@@ -63,23 +65,23 @@ def create_pos_dict(dictionary):
     for key in dictionary:
         if type(dictionary[key]) == tuple:
             pos[key] = dictionary[key]
-            pos_univ[key] = map_tag('brown', 'universal', dictionary[key])
+            pos_univ[key] = map_tag('en-ptb', 'universal', dictionary[key])
         elif type(dictionary[key]) == str:
             pos[key] = (dictionary[key],)
-            pos_univ[key] = (map_tag('brown', 'universal', dictionary[key]),)
+            pos_univ[key] = (map_tag('en-ptb', 'universal', dictionary[key]),)
     return pos, pos_univ
 
 title_dict = {
-              'honourable': 'NP',
-              'general': 'NP',
-              'colonel': 'NP',
-              'lieutenant': 'NP',
-              'superintendent': 'NP',
-              'senior': 'NP',
-              'junior': 'NP',
-              'sir': 'NP',
-              'senator': 'NP',
-              'doctor': 'NP',
-              'duke': 'NP',
-              'captain': 'NP'
+              'honourable': 'NNP',
+              'general': 'NNP',
+              'colonel': 'NNP',
+              'lieutenant': 'NNP',
+              'superintendent': 'NNP',
+              'senior': 'NNP',
+              'junior': 'NNP',
+              'sir': 'NNP',
+              'senator': 'NNP',
+              'doctor': 'NNP',
+              'duke': 'NNP',
+              'captain': 'NNP'
               }
