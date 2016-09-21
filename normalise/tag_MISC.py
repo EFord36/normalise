@@ -8,8 +8,6 @@ from __future__ import division, print_function, unicode_literals
 
 import re
 
-from normalise.tag1 import tag1
-
 
 def tag_MISC(dic):
     """Return dictionary with added tag within the value tuple."""

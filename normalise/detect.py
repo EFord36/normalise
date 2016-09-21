@@ -13,7 +13,7 @@ from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
 from nltk.corpus import names
-from normalise.contraction_list import contractions
+from normalise.data.contraction_list import contractions
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)

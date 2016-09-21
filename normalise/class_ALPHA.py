@@ -10,11 +10,11 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from normalise.tag1 import tag1, is_digbased, acr_pattern
+from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
-from normalise.splitter import split, retag1
-from normalise.measurements import meas_dict, meas_dict_pl
-from normalise.element_dict import element_dict
+from normalise.splitter import split, retagify
+from normalise.data.measurements import meas_dict, meas_dict_pl
+from normalise.data.element_dict import element_dict
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -32,7 +32,7 @@ with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
 if __name__ == "__main__":
-    tagged = tag1(NSWs)
+    tagged = tagify(NSWs)
 
     ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                   if tag == 'ALPHA'}
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                  if tag == 'SPLT'}
 
     splitted = split(SPLT_dict)
-    retagged = retag1(splitted)
+    retagged = retagify(splitted)
     retagged_ALPHA_dict = {ind: (nsw, tag)
                            for ind, (nsw, tag) in retagged.items()
                            if tag == 'SPLT-ALPHA'}
