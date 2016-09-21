@@ -192,6 +192,8 @@ def expand_NRANGE(n):
                     str += expand_NYER(m.group(1))
                 else:
                     str += expand_NUM(m.group(1))
+            else:
+                str += expand_NUM(m.group(1))
             if m.group(2) in ['/', '-', '–']:
                 str += ' to '
                 if m.group(1).isdigit() and m.group(3).isdigit():
@@ -199,6 +201,8 @@ def expand_NRANGE(n):
                         str += expand_NYER(m.group(3))
                     else:
                         str += expand_NUM(m.group(3))
+                else:
+                    str += expand_NUM(m.group(3))
             return str
         elif ',' in n:
             hyph = n.find('-')
