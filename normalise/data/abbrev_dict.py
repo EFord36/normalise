@@ -164,7 +164,7 @@ abbrev_dict = {
                "letts.": "letters",
                "libr.": "library",
                "ling.": "linguistic",
-               "lt.": "Lieutenant", 
+               "lt.": "Lieutenant",
                "m.": "masculine",
                "mag.": "magazine",
                "man.": "manual",
@@ -464,7 +464,7 @@ states = {
           "Wis.": "Wisconsin",
           "Wyo.": "Wyoming"
           }
-          
+
 titles = {
           "lt.": "Lieutenant",
           "rt.": "right",
@@ -497,9 +497,12 @@ def add_to_pickled_abbrev(dictionary):
         else:
             k = key.lower()
         if type(dictionary[key]) == list:
-            abbrevs[k].extend(dictionary[key])
+            for exp in dictionary[key]:
+                if exp not in abbrevs[k]:
+                    abbrevs[k].append(exp)
         elif type(dictionary[key]) == str:
-            abbrevs[k].append(dictionary[key])
+            if dictionary[key] not in abbrevs[k]:
+                abbrevs[k].append(dictionary[key])
     with open('../normalise/data/abbrev_dict.pickle', mode='wb') as f:
         pickle.dump(abbrevs, f)
     print(abbrevs)
