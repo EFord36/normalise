@@ -179,6 +179,9 @@ def find_matches(word):
 
 def gen_signature(word):
     inds = find_matches(word)
+    if len(inds) > 50:
+        f = len(inds) / 50
+        inds = [inds[int(i * f)] for i in range(50)]
     signature = defaultdict(int)
     for i in inds:
         for w in gen_context(i, brown):
