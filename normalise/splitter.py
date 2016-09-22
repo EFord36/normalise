@@ -48,25 +48,27 @@ def split(dic):
             emph_list += [nsw]
         hyph_list = []
         for nsw in emph_list:
-            hyph_list.extend(nsw.split('-'))
+            hyph_list.extend([item for item in nsw.split('-') if item])
         slash_list = []
         for nsw in hyph_list:
-            slash_list.extend(nsw.split('/'))
+            slash_list.extend([item for item in nsw.split('/') if item])
         space_list = []
         for nsw in slash_list:
-            space_list.extend(nsw.split(' '))
+            space_list.extend([item for item in nsw.split(' ') if item])
         underscore_list = []
         for nsw in space_list:
-            underscore_list.extend(nsw.split('_'))
+            underscore_list.extend([item for item in nsw.split('_') if item])
         mixedalnum_list = []
         for nsw in underscore_list:
-            mixedalnum_list.extend(mixedalnum_split(nsw))
+            mixedalnum_list.extend([item for item in mixedalnum_split(nsw)
+                                    if item])
         updown_list = []
         for nsw in mixedalnum_list:
-            updown_list.extend(split_updown(nsw))
+            updown_list.extend([item for item in split_updown(nsw) if item])
         mixedcase_list = []
         for nsw in updown_list:
-            mixedcase_list.extend(mixedcase_split(nsw))
+            mixedcase_list.extend([item for item in mixedcase_split(nsw)
+                                   if item])
         out.extend(mixedcase_list)
         split_dict.update(tag_SPLT(out))
     return split_dict
@@ -143,8 +145,6 @@ def mixedalnum_split(nsw):
     return out
 
 
-
-
 def mixedcase_split(nsw):
     """ Split tokens on transitions from upper- to lower- or lower- to
     upper-case.
@@ -170,7 +170,7 @@ def mixedcase_split(nsw):
                 else:
                     if cat == 'low':
                         pass
-                    elif nsw[i-1].isupper():
+                    elif nsw[i - 1].isupper():
                         cat = 'low'
                         pass
                     else:
