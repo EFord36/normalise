@@ -100,87 +100,102 @@ def split_updown(nsw):
     If neither group in wordlist, split before penultimate upper-case letter
     as default.
     """
-    m = updown_pattern.match(nsw)
-    if m:
-        if (m.group(2) + m.group(3)).lower() in wordlist:
-            return [m.group(1), m.group(2) + m.group(3)]
-        elif m.group(3) in wordlist:
-            return [m.group(1) + m.group(2), m.group(3)]
+    try:
+        m = updown_pattern.match(nsw)
+        if m:
+            if (m.group(2) + m.group(3)).lower() in wordlist:
+                return [m.group(1), m.group(2) + m.group(3)]
+            elif m.group(3) in wordlist:
+                return [m.group(1) + m.group(2), m.group(3)]
+            else:
+                return [m.group(1), m.group(2) + m.group(3)]
         else:
-            return [m.group(1), m.group(2) + m.group(3)]
-    else:
-        return [nsw]
+            return [nsw]
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 def mixedalnum_split(nsw):
     """ Split tokens on transitions from letters to numbers or numbers to
     letters.
     """
-    out = []
-    ind = 0
-    if nsw[0] in digits:
-        cat = 'num'
-    elif nsw[0].isalpha:
-        cat = 'let'
-    else:
-        cat = 'punc'
-    for i in range(1, len(nsw)):
-        if nsw[i] in digits:
-            if cat == 'num' or cat == 'punc':
-                pass
-            else:
-                out.append(nsw[ind:i])
-                cat = 'num'
-                ind = i
-        elif nsw[i].isalpha():
-            if cat == 'let' or cat == 'punc':
-                pass
-            else:
-                out.append(nsw[ind:i])
-                cat = 'let'
-                ind = i
+    try:
+        out = []
+        ind = 0
+        if nsw[0] in digits:
+            cat = 'num'
+        elif nsw[0].isalpha:
+            cat = 'let'
         else:
-            pass
-    out.append(nsw[ind:])
-    return out
+            cat = 'punc'
+        for i in range(1, len(nsw)):
+            if nsw[i] in digits:
+                if cat == 'num' or cat == 'punc':
+                    pass
+                else:
+                    out.append(nsw[ind:i])
+                    cat = 'num'
+                    ind = i
+            elif nsw[i].isalpha():
+                if cat == 'let' or cat == 'punc':
+                    pass
+                else:
+                    out.append(nsw[ind:i])
+                    cat = 'let'
+                    ind = i
+            else:
+                pass
+        out.append(nsw[ind:])
+        return out
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 def mixedcase_split(nsw):
     """ Split tokens on transitions from upper- to lower- or lower- to
     upper-case.
     """
-    if nsw.isalpha():
-        if nsw.istitle():
-            return [nsw]
-        else:
-            out = []
-            ind = 0
-            if nsw[0].isupper():
-                cat = 'up'
+    try:
+        if nsw.isalpha():
+            if nsw.istitle():
+                return [nsw]
             else:
-                cat = 'low'
-            for i in range(1, len(nsw)):
-                if nsw[i].isupper():
-                    if cat == 'up':
-                        pass
-                    else:
-                        out.append(nsw[ind:i])
-                        cat = 'up'
-                        ind = i
+                out = []
+                ind = 0
+                if nsw[0].isupper():
+                    cat = 'up'
                 else:
-                    if cat == 'low':
-                        pass
-                    elif nsw[i - 1].isupper():
-                        cat = 'low'
-                        pass
+                    cat = 'low'
+                for i in range(1, len(nsw)):
+                    if nsw[i].isupper():
+                        if cat == 'up':
+                            pass
+                        else:
+                            out.append(nsw[ind:i])
+                            cat = 'up'
+                            ind = i
                     else:
-                        out.append(nsw[ind:i])
-                        cat = 'low'
-                        ind = i
-            out.append(nsw[ind:])
-            return out
-    else:
-        return [nsw]
+                        if cat == 'low':
+                            pass
+                        elif nsw[i - 1].isupper():
+                            cat = 'low'
+                            pass
+                        else:
+                            out.append(nsw[ind:i])
+                            cat = 'low'
+                            ind = i
+                out.append(nsw[ind:])
+                return out
+        else:
+            return [nsw]
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 hyphen_pattern = re.compile('''
