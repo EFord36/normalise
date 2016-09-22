@@ -24,7 +24,8 @@ with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
-brown_common = {word: freq for word, freq in fd(brown).most_common(5000)[100:]}
+brown_common = {word: log(1161192 / freq) for
+                word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
 
 
@@ -97,7 +98,7 @@ def expand_EXPN(nsw, i, text):
                         freq = brown_common[c]
                     else:
                         freq = 0
-                    if freq > best:
+                    if freq < best:
                         best = freq
                         exp = c
             else:
@@ -142,7 +143,7 @@ def maximum_overlap(w, i, text):
                 freq = brown_common[c]
             else:
                 freq = 0
-            if freq > best:
+            if freq < best:
                 best = freq
                 curr = c
             elif freq == best and len(tag_matches(i, text)) == 1:
