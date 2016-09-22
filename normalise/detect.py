@@ -14,6 +14,7 @@ from nltk.corpus import nps_chat
 from nltk.corpus import brown
 from nltk.corpus import names
 from normalise.data.contraction_list import contractions
+from normalise.data.tech_words import tech_words
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -24,7 +25,7 @@ if __name__ == '__main__':
                    if len(w) > 4 and w.isalpha()}
     names_lower = {w.lower() for w in names.words()}
     words_lower = {w.lower() for w in words.words('en') if len(w) > 1}
-    wordlist = brown_lower | names_lower | words_lower | {'I', 'i', 'a', 'A'}
+    wordlist = brown_lower | names_lower | words_lower | set(tech_words) | {'I', 'i', 'a', 'A'}
     word_tokenized_lowered = [w.lower() if w.lower() in wordlist
                               else w for w in word_tokenized]
     word_tokenized = list(word_tokenized)
