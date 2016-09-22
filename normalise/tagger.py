@@ -9,6 +9,8 @@ from __future__ import division, print_function, unicode_literals
 import re
 import pickle
 
+from normalise.data.measurements import meas_dict
+
 with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
 
@@ -35,6 +37,8 @@ def tagify(dic):
                len(it) <= 3 or (it[-1] == 's' and not
                mixedcase_pattern.match(it[:-1])))):
                     out.update({ind: (it, 'ALPHA')})
+        elif it in meas_dict:
+            out.update({ind: (it, 'ALPHA')})
         elif is_url(it) or hashtag_pattern.match(it):
             out.update({ind: (it, 'MISC')})
         elif looks_splitty(it):
@@ -75,6 +79,10 @@ def is_digbased(w):
         return is_digbased(w[1:])
     elif w[0] == "'" and w[1:].isdigit():
         return True
+    elif w[0] == '+':
+        return is_digbased(w[1:])
+    elif w[-1] == '+':
+        return is_digbased(w[:-1])
     for lt in w:
         if not lt.isdigit() and lt not in ['/', '.', ',',
                                            '-', '–', '%',
