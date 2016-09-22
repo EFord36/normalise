@@ -170,6 +170,9 @@ def mixedcase_split(nsw):
                 else:
                     if cat == 'low':
                         pass
+                    elif nsw[i-1].isupper():
+                        cat = 'low'
+                        pass
                     else:
                         out.append(nsw[ind:i])
                         cat = 'low'
