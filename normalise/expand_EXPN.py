@@ -23,6 +23,9 @@ with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
 with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
+with open('../normalise/data/sig_dict.pickle', mode='rb') as file:
+    sig_dict = pickle.load(file)
+
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
                 word, freq in fd(brown).most_common(5000)[100:]}
@@ -178,6 +181,8 @@ def find_matches(word):
 
 
 def gen_signature(word):
+    if word in gen_signature.dict:
+        return gen_signature.dict[word]
     inds = find_matches(word)
     signature = defaultdict(int)
     for i in inds:
@@ -199,8 +204,10 @@ def gen_signature(word):
             if define:
                         sig.update([w for w in wt(define)
                                    if w not in stopwords.words('english')])
+    gen_signature.dict[word] = sig
     return sig
 
+gen_signature.dict = sig_dict
 
 def gen_context(i, text):
     ind = i
