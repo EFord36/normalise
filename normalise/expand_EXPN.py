@@ -24,8 +24,7 @@ with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
-brown_common = {word: log(1161192 / freq) for
-                word, freq in fd(brown).most_common(5000)[100:]}
+brown_common = {word: freq for word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
 
 
