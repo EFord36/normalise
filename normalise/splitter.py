@@ -10,7 +10,7 @@ from __future__ import division, print_function, unicode_literals
 import re
 import pickle
 
-from normalise.tag1 import tag1, NSWs, is_digbased, only_alpha
+from normalise.tagger import tagify, NSWs, is_digbased, only_alpha
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -18,7 +18,7 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 if __name__ == "__main__":
-    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tag1(NSWs).items()
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagify(NSWs).items()
                  if tag == 'SPLT'}
 
 
@@ -72,7 +72,7 @@ def split(dic):
     return split_dict
 
 
-def retag1(dic):
+def retagify(dic):
     """ Retag each part of a SPLT token as 'SPLT-ALPHA', 'SPLT-NUMB' or
     'SPLT-MISC'.
     """
@@ -114,32 +114,35 @@ def mixedalnum_split(nsw):
     """ Split tokens on transitions from letters to numbers or numbers to
     letters.
     """
-    if nsw.isalnum():
-        out = []
-        ind = 0
-        if nsw[0] in digits:
-            cat = 'num'
-        else:
-            cat = 'let'
-        for i in range(1, len(nsw)):
-            if nsw[i] in digits:
-                if cat == 'num':
-                    pass
-                else:
-                    out.append(nsw[ind:i])
-                    cat = 'num'
-                    ind = i
-            else:
-                if cat == 'let':
-                    pass
-                else:
-                    out.append(nsw[ind:i])
-                    cat = 'let'
-                    ind = i
-        out.append(nsw[ind:])
-        return out
+    out = []
+    ind = 0
+    if nsw[0] in digits:
+        cat = 'num'
+    elif nsw[0].isalpha:
+        cat = 'let'
     else:
-        return [nsw]
+        cat = 'punc'
+    for i in range(1, len(nsw)):
+        if nsw[i] in digits:
+            if cat == 'num' or cat == 'punc':
+                pass
+            else:
+                out.append(nsw[ind:i])
+                cat = 'num'
+                ind = i
+        elif nsw[i].isalpha():
+            if cat == 'let' or cat == 'punc':
+                pass
+            else:
+                out.append(nsw[ind:i])
+                cat = 'let'
+                ind = i
+        else:
+            pass
+    out.append(nsw[ind:])
+    return out
+
+
 
 
 def mixedcase_split(nsw):
@@ -166,6 +169,9 @@ def mixedcase_split(nsw):
                         ind = i
                 else:
                     if cat == 'low':
+                        pass
+                    elif nsw[i-1].isupper():
+                        cat = 'low'
                         pass
                     else:
                         out.append(nsw[ind:i])

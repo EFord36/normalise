@@ -10,11 +10,11 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
-from normalise.tag1 import tag1, is_digbased, acr_pattern
+from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
-from normalise.splitter import split, retag1
-from normalise.measurements import meas_dict, meas_dict_pl
-from normalise.element_dict import element_dict
+from normalise.splitter import split, retagify
+from normalise.data.measurements import meas_dict, meas_dict_pl
+from normalise.data.element_dict import element_dict
 
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
@@ -32,7 +32,7 @@ with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
 if __name__ == "__main__":
-    tagged = tag1(NSWs)
+    tagged = tagify(NSWs)
 
     ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                   if tag == 'ALPHA'}
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                  if tag == 'SPLT'}
 
     splitted = split(SPLT_dict)
-    retagged = retag1(splitted)
+    retagged = retagify(splitted)
     retagged_ALPHA_dict = {ind: (nsw, tag)
                            for ind, (nsw, tag) in retagged.items()
                            if tag == 'SPLT-ALPHA'}
@@ -118,15 +118,18 @@ def seed_features(item, context):
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
            (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
+           ((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
+           or (nsw.endswith("s'") and nsw[:-2].istitle()),
            (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
             and (nsw.lower() in wordlist
             or (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
             and nsw not in ampm),
            triple_rep(nsw) and len(nsw) > 3,
            bool(acr_pattern.match(nsw) and nsw not in meas_dict),
-           nsw.islower() and len(nsw) > 3,
+           nsw.isalpha() and nsw.islower() and len(nsw) > 3,
            nsw.endswith('s') and nsw[:-1].isupper(),
-           nsw in element_dict
+           nsw in element_dict,
+           nsw.isalpha and nsw.islower() and len(nsw) > 2
            ]
     return out
 
@@ -189,6 +192,9 @@ def seed(dict_tup, text):
         return 2
     elif nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw):
         return 3
+    elif (((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
+           or (nsw.endswith("s'") and nsw[:-2].istitle())):
+               return 3
     elif nsw in element_dict:
         return 1
     elif (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
@@ -198,12 +204,14 @@ def seed(dict_tup, text):
             return 3
     elif triple_rep(nsw) and len(nsw) > 3:
         return 3
-    elif nsw.islower() and len(nsw) > 3:
+    elif nsw.isalpha() and nsw.islower() and len(nsw) > 3:
         return 3
     elif acr_pattern.match(nsw) and nsw not in meas_dict:
         return 2
     elif len(nsw) == 1:
         return 2
+    elif nsw.isalpha and nsw.islower() and len(nsw) > 2:
+        return 3
     else:
         return -1
 

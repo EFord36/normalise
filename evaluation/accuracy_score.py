@@ -12,10 +12,10 @@ recall_score)
 
 from context import normalise
 from gold_standard_dict import gold_standard_dict, gold_standard_tagged
-from normalise.tag1 import tag1
+from normalise.tagger import tagify
 
 # Tag gold standard NSW tokens, return dictionary of predicted tags.
-gold_standard_predicted = tag1(gold_standard_dict)
+gold_standard_predicted = tagify(gold_standard_dict)
 
 def predicted_tags():
     """Return list of predicted tags"""

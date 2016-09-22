@@ -9,10 +9,10 @@ from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
-from normalise.abbrev_dict import states
+from normalise.data.abbrev_dict import states
 from normalise.splitter import split
-from normalise.tag1 import is_digbased
-from normalise.measurements import meas_dict, meas_dict_pl
+from normalise.tagger import is_digbased
+from normalise.data.measurements import meas_dict, meas_dict_pl
 
 with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
@@ -22,6 +22,9 @@ with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
 
 with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
+
+with open('../normalise/data/sig_dict.pickle', mode='rb') as file:
+    sig_dict = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
@@ -98,7 +101,7 @@ def expand_EXPN(nsw, i, text):
                         freq = brown_common[c]
                     else:
                         freq = 0
-                    if freq > best:
+                    if freq < best:
                         best = freq
                         exp = c
             else:
@@ -143,7 +146,7 @@ def maximum_overlap(w, i, text):
                 freq = brown_common[c]
             else:
                 freq = 0
-            if freq > best:
+            if freq < best:
                 best = freq
                 curr = c
             elif freq == best and len(tag_matches(i, text)) == 1:
@@ -178,6 +181,8 @@ def find_matches(word):
 
 
 def gen_signature(word):
+    if word in gen_signature.dict:
+        return gen_signature.dict[word]
     inds = find_matches(word)
     signature = defaultdict(int)
     for i in inds:
@@ -199,8 +204,10 @@ def gen_signature(word):
             if define:
                         sig.update([w for w in wt(define)
                                    if w not in stopwords.words('english')])
+    gen_signature.dict[word] = sig
     return sig
 
+gen_signature.dict = sig_dict
 
 def gen_context(i, text):
     ind = i
@@ -301,6 +308,9 @@ def tag_matches(i, text):
         for (cand, tags) in tag_cands_univ(abbrev):
             if true_tag_univ in tags:
                 matches += [cand]
+    if not matches and len(tag_cands_univ(abbrev)) == 1:
+        if tag_cands_univ(abbrev)[0][1] == tuple():
+            return [tag_cands_univ(abbrev)[0][0]]
     if len(matches) <= 10:
         return matches
     else:

@@ -187,16 +187,20 @@ def expand_NRANGE(n):
         if range_pattern.match(n):
             m = range_pattern.match(n)
             str = ''
-            if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+            if m.group(1).isdigit() and m.group(3).isdigit():
                 if 1800 <= int(m.group(1)) < 2050:
                     str += expand_NYER(m.group(1))
+                else:
+                    str += expand_NUM(m.group(1))
             else:
                 str += expand_NUM(m.group(1))
             if m.group(2) in ['/', '-', '–']:
                 str += ' to '
-                if isinstance(m.group(1), int) and isinstance(m.group(3), int):
+                if m.group(1).isdigit() and m.group(3).isdigit():
                     if 1800 <= int(m.group(3)) < 2050:
                         str += expand_NYER(m.group(3))
+                    else:
+                        str += expand_NUM(m.group(3))
                 else:
                     str += expand_NUM(m.group(3))
             return str
@@ -240,7 +244,7 @@ def expand_ordinal(n):
 
         ones_O = [
                   "zero", "first", "second", "third", "fourth", "fifth", "sixth",
-                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelveth",
+                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelfth",
                   "thirteenth", "fourteenth", "fifteenth", "sixteenth",
                   "seventeenth", "eighteenth", "nineteenth"
                   ]
@@ -813,7 +817,7 @@ def expand_NDATE(w):
 
 def expand_PRCT(w):
     try:
-        if '-' in w:
+        if '-' or '–' in w:
             return expand_NRANGE(w[:-1]) + " percent"
         elif '.' in w:
             m = percent_pattern2.match(w)
@@ -845,24 +849,51 @@ def expand_PRCT(w):
 
 def expand_NSCI(w):
     try:
-        m = coord_pattern.match(w)
-        exp = ''
-        if m.group(1):
-            exp += expand_NUM(m.group(1)[:-1]) + " degrees, "
-        if m.group(2):
-            exp += expand_NUM(m.group(2)[:-1]) + " minutes, "
-        if m.group(3):
-            exp += expand_NUM(m.group(3)[:-1]) + " seconds, "
-        if m.group(4):
-            if m.group(4) == "N":
-                exp += "North"
-            if m.group(4) == "S":
-                exp += "South"
-            if m.group(4) == "W":
-                exp += "West"
-            if m.group(4) == "E":
-                exp += "East"
-        return exp
+        if coord_pattern.match(w):
+            m = coord_pattern.match(w)
+            exp = ''
+            if m.group(1):
+                exp += expand_NUM(m.group(1)[:-1]) + " degrees"
+                if m.group(2):
+                    exp += ", "
+            if m.group(2):
+                exp += expand_NUM(m.group(2)[:-1]) + " minutes"
+                if m.group(3):
+                    exp += ", "
+            if m.group(3):
+                if m.group(3).isdigit():
+                    exp += expand_NUM(m.group(3)) + " seconds"
+                else:
+                    exp += expand_NUM(m.group(3)[:-1]) + " seconds"
+                if m.group(4):
+                    exp += ", "
+            if m.group(4):
+                if m.group(4) == "N":
+                    exp += "North"
+                if m.group(4) == "S":
+                    exp += "South"
+                if m.group(4) == "W":
+                    exp += "West"
+                if m.group(4) == "E":
+                    exp += "East"
+            return exp
+        elif feet_pattern.match(w):
+            m = feet_pattern.match(w)
+            exp = ''
+            if m.group(1):
+                if m.group(2):
+                    if m.group(2).startswith("."):
+                        exp += expand_NUM(m.group(1)[:-1]) + " "
+                        exp += expand_NUM(m.group(2)) + " feet"
+                    else:
+                        exp += expand_NUM(m.group(1)[:-1]) + " foot "
+                        if m.group(2).isdigit():
+                            exp += expand_NUM(m.group(2)) + " inches"
+                        else:
+                            exp += expand_NUM(m.group(2)[:-1]) + " inches"
+                else:
+                    exp += expand_NUM(m.group(1)) + " foot"
+            return exp
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
@@ -930,16 +961,25 @@ coord_pattern = re.compile('''
 ([0-9]+
 \.?
 [0-9]*
-°)?
+°)
 ([0-9]+
 \.?
 [0-9]*
-[\'|\’])?
+[\'|\’|′])?
 ([0-9]+
 \.?
 [0-9]*
-["|″])?
+["|″]?)?
 ([N|S|E|W])?
+$
+''', re.VERBOSE)
+
+feet_pattern = re.compile('''
+([0-9]+
+[\'|\’|′])
+(\.?
+[0-9]+
+["|″]?)?
 $
 ''', re.VERBOSE)
 
