@@ -817,7 +817,7 @@ def expand_NDATE(w):
 
 def expand_PRCT(w):
     try:
-        if '-' or '–' in w:
+        if '-' in w or '–' in w:
             return expand_NRANGE(w[:-1]) + " percent"
         elif '.' in w:
             m = percent_pattern2.match(w)
