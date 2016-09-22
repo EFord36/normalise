@@ -244,7 +244,7 @@ def expand_ordinal(n):
 
         ones_O = [
                   "zero", "first", "second", "third", "fourth", "fifth", "sixth",
-                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelveth",
+                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelfth",
                   "thirteenth", "fourteenth", "fifteenth", "sixteenth",
                   "seventeenth", "eighteenth", "nineteenth"
                   ]
