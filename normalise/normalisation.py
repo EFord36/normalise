@@ -88,7 +88,7 @@ def tokenize_basic(text):
         else:
             out.append(guess[i])
     if guess[-1].isalpha():
-        out.append(guess[-1])
+        out.append(guess[i])
     elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
         out.append(guess[-1][:-1])
         out.append('.')
