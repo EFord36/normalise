@@ -66,12 +66,16 @@ def expand_EXPN(nsw, i, text):
         if w.lower() in abbrevs:
             cands = abbrevs[w.lower()]
             true_tag = abbrev_tag(i, text)
+            true_tag_univ = abbrev_tag_univ(i, text)
+            if len(cands) == 1:
+                cand = cands[0]
+                if pos_tag_dict_univ[cand.lower()] in [true_tag_univ, tuple()]:
+                    return cand
             matches = []
             for cand in cands:
                 if true_tag in pos_tag_dict[cand.lower()]:
                     matches += [cand]
             if not matches:
-                true_tag_univ = abbrev_tag_univ(i, text)
                 for cand in cands:
                     if true_tag_univ in pos_tag_dict_univ[cand.lower()]:
                         matches += [cand]
