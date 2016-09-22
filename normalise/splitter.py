@@ -114,32 +114,35 @@ def mixedalnum_split(nsw):
     """ Split tokens on transitions from letters to numbers or numbers to
     letters.
     """
-    if nsw.isalnum():
-        out = []
-        ind = 0
-        if nsw[0] in digits:
-            cat = 'num'
-        else:
-            cat = 'let'
-        for i in range(1, len(nsw)):
-            if nsw[i] in digits:
-                if cat == 'num':
-                    pass
-                else:
-                    out.append(nsw[ind:i])
-                    cat = 'num'
-                    ind = i
-            else:
-                if cat == 'let':
-                    pass
-                else:
-                    out.append(nsw[ind:i])
-                    cat = 'let'
-                    ind = i
-        out.append(nsw[ind:])
-        return out
+    out = []
+    ind = 0
+    if nsw[0] in digits:
+        cat = 'num'
+    elif nsw[0].isalpha:
+        cat = 'let'
     else:
-        return [nsw]
+        cat = 'punc'
+    for i in range(1, len(nsw)):
+        if nsw[i] in digits:
+            if cat == 'num' or cat == 'punc':
+                pass
+            else:
+                out.append(nsw[ind:i])
+                cat = 'num'
+                ind = i
+        elif nsw[i].isalpha():
+            if cat == 'let' or cat == 'punc':
+                pass
+            else:
+                out.append(nsw[ind:i])
+                cat = 'let'
+                ind = i
+        else:
+            pass
+    out.append(nsw[ind:])
+    return out
+
+
 
 
 def mixedcase_split(nsw):
