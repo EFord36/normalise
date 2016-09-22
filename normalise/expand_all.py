@@ -79,7 +79,9 @@ def expand_PROF(w):
 
 def expand_WDLK(word):
     try:
-        if word in wordlist:
+        if word.lower() in wordlist:
+            return word
+        elif word[0].isupper() and word[1:].islower():
             return word
         elif triple_rep(word):
             return expand_FNSP(word)
