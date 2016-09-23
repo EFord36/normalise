@@ -125,6 +125,9 @@ def tokenize_basic(text):
             out.append(guess[i])
     if guess[-1].isalpha():
         out.append(guess[-1])
+    elif guess[-1][-1] == '.': # to be improved
+        out.append(guess[-1][:-1]) # to be improved
+        out.append('.') # to be improved
     elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
         out.append(guess[-1][:-1])
         out.append('.')
