@@ -148,14 +148,11 @@ def standardise(text, tokenizer=tokenize_basic, verbose=True):
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            insert(tokenizer(text), verbose=verbose)
-            return insert(tokenizer(text))
+            return insert(tokenizer(text), verbose=verbose)
         else:
-            insert(tokenizer(text), verbose=verbose)
-            return insert(tokenizer(text))
+            return insert(tokenizer(text), verbose=verbose)
     else:
-        insert(text, verbose=verbose)
-        return insert(text)
+        return insert(text, verbose=verbose)
 
 
 def insert(text, verbose=True):
