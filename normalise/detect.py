@@ -7,6 +7,7 @@ Created on Mon Jul 11 13:54:25 2016
 
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import pickle
 import nltk
 from nltk.corpus import words
@@ -71,11 +72,18 @@ def ident_NSW(w):
             and not (w.lower() in contractions))
 
 
-def create_NSW_dict(text):
+def create_NSW_dict(text, verbose=True):
     "Create dictionary of NSWs in text: keys are indices, values NSWs"
     out = {}
     for i in range(len(text)):
+        if verbose:
+            sys.stdout.write("\r{} found".format(len(out)))
+            sys.stdout.flush()
         w = text[i]
         if ident_NSW(w):
             out[i] = w
+    if verbose:
+        sys.stdout.write("\r{} found".format(len(out)))
+        sys.stdout.flush()
+        print("\n")
     return out

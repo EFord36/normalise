@@ -25,9 +25,16 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 names_lower = {w.lower() for w in names.words()}
 
 
-def normalise(text):
-    NSWs = create_NSW_dict(text)
-    tagged = tagify(NSWs)
+def normalise(text, verbose=True):
+    if verbose:
+        print("\nCREATING NSW DICTIONARY")
+        print("-----------------------\n")
+
+    NSWs = create_NSW_dict(text, verbose=verbose)
+    if verbose:
+        print("TAGGING NSWs")
+        print("------------\n")
+    tagged = tagify(NSWs, verbose=verbose)
     ALPHA_dict = {}
     NUMB_dict = {}
     MISC_dict = {}
@@ -42,8 +49,14 @@ def normalise(text):
             MISC_dict.update((item,))
         elif tag == 'SPLT':
             SPLT_dict.update((item,))
-    splitted = split(SPLT_dict)
-    retagged = retagify(splitted)
+    if verbose:
+        print("SPLITTING NSWs")
+        print("--------------\n")
+    splitted = split(SPLT_dict, verbose=verbose)
+    if verbose:
+        print("RETAGGING SPLIT NSWs")
+        print("--------------------\n")
+    retagged = retagify(splitted, verbose=verbose)
     for item in retagged.items():
         tag = item[1][1]
         if tag == 'SPLT-ALPHA':
@@ -52,12 +65,30 @@ def normalise(text):
             NUMB_dict.update((item,))
         elif tag == 'SPLT-MISC':
             MISC_dict.update((item,))
-    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text)
-    tagged_NUMB = run_clfNUMB(NUMB_dict, text)
-    tagged_MISC = tag_MISC(MISC_dict)
-    expanded_ALPHA = expand_all(tagged_ALPHA, text)
-    expanded_NUMB = expand_all(tagged_NUMB, text)
-    expanded_MISC = expand_all(tagged_MISC, text)
+    if verbose:
+        print("CLASSIFYING ALPHABETIC NSWs")
+        print("---------------------------\n")
+    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=verbose)
+    if verbose:
+        print("CLASSIFYING NUMERIC NSWs")
+        print("------------------------\n")
+    tagged_NUMB = run_clfNUMB(NUMB_dict, text, verbose=verbose)
+    if verbose:
+        print("CLASSIFYING MISCELLANEOUS NSWs")
+        print("------------------------------\n")
+    tagged_MISC = tag_MISC(MISC_dict, verbose=verbose)
+    if verbose:
+        print("EXPANDING ALPHABETIC NSWs")
+        print("-------------------------\n")
+    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose)
+    if verbose:
+        print("EXPANDING NUMERIC NSWs")
+        print("----------------------\n")
+    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose)
+    if verbose:
+        print("EXPANDING MISCELLANEOUS NSWs")
+        print("----------------------------\n")
+    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
 
@@ -100,21 +131,26 @@ def tokenize_basic(text):
     return out
 
 
-def standardise(text, tokenizer=tokenize_basic):
+def standardise(text, tokenizer=tokenize_basic, verbose=True):
     if type(text) == str:
         if tokenizer == tokenize_basic:
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            return insert(tokenizer(text))
+            insert(tokenizer(text), verbose=verbose)
+            return None # insert(tokenizer(text))
         else:
-            return insert(tokenizer(text))
+            insert(tokenizer(text), verbose=verbose)
+            return None # insert(tokenizer(text))
     else:
-        return insert(text)
+        insert(text, verbose=verbose)
+        return None # insert(text)
 
 
-def insert(text):
-    expanded_ALPHA, expanded_NUMB, expanded_MISC = normalise(text)
+def insert(text, verbose=True):
+    (expanded_ALPHA,
+    expanded_NUMB,
+    expanded_MISC) = normalise(text, verbose=verbose)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):

@@ -217,7 +217,7 @@ def gen_context(i, text):
         ind = int(i)
         split_token = text[ind]
         del text[ind]
-        parts = split({ind: (split_token, 'SPLT')})
+        parts = split({ind: (split_token, 'SPLT')}, verbose=False)
         for it in sorted(parts, reverse=True):
             text.insert(ind, parts[it][0])
     start = ind
@@ -267,7 +267,8 @@ def abbrev_tag(i, text):
             if text[i] == cand:
                 return tag
         else:
-            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+            if split({int(i): (text[int(i)], 'SPLT')},
+                     verbose=False)[i][0] == cand:
                 return tag
 
 
@@ -289,7 +290,8 @@ def abbrev_tag_univ(i, text):
             if text[i] == cand:
                 return tag
         else:
-            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+            if split({int(i): (text[int(i)], 'SPLT')},
+                     verbose=False)[i][0] == cand:
                 return tag
 
 
@@ -298,7 +300,7 @@ def tag_matches(i, text):
     if isinstance(i, int):
         abbrev = text[i]
     else:
-        abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
+        abbrev = split({int(i): (text[int(i)], 'SPLT')}, verbose=False)[i][0]
     true_tag = abbrev_tag(i, text)
     for (cand, tags) in tag_cands(abbrev):
         if true_tag in tags:

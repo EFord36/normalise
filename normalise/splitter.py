@@ -7,6 +7,7 @@ Created on Tue Jul 12 10:54:54 2016
 
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import re
 import pickle
 
@@ -18,7 +19,8 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 if __name__ == "__main__":
-    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagify(NSWs).items()
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag)
+                 in tagify(NSWs, verbose=False).items()
                  if tag == 'SPLT'}
 
 
@@ -35,10 +37,14 @@ def tag_SPLT(lst):
     return out
 
 
-def split(dic):
+def split(dic, verbose=True):
     """ Form dictionary of SPLT tokens."""
     split_dict = {}
+    done = 0
     for ind, (nsw, tag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} split".format(done, len(dic)))
+            sys.stdout.flush()
         out = [ind]
         emph_list = []
         emph_match = emph_pattern.match(nsw)
@@ -71,15 +77,23 @@ def split(dic):
                                    if item])
         out.extend(mixedcase_list)
         split_dict.update(tag_SPLT(out))
+        done += 1
+    if verbose:
+        sys.stdout.write("\r{} of {} split".format(done, len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return split_dict
 
 
-def retagify(dic):
+def retagify(dic, verbose=True):
     """ Retag each part of a SPLT token as 'SPLT-ALPHA', 'SPLT-NUMB' or
     'SPLT-MISC'.
     """
     out = {}
     for ind, (it, tag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} retagged".format(len(out), len(dic)))
+            sys.stdout.flush()
         if len(it) > 100:
             out.update({ind: (it, tag + 'MISC')})
         if is_digbased(it):
@@ -91,6 +105,10 @@ def retagify(dic):
                     out.update({ind: (it, tag + 'ALPHA')})
         else:
             out.update({ind: (it, tag + 'MISC')})
+    if verbose:
+        sys.stdout.write("\r{} of {} retagged".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 

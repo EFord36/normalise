@@ -25,7 +25,7 @@ def create_ALPHA_ex():
     with open('gs_alphas', mode='w', encoding='utf-8') as file:
         file.write(str(ALPHA_ex))
 
-gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text)
+gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text, verbose=False)
 
 
 def gold_vs_pred_tuple():
