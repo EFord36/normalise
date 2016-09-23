@@ -96,7 +96,9 @@ def tokenize_basic(text):
     guess = text.split(' ')
     out = []
     for i in range(len(guess) - 1):
-        if guess[i].isalpha():
+        if not guess[i]:
+            pass
+        elif guess[i].isalpha():
             out.append(guess[i])
         elif guess[i][-1] == '.' and guess[i][:-1].isalpha():
             following = guess[i + 1]
