@@ -11,7 +11,7 @@ import pickle
 from nltk.corpus import names
 
 from normalise.detect import create_NSW_dict
-from normalise.tagger import tagify
+from normalise.tagger import tagify, is_digbased
 from normalise.splitter import split, retagify
 from normalise.class_ALPHA import run_clfALPHA
 from normalise.class_NUMB import run_clfNUMB, gen_frame
@@ -123,6 +123,9 @@ def tokenize_basic(text):
     if guess[-1].isalpha():
         out.append(guess[-1])
     elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
+        out.append(guess[-1][:-1])
+        out.append('.')
+    elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
         out.append(guess[-1][:-1])
         out.append('.')
     elif guess[-1].endswith((',', ':', ';')):
