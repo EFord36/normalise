@@ -52,7 +52,10 @@ def expand_all(dic, text, verbose=True):
 
 
 def expand_NONE(nsw):
-    return ''
+    if nsw == '&':
+        return 'and'
+    else:
+        return ''
 
 
 def expand_PROF(w):
