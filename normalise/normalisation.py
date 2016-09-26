@@ -18,7 +18,7 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 names_lower = {w.lower() for w in names.words()}
 
 
-def normalise(text, verbose=True):
+def list_NSWs(text, verbose=True):
     if verbose:
         print("\nCREATING NSW DICTIONARY")
         print("-----------------------\n")
@@ -136,7 +136,7 @@ def tokenize_basic(text):
     return out
 
 
-def standardise(text, tokenizer=tokenize_basic, verbose=True):
+def normalise(text, tokenizer=tokenize_basic, verbose=True):
     if type(text) == str:
         if tokenizer == tokenize_basic and verbose:
             print("NOTE: using basic tokenizer.\n"
