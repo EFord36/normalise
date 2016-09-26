@@ -94,43 +94,39 @@ def tokenize_basic(text):
             pass
         elif guess[i].isalpha():
             out.append(guess[i])
+        elif guess[i][0] in ['(', '[', '{']:
+            if guess[i][1] in [')', ']', '}']:
+                out.extend([guess[i][0], guess[i][1:-1], guess[i][-1]])
+            else:
+                out.extend([guess[i][0], guess[i][1:]])
+        elif guess[i][-1] in [')', ']', '}']:
+                out.extend([guess[i][:-1], guess[i][-1]])
         elif guess[i][-1] == '.' and guess[i][:-1].isalpha():
             following = guess[i + 1]
             if following.istitle() and following.lower() in wordlist:
                 if following.lower() in names_lower:
                     if guess[i][:-1] in wordlist:
-                        out.append(guess[i][:-1])
-                        out.append('.')
+                        out.extend([guess[i][:-1], '.'])
                     else:
                         out.append(guess[i])
                 else:
-                    out.append(guess[i][:-1])
-                    out.append('.')
+                    out.extend([guess[i][:-1], '.'])
             elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
-                out.append(guess[-1][:-1])
-                out.append('.')
+                out.extend([guess[-1][:-1], '.'])
             else:
                 out.append(guess[i])
         elif guess[i].endswith((',', ':', ';')):
-            out.append(guess[i][:-1])
-            out.append(guess[i][-1])
-
+            out.extend([guess[i][:-1], guess[i][-1]])
         else:
             out.append(guess[i])
     if guess[-1].isalpha():
         out.append(guess[-1])
-    elif guess[-1][-1] == '.': # to be improved
-        out.append(guess[-1][:-1]) # to be improved
-        out.append('.') # to be improved
     elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
-        out.append(guess[-1][:-1])
-        out.append('.')
+        out.extend([guess[-1][:-1], '.'])
     elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
-        out.append(guess[-1][:-1])
-        out.append('.')
+        out.extend([guess[-1][:-1], '.'])
     elif guess[-1].endswith((',', ':', ';')):
-        out.append(guess[-1][:-1])
-        out.append(guess[-1][-1])
+        out.extend([guess[-1][:-1], guess[-1][-1]])
     else:
         out.append(guess[-1])
     return out
