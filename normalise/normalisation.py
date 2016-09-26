@@ -113,8 +113,8 @@ def tokenize_basic(text):
                         out.append(guess[i])
                 else:
                     out.extend([guess[i][:-1], '.'])
-            elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
-                out.extend([guess[-1][:-1], '.'])
+            elif guess[i][-1] == '.' and is_digbased(guess[i][:-1]):
+                out.extend([guess[i][:-1], '.'])
             else:
                 out.append(guess[i])
         elif guess[i].endswith((',', ':', ';')):
