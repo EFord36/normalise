@@ -28,7 +28,7 @@ if __name__ == '__main__':
 # Conditions for identification of NSWs.
 def cond1(w):
     """ Return word if its lower-cased form is not in the wordlist."""
-    return w.lower() not in wordlist
+    return w.lower() not in wordlist or w == 'US'
 
 
 def cond2(w):
