@@ -1,45 +1,40 @@
-# normalise: a module for normalising text
+# normalise
 
-### Preparing for NLTK compatible release
-- [ ] Learn Cloudbees/Jenkins integrated testing framework
-- [ ] Learn Sphinx Markup for documentation
-- [ ] Learn relevant package structure to mirror NLTK
+> A module for normalising text. 
 
-### Pipeline
-- [ ] Tokenizer
-- [x] Detector
-- [x] Splitter
-- [ ] Taggers
-- [ ] Expansion
+<hr>
 
-### Taggers
-- [x] Tag into ALPHA, NUMB, MISC, SPLT
-- [x] Subtag SPLT tokens into SPLT-ALPHA, SPLT-NUMB, SPLT-MISC,
-- [x] Specific tagging with categories
+## Introduction
 
-### Expansion
+This module takes a text as input, and returns it in a fully normalised form, ie. expands everything that is not in a standard, readable format. Non-standard words (NSWs) are detected, classified and expanded. Examples of NSWs that are normalised include:
+* Numbers - percentages, dates, currency amounts, ranges, telephone numbers.
+* Abbreviations and acronyms.
+* Web addresses and hashtags.
 
-##### ALPHA
-- [x] EXPN
-- [x] LSEQ
-- [x] WDLK
 
-##### NUMB
-- [x] NUM
-- [x] NORD
-- [x] NRANGE
-- [ ] NTEL
-- [x] NDIG
-- [ ] NADDR
-- [x] NTIME
-- [ ] NDATE
-- [x] NYER
-- [x] MONEY
-- [x] PRCT
-- [ ] NSCI
+## Table of Contents
+* [Installation](#installation)
+* [Examples](#examples)
+* [Authors](#authors)
+* [License](#license)
+* [Acknowledgements](#acknows)
 
-##### MISC
-- [x] PROF
-- [ ] URL
-- [ ] HTAG
-- [x] NONE
+
+## <a name="installation"><a/>Installation
+
+## <a name="examples"><a/>Examples
+
+## <a name="authors"><a/>Authors
+
+* **Elliot Ford** - [EFord36](https://github.com/EFord36)
+* **Emma Flint** - [emmaflint27](https://github.com/emmaflint27)
+
+## <a name="license"><a/>License
+
+This project is licensed under the terms of the GNU General Public License.
+
+Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENSE.txt) for more information. 
+
+## <a name="acknows"><a/>Acknowledgements
+
+This project builds on the work described in Sproat et al (2001). 
