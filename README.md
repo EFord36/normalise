@@ -2,11 +2,10 @@
 
 > A module for normalising text. 
 
-<hr>
-
 ## Introduction
 
-This module takes a text as input, and returns it in a fully normalised form, ie. expands everything that is not in a standard, readable format. Non-standard words (NSWs) are detected, classified and expanded. Examples of NSWs that are normalised include:
+This module takes a text as input, and returns it in a fully normalised form, *ie.* expands everything that is not in a standard, readable format. Non-standard words (NSWs) are detected, classified and expanded. Examples of NSWs that are normalised include:
+
 * Numbers - percentages, dates, currency amounts, ranges, telephone numbers.
 * Abbreviations and acronyms.
 * Web addresses and hashtags.
@@ -14,7 +13,7 @@ This module takes a text as input, and returns it in a fully normalised form, ie
 
 ## Table of Contents
 * [Installation](#installation)
-* [Examples](#examples)
+* [Usage](#usage)
 * [Authors](#authors)
 * [License](#license)
 * [Acknowledgements](#acknows)
@@ -22,7 +21,65 @@ This module takes a text as input, and returns it in a fully normalised form, ie
 
 ## <a name="installation"><a/>Installation
 
-## <a name="examples"><a/>Examples
+To install the module (on Windows, Mac OS X, Linux, etc.) using pip:
+
+```
+$ pip install --upgrade pip setuptools
+
+$ pip install normalise
+```
+
+If `pip` installation fails, you can try `easy_install normalise`. 
+
+
+## <a name="usage"><a/>Usage
+
+Your input text can be a list of words, or a string. 
+
+To normalise your text, use the `normalise` function. This will return the text with NSWs replaced by their expansions:
+
+```python
+text = ["On", "the", "28", "Apr.", "2010", ",", "Dr.", "Banks", "bought", "a", "chair", "for", "£35", "."]
+
+normalise(text, verbose=True)
+
+Out: 
+['On',
+ 'the',
+ 'twenty-eighth of',
+ 'April',
+ 'twenty ten',
+ ',',
+ 'Doctor',
+ 'Banks',
+ 'bought',
+ 'a',
+ 'chair',
+ 'for',
+ 'thirty five pounds',
+ '.']
+```
+
+`verbose=True` displays the stages of the normalisation process, so you know where it's at. To turn this off, use `verbose=False`. 
+
+If your input is a string, you can use our basic tokenizer. For best results, input your own custom tokenizer.
+
+```python
+normalise(text, tokenizer=tokenize_basic, verbose=True)
+```
+
+In order to see a list of all NSWs in your text, along with their index, tags, and expansion, use the `list_NSWs` function:
+
+```python
+list_NSWs(text)
+
+Out:
+({3: ('Apr.', 'ALPHA', 'EXPN', 'April'),
+  6: ('Dr.', 'ALPHA', 'EXPN', 'Doctor')},
+ {2: ('28', 'NUMB', 'NORD', 'twenty-eighth of'),
+  4: ('2010', 'NUMB', 'NYER', 'twenty ten'),
+  12: ('£35', 'NUMB', 'MONEY', 'thirty five pounds')}
+ ```
 
 ## <a name="authors"><a/>Authors
 
@@ -37,4 +94,6 @@ Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENS
 
 ## <a name="acknows"><a/>Acknowledgements
 
-This project builds on the work described in Sproat et al (2001). 
+This project builds on the work described in [Sproat et al (2001)](http://www.cs.toronto.edu/~gpenn/csc2518/sproatetal01.pdf). 
+
+We would like to thank Andrew Caines and Paula Buttery for supervising us during this project. 
