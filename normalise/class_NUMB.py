@@ -298,7 +298,8 @@ def seed_features(item, context):
           or (context[3] in meas_dict or context[3] in meas_dict_pl)
           and nsw.isdigit()))),
           looks_datey(nsw, context),
-          (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'),
+          (len(nsw) == 11 and nsw.startswith('0')) or (nsw.startswith('+44')
+           and len(nsw) == 13),
           looks_rangey(nsw),
           (nsw.isdigit() and 1950 < int(nsw) < 2100
            and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
@@ -454,7 +455,8 @@ def seed(dict_tup, text):
         return 10
     elif looks_rangey(nsw):
         return 8
-    elif (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'):
+    elif (len(nsw) == 11 and nsw.startswith('0')) or (nsw.startswith('+44')
+          and len(nsw) == 13):
         return 9
     elif '.' in nsw or ',' in nsw:
         return 7
