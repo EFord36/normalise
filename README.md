@@ -1,4 +1,4 @@
-# normalise
+![Title Logo](logo.png)
 
 > A module for normalising text. 
 
