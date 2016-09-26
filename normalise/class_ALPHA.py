@@ -120,8 +120,9 @@ def seed_features(item, context):
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
            (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
-           ((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
-           or (nsw.endswith("s'") and nsw[:-2].istitle()),
+           (((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
+           or (nsw.endswith("s'") and nsw[:-2].istitle())
+           or (nsw.endswith("'s") and nsw[:-2].istitle())),
            (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
             and (nsw.lower() in wordlist
             or (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
