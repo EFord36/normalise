@@ -13,8 +13,11 @@ from normalise.data.tech_words import tech_words
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
+with open('../normalise/data/fake_data.pickle', mode='rb') as file:
+    fake_data = pickle.load(file)
+
 if __name__ == '__main__':
-    word_tokenized = brown.words() + nps_chat.words()
+    word_tokenized = brown.words() + nps_chat.words() + fake_data
     brown_lower = {w.lower() for w in brown.words()
                    if len(w) > 4 and w.isalpha()}
     names_lower = {w.lower() for w in names.words()}
