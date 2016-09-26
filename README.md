@@ -21,10 +21,9 @@ This module takes a text as input, and returns it in a fully normalised form, *i
 
 ## <a name="installation"><a/>Installation
 
-To install the module (on Windows, Mac OS X, Linux, etc.) using pip:
+To install the module (on Windows, Mac OS X, Linux, etc.) and to ensure that you have the latest version of pip and setuptools:
 
-```python
-# To ensure that you have the latest version of pip and setuptools:
+```
 $ pip install --upgrade pip setuptools
 
 $ pip install normalise
