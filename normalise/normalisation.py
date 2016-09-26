@@ -152,7 +152,7 @@ def normalise(text, tokenizer=tokenize_basic, verbose=True):
 def insert(text, verbose=True):
     (expanded_ALPHA,
     expanded_NUMB,
-    expanded_MISC) = normalise(text, verbose=verbose)
+    expanded_MISC) = list_NSWs(text, verbose=verbose)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
