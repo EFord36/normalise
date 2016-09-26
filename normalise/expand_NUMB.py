@@ -1,6 +1,8 @@
 import re
 
+from roman import romanNumeralPattern, fromRoman
 from normalise.class_NUMB import gen_frame
+
 
 def expand_fraction(n):
     """Expand fractions."""
@@ -217,6 +219,8 @@ def expand_NORD(dict_tup, text):
        Only if not already in text, eg. 'The 30th of April'."""
     try:
         ind, (nsw, tag, ntag) = dict_tup
+        if romanNumeralPattern.match(nsw):
+            return 'the ' + expand_NORD((ind, (str(fromRoman(nsw)), tag, ntag)), text)
         out = expand_ordinal(nsw)
         if gen_frame(dict_tup, text)[3] in months:
             out += ' of'
@@ -226,7 +230,7 @@ def expand_NORD(dict_tup, text):
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
-        return out
+        return dict_tup[1][0]
 
 
 def expand_ordinal(n):

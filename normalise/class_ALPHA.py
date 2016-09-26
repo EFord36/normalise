@@ -4,6 +4,7 @@ import pickle
 
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
+from roman import romanNumeralPattern
 
 from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
@@ -25,6 +26,9 @@ with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
 
 with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
     clf_ALPHA = pickle.load(file)
+
+with open('../normalise/data/names.pickle', mode='rb') as file:
+    names_lower = pickle.load(file)
 
 if __name__ == "__main__":
     tagged = tagify(NSWs, verbose=False)
@@ -79,9 +83,12 @@ def run_clfALPHA(dic, text, verbose=True):
         if verbose:
             sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
             sys.stdout.flush()
-        pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
-        ntag = int_tag_dict[pred_int]
-        out.update({ind: (nsw, tag, ntag)})
+        if romanNumeralPattern.match(nsw) and gen_frame((ind, (nsw, tag)), text)[1].lower() in names_lower:
+            out.update({ind: (nsw, 'NUMB', 'NORD')})
+        else:
+            pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
+            ntag = int_tag_dict[pred_int]
+            out.update({ind: (nsw, tag, ntag)})
     if verbose:
         sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
         sys.stdout.flush()

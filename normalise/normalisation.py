@@ -15,7 +15,8 @@ from normalise.expand_NUMB import bmoney
 with open('../normalise/data/wordlist.pickle', mode='rb') as file:
     wordlist = pickle.load(file)
 
-names_lower = {w.lower() for w in names.words()}
+with open('../normalise/data/names.pickle', mode='rb') as file:
+    names_lower = pickle.load(file)
 
 
 def list_NSWs(text, verbose=True):
