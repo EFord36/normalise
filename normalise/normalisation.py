@@ -25,6 +25,7 @@ def normalise(text, verbose=True):
 
     NSWs = create_NSW_dict(text, verbose=verbose)
     if verbose:
+        print("{} NSWs found\n".format(len(NSWs)))
         print("TAGGING NSWs")
         print("------------\n")
     tagged = tagify(NSWs, verbose=verbose)

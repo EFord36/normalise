@@ -67,16 +67,4 @@ def ident_NSW(w):
 
 def create_NSW_dict(text, verbose=True):
     "Create dictionary of NSWs in text: keys are indices, values NSWs"
-    out = {}
-    for i in range(len(text)):
-        if verbose:
-            sys.stdout.write("\r{} found".format(len(out)))
-            sys.stdout.flush()
-        w = text[i]
-        if ident_NSW(w):
-            out[i] = w
-    if verbose:
-        sys.stdout.write("\r{} found".format(len(out)))
-        sys.stdout.flush()
-        print("\n")
-    return out
+    return {i: text[i] for i in range(len(text)) if ident_NSW(text[i])}
