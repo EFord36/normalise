@@ -52,6 +52,8 @@ def expand_all(dic, text, verbose=True):
 
 
 def expand_NONE(nsw):
+    """For nsws tagged 'NONE', return 'and' if nsw is '&', otherwise return 
+       nothing."""
     if nsw == '&':
         return 'and'
     else:
@@ -60,7 +62,7 @@ def expand_NONE(nsw):
 
 def expand_PROF(w):
     try:
-        """Return 'original' rude word from asterisked FNSP."""
+        """Return 'original' rude word from asterisked 'WDLK'."""
         rude = ['ass', 'arse', 'asshole', 'balls', 'bitch', 'cunt',
                 'cock', 'crap', 'cum', 'damn' 'dick', 'fuck', 'motherfucker',
                 'pussy','shit', 'tits', 'twat', 'wank', 'wanker']
@@ -90,6 +92,7 @@ def expand_PROF(w):
 
 
 def expand_WDLK(word):
+    """Expand 'WDLK' tokens."""
     try:
         if word.lower() in wordlist:
             return word
@@ -144,6 +147,7 @@ def create_regexp(w):
 
 
 def expand_LSEQ(word):
+    """Expand 'LSEQ' tokens to a series of letters."""
     try:
         out = ''
         if word[0].isalpha():

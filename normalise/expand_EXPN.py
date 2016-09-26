@@ -33,6 +33,8 @@ words = [w for w, freq in fd(brown).most_common()]
 
 
 def expand_EXPN(nsw, i, text):
+    """Expand abbreviations to best possible match. If no close matches, 
+       return nsw."""
     try:
         if nsw in meas_dict:
             if isinstance(i, int):
@@ -127,6 +129,7 @@ def expand_EXPN(nsw, i, text):
 
 
 def maximum_overlap(w, i, text):
+    """Return the candidate expansion with the highest overlap."""
     best = 0
     current = []
     curr = ''
@@ -164,6 +167,8 @@ def maximum_overlap(w, i, text):
 
 
 def overlap(i, word, text):
+    """Return overlap between words in the context of the abbreviation and
+       words in the signatures generated for each candidate expansion."""
     overlap = 0
     sig = gen_signature(word)
     context = gen_context(i, text)
@@ -177,6 +182,7 @@ def overlap(i, word, text):
 
 
 def find_matches(word):
+    """Find examples of the candidate word in the Brown corpus."""
     lst1 = []
     for i in range(len(brown)):
         if brown[i] == word:
@@ -185,6 +191,9 @@ def find_matches(word):
 
 
 def gen_signature(word):
+    """Generate a signature for each candidate expansion, using contextual
+       information from the Brown corpus, as well as WordNet definitions and 
+       examples (if applicable)."""
     if word in gen_signature.dict:
         return gen_signature.dict[word]
     inds = find_matches(word)
@@ -217,6 +226,8 @@ def gen_signature(word):
 gen_signature.dict = sig_dict
 
 def gen_context(i, text):
+    """Generate context for the abbreviation - 4 words either side unless
+       sentence is too short."""
     ind = i
     context = []
     text = text[:]
@@ -257,11 +268,13 @@ def gen_context(i, text):
 
 
 def tag_sent(i, text):
+    """POS tag sentence (or context) containing abbreviation."""
     sent = gen_context(i, text)
     return pos_tag(sent)
 
 
 def tag_cands(abbrv):
+    """Tags candidate expansions of the abbreviaiton with POS."""
     tagged_cands = []
     for (cand, freq) in gen_best(abbrv):
         tagged_cands += [(cand, pos_tag_dict[cand])]
@@ -269,6 +282,7 @@ def tag_cands(abbrv):
 
 
 def abbrev_tag(i, text):
+    """Return POS tag for the abbreviation."""
     for (cand, tag) in tag_sent(i, text):
         if isinstance(i, int):
             if text[i] == cand:
@@ -280,11 +294,13 @@ def abbrev_tag(i, text):
 
 
 def tag_sent_univ(i, text):
+    """POS tag sentence using universal tagset."""
     sent = gen_context(i, text)
     return pos_tag(sent, tagset='universal')
 
 
 def tag_cands_univ(abbrv):
+    """Tags candidate expansions using universal tagset."""
     tagged_cands = []
     for (cand, freq) in gen_best(abbrv):
         tagged_cands += [(cand, pos_tag_dict_univ[cand])]
@@ -292,6 +308,7 @@ def tag_cands_univ(abbrv):
 
 
 def abbrev_tag_univ(i, text):
+    """Return POS tag for the abbreviation using universal tagset."""
     for (cand, tag) in tag_sent_univ(i, text):
         if isinstance(i, int):
             if text[i] == cand:
@@ -303,6 +320,8 @@ def abbrev_tag_univ(i, text):
 
 
 def tag_matches(i, text):
+    """Return candidate expansions whose POS tag matches the POS tag of the
+       abbreviation."""
     matches = []
     if isinstance(i, int):
         abbrev = text[i]
@@ -327,6 +346,7 @@ def tag_matches(i, text):
 
 
 def find_last_letter(w):
+    """Find last alphabetic character in a word."""
     if w[-1].isalpha():
         return w[-1]
     else:
@@ -334,6 +354,7 @@ def find_last_letter(w):
 
 
 def gen_candidates(word):
+    """Generate a list of candidate expansions given an abbreviation."""
     vowel_cands = []
     start_cands = []
     start_and_end_cands = []
@@ -369,6 +390,7 @@ def gen_candidates(word):
 
 
 def distance(abbrv, word):
+    """Calculate distance between abbreviation and potential expansion."""
     extras = [lt for lt in word if abbrv.count(lt) != word.count(lt)]
     count = 0
     for lt in extras:
@@ -380,6 +402,7 @@ def distance(abbrv, word):
 
 
 def gen_best(abbrv):
+    """Generate best expansions given abbreviation (up to 50)."""
     vowel_cands, start_and_end_cands, start_cands = gen_candidates(abbrv)
     vowel_freqs = sorted([(it, brown_common[it])
                          for it in vowel_cands

@@ -11,6 +11,7 @@ with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
 
 
 def expand_HTAG(word):
+    """Expand tokens tagged HTAG."""
     try:
         m = hashtag_pattern.match(word)
         string = m.group(2)
@@ -29,6 +30,7 @@ def expand_HTAG(word):
 
 
 def expand_URL(word):
+    """Expand tokens tagged URL."""
     try:
         starts = ["http://", "https://", "www."]
         starts_exp = ['', '', 'W W W dot']
