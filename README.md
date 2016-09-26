@@ -23,7 +23,8 @@ This module takes a text as input, and returns it in a fully normalised form, *i
 
 To install the module (on Windows, Mac OS X, Linux, etc.) using pip:
 
-```
+```python
+# To ensure that you have the latest version of pip and setuptools:
 $ pip install --upgrade pip setuptools
 
 $ pip install normalise
@@ -60,7 +61,7 @@ Out:
  '.']
 ```
 
-`verbose=True` displays the stages of the normalisation process, so you know where it's at. To turn this off, use `verbose=False`. 
+`verbose=True` displays the stages of the normalisation process, so you can monitor its progress. To turn this off, use `verbose=False`. 
 
 If your input is a string, you can use our basic tokenizer. For best results, input your own custom tokenizer.
 
