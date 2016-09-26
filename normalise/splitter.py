@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 12 10:54:54 2016
-
-@author: Elliot
-"""
-
 from __future__ import division, print_function, unicode_literals
 
 import sys

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 22 14:30:22 2016
-
-@author: emmaflint
-"""
-
 import re
 
 from normalise.class_NUMB import gen_frame

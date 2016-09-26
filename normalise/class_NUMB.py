@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 14 09:14:19 2016
-
-@author: Elliot
-"""
 import sys
 import re
 import pickle

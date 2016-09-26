@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 21 14:12:34 2016
-
-@author: emmaflint
-"""
-
 gs_ALPHA_dict = {                  
                   9215.1: ('up', 'SPLT-ALPHA'),
                   0: ('BBC', 'ALPHA'),
@@ -412,7 +405,7 @@ gs_ALPHA_dict = {
                   3504.1: ('environment', 'SPLT-ALPHA'),
                   1019: ('BBC', 'ALPHA')
                   }
-                
+
 gs_ALPHA_tagged = {
                   9215.1: ('up', 'SPLT-ALPHA', 'WDLK'),
                   0: ('BBC', 'ALPHA', 'LSEQ'),

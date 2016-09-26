@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep  1 15:18:06 2016
-
-@author: emmaflint
-"""
-
 from __future__ import division, print_function, unicode_literals
 
 import pickle
