@@ -14,6 +14,7 @@ This module takes a text as input, and returns it in a fully normalised form, *i
 ## Table of Contents
 * [Installation](#installation)
 * [Usage](#usage)
+* [Example](#example)
 * [Authors](#authors)
 * [License](#license)
 * [Acknowledgements](#acknows)
@@ -79,6 +80,52 @@ Out:
  {2: ('28', 'NUMB', 'NORD', 'twenty-eighth of'),
   4: ('2010', 'NUMB', 'NYER', 'twenty ten'),
   12: ('£35', 'NUMB', 'MONEY', 'thirty five pounds')}
+ ```
+ 
+## <a name="example"><a/>Example
+
+A further example demonstrating the expansion of more types of NSW (including abbreviations, spelling mistakes, percentage ranges, currency):
+
+```python
+text = ["On", "the", "13", "Feb.", "2007", ",", "Theresa", "May", "MP", "announced", 
+"on", "ITV", "News", "that", "the", "rate", "of", "childhod", "obesity", "had", "risen",
+"from", "7.3-9.6%", "in", "just", "3", "years", ",", "costing", "the", "Gov.", "£20m", "."]
+
+normalise(text, verbose=True)
+
+Out:
+['On',
+ 'the',
+ 'thirteenth of',
+ 'February',
+ 'two thousand and seven',
+ 'Theresa',
+ 'May',
+ 'M P',
+ 'announced',
+ 'on',
+ 'I T V',
+ 'News',
+ 'that',
+ 'the',
+ 'rate',
+ 'of',
+ 'childhood',
+ 'obesity',
+ 'had',
+ 'risen',
+ 'from',
+ 'seven point three to nine point six percent',
+ 'in',
+ 'just',
+ 'three',
+ 'years',
+ ',',
+ 'costing',
+ 'the',
+ 'government',
+ 'twenty million pounds',
+ '.']
  ```
 
 ## <a name="authors"><a/>Authors
