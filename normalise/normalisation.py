@@ -177,11 +177,3 @@ def insert(text, verbose=True):
                     final = final[1:]
                     out[rind] = final
     return out
-
-
-def rejoin(tokenized_text):
-    out = ''
-    for word in tokenized_text:
-        out += word
-        out += ' '
-    return out
