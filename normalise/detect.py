@@ -2,7 +2,7 @@ from __future__ import division, print_function, unicode_literals
 
 import sys
 import pickle
-import nltk
+from nltk import WordNetLemmatizer
 from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
@@ -33,7 +33,7 @@ def cond1(w):
 
 def cond2(w):
     """ Return word if its lemmatised form is not in the wordlist."""
-    wnl = nltk.WordNetLemmatizer()
+    wnl = WordNetLemmatizer()
     return wnl.lemmatize(w.lower()) not in wordlist
 
 
