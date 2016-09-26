@@ -1,3 +1,4 @@
+import sys
 import re
 import pickle
 
@@ -36,10 +37,17 @@ func_dict = {
              }
 
 
-def expand_all(dic, text):
+def expand_all(dic, text, verbose=True):
     out = {}
     for ind, (nsw, tag, ntag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} expanded".format(len(out), len(dic)))
+            sys.stdout.flush()
         out.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
+    if verbose:
+        sys.stdout.write("\r{} of {} expanded".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
@@ -80,7 +88,9 @@ def expand_PROF(w):
 
 def expand_WDLK(word):
     try:
-        if word in wordlist:
+        if word.lower() in wordlist:
+            return word
+        elif word[0].isupper() and word[1:].islower():
             return word
         elif triple_rep(word):
             return expand_FNSP(word)

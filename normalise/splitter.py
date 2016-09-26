@@ -1,12 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 12 10:54:54 2016
-
-@author: Elliot
-"""
-
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import re
 import pickle
 
@@ -18,7 +12,8 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 if __name__ == "__main__":
-    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagify(NSWs).items()
+    SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag)
+                 in tagify(NSWs, verbose=False).items()
                  if tag == 'SPLT'}
 
 
@@ -35,10 +30,14 @@ def tag_SPLT(lst):
     return out
 
 
-def split(dic):
+def split(dic, verbose=True):
     """ Form dictionary of SPLT tokens."""
     split_dict = {}
+    done = 0
     for ind, (nsw, tag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} split".format(done, len(dic)))
+            sys.stdout.flush()
         out = [ind]
         emph_list = []
         emph_match = emph_pattern.match(nsw)
@@ -48,36 +47,46 @@ def split(dic):
             emph_list += [nsw]
         hyph_list = []
         for nsw in emph_list:
-            hyph_list.extend(nsw.split('-'))
+            hyph_list.extend([item for item in nsw.split('-') if item])
         slash_list = []
         for nsw in hyph_list:
-            slash_list.extend(nsw.split('/'))
+            slash_list.extend([item for item in nsw.split('/') if item])
         space_list = []
         for nsw in slash_list:
-            space_list.extend(nsw.split(' '))
+            space_list.extend([item for item in nsw.split(' ') if item])
         underscore_list = []
         for nsw in space_list:
-            underscore_list.extend(nsw.split('_'))
+            underscore_list.extend([item for item in nsw.split('_') if item])
         mixedalnum_list = []
         for nsw in underscore_list:
-            mixedalnum_list.extend(mixedalnum_split(nsw))
+            mixedalnum_list.extend([item for item in mixedalnum_split(nsw)
+                                    if item])
         updown_list = []
         for nsw in mixedalnum_list:
-            updown_list.extend(split_updown(nsw))
+            updown_list.extend([item for item in split_updown(nsw) if item])
         mixedcase_list = []
         for nsw in updown_list:
-            mixedcase_list.extend(mixedcase_split(nsw))
+            mixedcase_list.extend([item for item in mixedcase_split(nsw)
+                                   if item])
         out.extend(mixedcase_list)
         split_dict.update(tag_SPLT(out))
+        done += 1
+    if verbose:
+        sys.stdout.write("\r{} of {} split".format(done, len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return split_dict
 
 
-def retagify(dic):
+def retagify(dic, verbose=True):
     """ Retag each part of a SPLT token as 'SPLT-ALPHA', 'SPLT-NUMB' or
     'SPLT-MISC'.
     """
     out = {}
     for ind, (it, tag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} retagged".format(len(out), len(dic)))
+            sys.stdout.flush()
         if len(it) > 100:
             out.update({ind: (it, tag + 'MISC')})
         if is_digbased(it):
@@ -89,6 +98,10 @@ def retagify(dic):
                     out.update({ind: (it, tag + 'ALPHA')})
         else:
             out.update({ind: (it, tag + 'MISC')})
+    if verbose:
+        sys.stdout.write("\r{} of {} retagged".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
@@ -98,83 +111,102 @@ def split_updown(nsw):
     If neither group in wordlist, split before penultimate upper-case letter
     as default.
     """
-    m = updown_pattern.match(nsw)
-    if m:
-        if (m.group(2) + m.group(3)).lower() in wordlist:
-            return [m.group(1), m.group(2) + m.group(3)]
-        elif m.group(3) in wordlist:
-            return [m.group(1) + m.group(2), m.group(3)]
+    try:
+        m = updown_pattern.match(nsw)
+        if m:
+            if (m.group(2) + m.group(3)).lower() in wordlist:
+                return [m.group(1), m.group(2) + m.group(3)]
+            elif m.group(3) in wordlist:
+                return [m.group(1) + m.group(2), m.group(3)]
+            else:
+                return [m.group(1), m.group(2) + m.group(3)]
         else:
-            return [m.group(1), m.group(2) + m.group(3)]
-    else:
-        return [nsw]
+            return [nsw]
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 def mixedalnum_split(nsw):
     """ Split tokens on transitions from letters to numbers or numbers to
     letters.
     """
-    if nsw.isalnum():
+    try:
         out = []
         ind = 0
         if nsw[0] in digits:
             cat = 'num'
-        else:
+        elif nsw[0].isalpha:
             cat = 'let'
+        else:
+            cat = 'punc'
         for i in range(1, len(nsw)):
             if nsw[i] in digits:
-                if cat == 'num':
+                if cat == 'num' or cat == 'punc':
                     pass
                 else:
                     out.append(nsw[ind:i])
                     cat = 'num'
                     ind = i
-            else:
-                if cat == 'let':
+            elif nsw[i].isalpha():
+                if cat == 'let' or cat == 'punc':
                     pass
                 else:
                     out.append(nsw[ind:i])
                     cat = 'let'
                     ind = i
+            else:
+                pass
         out.append(nsw[ind:])
         return out
-    else:
-        return [nsw]
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 def mixedcase_split(nsw):
     """ Split tokens on transitions from upper- to lower- or lower- to
     upper-case.
     """
-    if nsw.isalpha():
-        if nsw.istitle():
-            return [nsw]
-        else:
-            out = []
-            ind = 0
-            if nsw[0].isupper():
-                cat = 'up'
+    try:
+        if nsw.isalpha():
+            if nsw.istitle():
+                return [nsw]
             else:
-                cat = 'low'
-            for i in range(1, len(nsw)):
-                if nsw[i].isupper():
-                    if cat == 'up':
-                        pass
-                    else:
-                        out.append(nsw[ind:i])
-                        cat = 'up'
-                        ind = i
+                out = []
+                ind = 0
+                if nsw[0].isupper():
+                    cat = 'up'
                 else:
-                    if cat == 'low':
-                        pass
+                    cat = 'low'
+                for i in range(1, len(nsw)):
+                    if nsw[i].isupper():
+                        if cat == 'up':
+                            pass
+                        else:
+                            out.append(nsw[ind:i])
+                            cat = 'up'
+                            ind = i
                     else:
-                        out.append(nsw[ind:i])
-                        cat = 'low'
-                        ind = i
-            out.append(nsw[ind:])
-            return out
-    else:
-        return [nsw]
+                        if cat == 'low':
+                            pass
+                        elif nsw[i - 1].isupper():
+                            cat = 'low'
+                            pass
+                        else:
+                            out.append(nsw[ind:i])
+                            cat = 'low'
+                            ind = i
+                out.append(nsw[ind:])
+                return out
+        else:
+            return [nsw]
+    except(KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        return nsw
 
 
 hyphen_pattern = re.compile('''

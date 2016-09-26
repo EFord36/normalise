@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 30 15:39:00 2016
-
-@author: emmaflint
-"""
 import pickle
 from collections import defaultdict
 

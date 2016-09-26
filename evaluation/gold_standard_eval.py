@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 18 09:44:25 2016
-
-@author: emmaflint
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
@@ -27,7 +21,7 @@ def create_NUMB_ex():
     with open('gs_numbs', mode='w', encoding='utf-8') as file:
         file.write(str(NUMB_ex))
 
-gold_standard_predicted = run_clfNUMB(gs_numb_dict, text)
+gold_standard_predicted = run_clfNUMB(gs_numb_dict, text, verbose=False)
 
 
 def gold_vs_pred_tuple():

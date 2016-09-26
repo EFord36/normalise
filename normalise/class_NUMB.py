@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 14 09:14:19 2016
-
-@author: Elliot
-"""
+import sys
 import re
 import pickle
 
@@ -33,7 +28,7 @@ with open('../normalise/data/clf_NUMB.pickle', mode='rb') as file:
 
 if __name__ == "__main__":
     # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
-    tagged = tagify(NSWs)
+    tagged = tagify(NSWs, verbose=False)
 
     NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'NUMB'}
@@ -41,8 +36,8 @@ if __name__ == "__main__":
     SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'SPLT'}
 
-    splitted = split(SPLT_dict)
-    retagged = retagify(splitted)
+    splitted = split(SPLT_dict, verbose=False)
+    retagged = retagify(splitted, verbose=False)
     retagged_NUMB_dict = {ind: (nsw, tag)
                           for ind, (nsw, tag) in retagged.items()
                           if tag == 'SPLT-NUMB'}
@@ -59,7 +54,7 @@ months = ["January", "Jan", "Jan.", "February", "Feb", "Feb.",
 addr_words = ['Road', 'Rd.', 'Street', 'Avenue', 'Ave.']
 
 
-def run_clfNUMB(dic, text):
+def run_clfNUMB(dic, text, verbose=True):
     """Train classifier on training data, return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -84,9 +79,16 @@ def run_clfNUMB(dic, text):
                     }
     out = {}
     for (ind, (nsw, tag)) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+            sys.stdout.flush()
         pred_int = int(clf.predict(gen_featuresetsNUM({ind: (nsw, tag)}, text)))
         ntag = int_tag_dict[pred_int]
         out.update({ind: (nsw, tag, ntag)})
+    if verbose:
+        sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 

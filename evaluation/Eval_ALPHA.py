@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 21 15:24:25 2016
-
-@author: emmaflint
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
@@ -25,7 +19,7 @@ def create_ALPHA_ex():
     with open('gs_alphas', mode='w', encoding='utf-8') as file:
         file.write(str(ALPHA_ex))
 
-gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text)
+gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text, verbose=False)
 
 
 def gold_vs_pred_tuple():

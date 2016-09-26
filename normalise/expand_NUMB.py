@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 22 14:30:22 2016
-
-@author: emmaflint
-"""
-
 import re
 
 from normalise.class_NUMB import gen_frame
@@ -244,7 +237,7 @@ def expand_ordinal(n):
 
         ones_O = [
                   "zero", "first", "second", "third", "fourth", "fifth", "sixth",
-                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelveth",
+                  "seventh", "eighth", "nineth", "tenth", "eleventh", "twelfth",
                   "thirteenth", "fourteenth", "fifteenth", "sixteenth",
                   "seventeenth", "eighteenth", "nineteenth"
                   ]
@@ -817,7 +810,7 @@ def expand_NDATE(w):
 
 def expand_PRCT(w):
     try:
-        if '-' in w:
+        if '-' in w or '–' in w:
             return expand_NRANGE(w[:-1]) + " percent"
         elif '.' in w:
             m = percent_pattern2.match(w)

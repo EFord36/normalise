@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Sep  1 15:18:06 2016
-
-@author: emmaflint
-"""
-
 from __future__ import division, print_function, unicode_literals
 
 import pickle
 from nltk.corpus import names
 
 from normalise.detect import create_NSW_dict
-from normalise.tagger import tagify
+from normalise.tagger import tagify, is_digbased
 from normalise.splitter import split, retagify
 from normalise.class_ALPHA import run_clfALPHA
 from normalise.class_NUMB import run_clfNUMB, gen_frame
@@ -25,9 +18,17 @@ with open('../normalise/data/wordlist.pickle', mode='rb') as file:
 names_lower = {w.lower() for w in names.words()}
 
 
-def normalise(text):
-    NSWs = create_NSW_dict(text)
-    tagged = tagify(NSWs)
+def normalise(text, verbose=True):
+    if verbose:
+        print("\nCREATING NSW DICTIONARY")
+        print("-----------------------\n")
+
+    NSWs = create_NSW_dict(text, verbose=verbose)
+    if verbose:
+        print("{} NSWs found\n".format(len(NSWs)))
+        print("TAGGING NSWs")
+        print("------------\n")
+    tagged = tagify(NSWs, verbose=verbose)
     ALPHA_dict = {}
     NUMB_dict = {}
     MISC_dict = {}
@@ -42,8 +43,14 @@ def normalise(text):
             MISC_dict.update((item,))
         elif tag == 'SPLT':
             SPLT_dict.update((item,))
-    splitted = split(SPLT_dict)
-    retagged = retagify(splitted)
+    if verbose:
+        print("SPLITTING NSWs")
+        print("--------------\n")
+    splitted = split(SPLT_dict, verbose=verbose)
+    if verbose:
+        print("RETAGGING SPLIT NSWs")
+        print("--------------------\n")
+    retagged = retagify(splitted, verbose=verbose)
     for item in retagged.items():
         tag = item[1][1]
         if tag == 'SPLT-ALPHA':
@@ -52,12 +59,30 @@ def normalise(text):
             NUMB_dict.update((item,))
         elif tag == 'SPLT-MISC':
             MISC_dict.update((item,))
-    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text)
-    tagged_NUMB = run_clfNUMB(NUMB_dict, text)
-    tagged_MISC = tag_MISC(MISC_dict)
-    expanded_ALPHA = expand_all(tagged_ALPHA, text)
-    expanded_NUMB = expand_all(tagged_NUMB, text)
-    expanded_MISC = expand_all(tagged_MISC, text)
+    if verbose:
+        print("CLASSIFYING ALPHABETIC NSWs")
+        print("---------------------------\n")
+    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=verbose)
+    if verbose:
+        print("CLASSIFYING NUMERIC NSWs")
+        print("------------------------\n")
+    tagged_NUMB = run_clfNUMB(NUMB_dict, text, verbose=verbose)
+    if verbose:
+        print("CLASSIFYING MISCELLANEOUS NSWs")
+        print("------------------------------\n")
+    tagged_MISC = tag_MISC(MISC_dict, verbose=verbose)
+    if verbose:
+        print("EXPANDING ALPHABETIC NSWs")
+        print("-------------------------\n")
+    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose)
+    if verbose:
+        print("EXPANDING NUMERIC NSWs")
+        print("----------------------\n")
+    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose)
+    if verbose:
+        print("EXPANDING MISCELLANEOUS NSWs")
+        print("----------------------------\n")
+    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
 
@@ -65,7 +90,9 @@ def tokenize_basic(text):
     guess = text.split(' ')
     out = []
     for i in range(len(guess) - 1):
-        if guess[i].isalpha():
+        if not guess[i]:
+            pass
+        elif guess[i].isalpha():
             out.append(guess[i])
         elif guess[i][-1] == '.' and guess[i][:-1].isalpha():
             following = guess[i + 1]
@@ -79,6 +106,9 @@ def tokenize_basic(text):
                 else:
                     out.append(guess[i][:-1])
                     out.append('.')
+            elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
+                out.append(guess[-1][:-1])
+                out.append('.')
             else:
                 out.append(guess[i])
         elif guess[i].endswith((',', ':', ';')):
@@ -88,8 +118,14 @@ def tokenize_basic(text):
         else:
             out.append(guess[i])
     if guess[-1].isalpha():
-        out.append(guess[i])
+        out.append(guess[-1])
+    elif guess[-1][-1] == '.': # to be improved
+        out.append(guess[-1][:-1]) # to be improved
+        out.append('.') # to be improved
     elif guess[-1][-1] == '.' and guess[-1][:-1] in wordlist:
+        out.append(guess[-1][:-1])
+        out.append('.')
+    elif guess[-1][-1] == '.' and is_digbased(guess[-1][:-1]):
         out.append(guess[-1][:-1])
         out.append('.')
     elif guess[-1].endswith((',', ':', ';')):
@@ -100,21 +136,23 @@ def tokenize_basic(text):
     return out
 
 
-def standardise(text, tokenizer=tokenize_basic):
+def standardise(text, tokenizer=tokenize_basic, verbose=True):
     if type(text) == str:
-        if tokenizer == tokenize_basic:
+        if tokenizer == tokenize_basic and verbose:
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            return insert(tokenizer(text))
+            return insert(tokenizer(text), verbose=verbose)
         else:
-            return insert(tokenizer(text))
+            return insert(tokenizer(text), verbose=verbose)
     else:
-        return insert(text)
+        return insert(text, verbose=verbose)
 
 
-def insert(text):
-    expanded_ALPHA, expanded_NUMB, expanded_MISC = normalise(text)
+def insert(text, verbose=True):
+    (expanded_ALPHA,
+    expanded_NUMB,
+    expanded_MISC) = normalise(text, verbose=verbose)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
@@ -138,4 +176,12 @@ def insert(text):
                         final += split_dict[rind][it]
                     final = final[1:]
                     out[rind] = final
+    return out
+
+
+def rejoin(tokenized_text):
+    out = ''
+    for word in tokenized_text:
+        out += word
+        out += ' '
     return out

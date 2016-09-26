@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 11 14:44:25 2016
-
-@author: Elliot
-"""
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import re
 import pickle
+
+from normalise.data.measurements import meas_dict
 
 with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
     NSWs = pickle.load(file)
@@ -16,7 +13,7 @@ curr_list = ['£', '$', '€']
 AlPHA_dict, NUMB_dict, MISC_dict = {}, {}, {}
 
 
-def tagify(dic):
+def tagify(dic, verbose=True):
     """Return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -26,6 +23,9 @@ def tagify(dic):
     """
     out = {}
     for ind, it in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} tagged".format(len(out), len(dic)))
+            sys.stdout.flush()
         if len(it) > 100:
             out.update({ind: (it, 'MISC')})
         if is_digbased(it):
@@ -35,12 +35,18 @@ def tagify(dic):
                len(it) <= 3 or (it[-1] == 's' and not
                mixedcase_pattern.match(it[:-1])))):
                     out.update({ind: (it, 'ALPHA')})
+        elif it in meas_dict:
+            out.update({ind: (it, 'ALPHA')})
         elif is_url(it) or hashtag_pattern.match(it):
             out.update({ind: (it, 'MISC')})
         elif looks_splitty(it):
             out.update({ind: (it, 'SPLT')})
         else:
             out.update({ind: (it, 'MISC')})
+    if verbose:
+        sys.stdout.write("\r{} of {} tagged".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
@@ -75,6 +81,10 @@ def is_digbased(w):
         return is_digbased(w[1:])
     elif w[0] == "'" and w[1:].isdigit():
         return True
+    elif w[0] == '+':
+        return is_digbased(w[1:])
+    elif w[-1] == '+':
+        return is_digbased(w[:-1])
     for lt in w:
         if not lt.isdigit() and lt not in ['/', '.', ',',
                                            '-', '–', '%',

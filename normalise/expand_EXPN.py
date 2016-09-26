@@ -23,6 +23,9 @@ with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
 with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
     abbrevs = pickle.load(file)
 
+with open('../normalise/data/sig_dict.pickle', mode='rb') as file:
+    sig_dict = pickle.load(file)
+
 brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
                 word, freq in fd(brown).most_common(5000)[100:]}
@@ -102,7 +105,7 @@ def expand_EXPN(nsw, i, text):
                         freq = brown_common[c]
                     else:
                         freq = 0
-                    if freq > best:
+                    if freq < best:
                         best = freq
                         exp = c
             else:
@@ -147,7 +150,7 @@ def maximum_overlap(w, i, text):
                 freq = brown_common[c]
             else:
                 freq = 0
-            if freq > best:
+            if freq < best:
                 best = freq
                 curr = c
             elif freq == best and len(tag_matches(i, text)) == 1:
@@ -182,6 +185,8 @@ def find_matches(word):
 
 
 def gen_signature(word):
+    if word in gen_signature.dict:
+        return gen_signature.dict[word]
     inds = find_matches(word)
     if len(inds) > 50:
         f = len(inds) / 50
@@ -206,8 +211,10 @@ def gen_signature(word):
             if define:
                         sig.update([w for w in wt(define)
                                    if w not in stopwords.words('english')])
+    gen_signature.dict[word] = sig
     return sig
 
+gen_signature.dict = sig_dict
 
 def gen_context(i, text):
     ind = i
@@ -217,7 +224,7 @@ def gen_context(i, text):
         ind = int(i)
         split_token = text[ind]
         del text[ind]
-        parts = split({ind: (split_token, 'SPLT')})
+        parts = split({ind: (split_token, 'SPLT')}, verbose=False)
         for it in sorted(parts, reverse=True):
             text.insert(ind, parts[it][0])
     start = ind
@@ -267,7 +274,8 @@ def abbrev_tag(i, text):
             if text[i] == cand:
                 return tag
         else:
-            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+            if split({int(i): (text[int(i)], 'SPLT')},
+                     verbose=False)[i][0] == cand:
                 return tag
 
 
@@ -289,7 +297,8 @@ def abbrev_tag_univ(i, text):
             if text[i] == cand:
                 return tag
         else:
-            if split({int(i): (text[int(i)], 'SPLT')})[i][0] == cand:
+            if split({int(i): (text[int(i)], 'SPLT')},
+                     verbose=False)[i][0] == cand:
                 return tag
 
 
@@ -298,7 +307,7 @@ def tag_matches(i, text):
     if isinstance(i, int):
         abbrev = text[i]
     else:
-        abbrev = split({int(i): (text[int(i)], 'SPLT')})[i][0]
+        abbrev = split({int(i): (text[int(i)], 'SPLT')}, verbose=False)[i][0]
     true_tag = abbrev_tag(i, text)
     for (cand, tags) in tag_cands(abbrev):
         if true_tag in tags:

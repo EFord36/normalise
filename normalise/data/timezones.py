@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 14 14:13:18 2016
-
-@author: Elliot
-"""
-
 timezone_dict = {
                  "ACDT": "Australian Central Daylight Time",
                  "ACST": "Australian Central Standard Time",
