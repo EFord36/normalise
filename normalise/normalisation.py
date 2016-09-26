@@ -144,7 +144,7 @@ def tokenize_basic(text):
 
 def standardise(text, tokenizer=tokenize_basic, verbose=True):
     if type(text) == str:
-        if tokenizer == tokenize_basic:
+        if tokenizer == tokenize_basic and verbose:
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
