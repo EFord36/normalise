@@ -88,7 +88,7 @@ Out:
 
 ## <a name="license"><a/>License
 
-This project is licensed under the terms of the GNU General Public License.
+This project is licensed under the terms of the GNU General Public License version 3.0 or later.
 
 Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENSE.txt) for more information. 
 
