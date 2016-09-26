@@ -469,6 +469,7 @@ titles = {
 
 
 def build_abbrevs(dictionary):
+    """Add new dictionary of abbreviations to previous dictionary."""
     abbrevs = defaultdict(list)
     for key in dictionary:
         if key.endswith('.'):
@@ -483,6 +484,7 @@ def build_abbrevs(dictionary):
 
 
 def add_to_pickled_abbrev(dictionary):
+    """Add new dictionary to pickled file of abbreviations."""
     with open('../normalise/data/abbrev_dict.pickle', mode='rb') as f:
         abbrevs = pickle.load(f)
     for key in dictionary:

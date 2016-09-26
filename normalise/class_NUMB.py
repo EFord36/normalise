@@ -250,6 +250,7 @@ def time_context(nsw, context):
 
 
 def looks_datey(nsw, context):
+    """Return 'True' if nsw looks like a valid date."""
     m = date_pattern.match(nsw)
     if date_pattern.match(nsw):
         if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32

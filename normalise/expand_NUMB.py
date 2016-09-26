@@ -3,6 +3,7 @@ import re
 from normalise.class_NUMB import gen_frame
 
 def expand_fraction(n):
+    """Expand fractions."""
     try:
         slash = n.find('/')
         first = n[:slash]
@@ -176,6 +177,7 @@ def expand_NUM(n):
 
 
 def expand_NRANGE(n):
+    """Return a number range in words."""
     try:
         if range_pattern.match(n):
             m = range_pattern.match(n)
@@ -211,6 +213,8 @@ def expand_NRANGE(n):
 
 
 def expand_NORD(dict_tup, text):
+    """Insert 'the' and 'of' if ordinal is a date, to sound more natural.
+       Only if not already in text, eg. 'The 30th of April'."""
     try:
         ind, (nsw, tag, ntag) = dict_tup
         out = expand_ordinal(nsw)
@@ -647,6 +651,7 @@ def expand_MONEY(dict_tup, text):
 
 
 def expand_NDIG(w):
+    """Expand digit sequences to a series of words."""
     try:
         numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         num_words = ['zero', 'one', 'two', 'three', 'four', 'five',
@@ -669,6 +674,7 @@ def expand_NDIG(w):
 
 
 def expand_NTEL(w):
+    """Expand telephone numbers."""
     try:
         str2 = ''
         if w[0] == '+':
@@ -696,6 +702,7 @@ num_words2 = ['one', 'two', 'three', 'four', 'five',
 
 
 def expand_NTIME(w):
+    """Expand a time to words."""
     try:
         str2 = ''
         m = time_pattern.match(w)
@@ -725,6 +732,7 @@ def expand_NTIME(w):
 
 
 def expand_NYER(w):
+    """Expand a year to words."""
     try:
         if w[-1] == 's':
             if len(w) > 1 and w[-2:] == "'s":
@@ -769,6 +777,7 @@ def expand_NYER(w):
 
 
 def expand_NDATE(w):
+    """Expand a date to words."""
     try:
         numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06',
                    '6', '07', '7', '08', '8', '09', '9', '10', '11', '12']
@@ -809,6 +818,7 @@ def expand_NDATE(w):
 
 
 def expand_PRCT(w):
+    """Expand a percentage to words."""
     try:
         if '-' in w or '–' in w:
             return expand_NRANGE(w[:-1]) + " percent"
@@ -841,6 +851,7 @@ def expand_PRCT(w):
 
 
 def expand_NSCI(w):
+    """Expand scientific numbers (coordinates, feet and inches) to words."""
     try:
         if coord_pattern.match(w):
             m = coord_pattern.match(w)
