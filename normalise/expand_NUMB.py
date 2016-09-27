@@ -793,26 +793,26 @@ def expand_NDATE(w):
         str2 = ''
         if m.group(5):
             if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
             elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of '
+                str2 += (expand_ordinal(m.group(3)) + ' of '
                         + months[numbers.index(m.group(1))]
                         + " " + expand_NYER(m.group(5)))
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
         else:
             if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
             elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of '
+                str2 += (expand_ordinal(m.group(3)) + ' of '
                         + months[numbers.index(m.group(1))])
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
         return str2
     except (KeyboardInterrupt, SystemExit):
