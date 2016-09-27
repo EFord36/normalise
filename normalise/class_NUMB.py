@@ -307,6 +307,7 @@ def seed_features(item, context):
             or ((context[1] in months or context[3] in months)
             and nsw.isdigit()
             and int(nsw) < 31)),
+           bool(digit_pattern.match(nsw)),
            ((float_pattern.match(nsw) and float(nsw) > 31)
            or ((context[3] in ['million', 'billion', 'thousand']
           or (context[3] in meas_dict or context[3] in meas_dict_pl)
@@ -457,6 +458,8 @@ def seed(dict_tup, text):
           len(context[1]) > 1 and context[1].lower() not in wordlist and
           len(nsw) > 1) or nsw.count('.') > 2:
         return 5
+    elif digit_pattern.match(nsw):
+        return 5
     elif (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
           ((context[1] in months or context[3] in months) and
           nsw.isdigit() and
@@ -556,5 +559,12 @@ feet_pattern = re.compile('''
 (\.?
 [0-9]+
 ["|″]?)?
+$
+''', re.VERBOSE)
+
+digit_pattern = re.compile('''
+([0-9]+
+\-){2,}
+[0-9]+
 $
 ''', re.VERBOSE)
