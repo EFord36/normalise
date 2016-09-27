@@ -105,18 +105,17 @@ If a variety is not specified, our default is British English.
 Although our system aims to be domain-general, users can input their own dictionary of abbreviations in order to tailor to a specific domain. This can be done using the keyword argument `user_abbrevs={}`:
 
 ```python
-my_abbreviations = {"Bdrm.": "bedroom",
-                    "Ktchn.": "kitchen",
-                    "Wndw.": "window",
-                    "ono.": "or near offer"}
+my_abbreviations = {"bdrm": "bedroom",
+                    "KT": "kitchen",
+                    "wndw": "window",
+                    "ONO": "or near offer"}
                     
-text = ["4", "Bdrm.", "house", "for", "sale", ",", "£459k", "ono."]
+text = ["4bdrm", "house", "for", "sale", ",", "£459k", "ONO"]
 
 normalise(text, user_abbrevs=my_abbreviations)
 
 Out:
-['four',
- 'bedroom',
+['four bedroom',
  'house',
  'for',
  'sale',
