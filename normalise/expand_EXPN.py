@@ -10,7 +10,7 @@ from nltk import FreqDist as fd
 from nltk import pos_tag
 
 from normalise.detect import mod_path
-from normalise.data.abbrev_dict import states
+from normalise.data.abbrev_dict import states, create_user_abbrevs
 from normalise.splitter import split
 from normalise.tagger import is_digbased
 from normalise.data.measurements import meas_dict, meas_dict_pl
@@ -33,10 +33,12 @@ brown_common = {word: log(1161192 / freq) for
 words = [w for w, freq in fd(brown).most_common()]
 
 
-def expand_EXPN(nsw, i, text):
+def expand_EXPN(nsw, i, text, user_abbrevs={}):
     """Expand abbreviations to best possible match. If no close matches,
        return nsw."""
     try:
+        if user_abbrevs:
+            abbrevs = create_user_abbrevs(user_abbrevs)
         if nsw in meas_dict:
             if isinstance(i, int):
                 if is_digbased(text[i - 1]):
@@ -126,7 +128,7 @@ def expand_EXPN(nsw, i, text):
     except(KeyboardInterrupt, SystemExit):
         raise
     except:
-        return w
+        return nsw
 
 
 def maximum_overlap(w, i, text):

@@ -22,7 +22,7 @@ with open('{}/data/names.pickle'.format(mod_path), mode='rb') as file:
     names_lower = pickle.load(file)
 
 
-def list_NSWs(text, verbose=True, variety='BrE'):
+def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
     if verbose:
         print("\nCREATING NSW DICTIONARY")
         print("-----------------------\n")
@@ -78,15 +78,15 @@ def list_NSWs(text, verbose=True, variety='BrE'):
     if verbose:
         print("EXPANDING ALPHABETIC NSWs")
         print("-------------------------\n")
-    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose, variety=variety)
+    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     if verbose:
         print("EXPANDING NUMERIC NSWs")
         print("----------------------\n")
-    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose, variety=variety)
+    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     if verbose:
         print("EXPANDING MISCELLANEOUS NSWs")
         print("----------------------------\n")
-    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose, variety=variety)
+    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
 
@@ -140,23 +140,23 @@ def tokenize_basic(text):
     return out
 
 
-def normalise(text, tokenizer=tokenize_basic, verbose=True, variety='BrE'):
+def normalise(text, tokenizer=tokenize_basic, verbose=True, variety='BrE', user_abbrevs={}):
     if type(text) == str:
         if tokenizer == tokenize_basic and verbose:
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            return insert(tokenizer(text), verbose=verbose, variety=variety)
+            return insert(tokenizer(text), verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
         else:
-            return insert(tokenizer(text), verbose=verbose, variety=variety)
+            return insert(tokenizer(text), verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     else:
-        return insert(text, verbose=verbose, variety=variety)
+        return insert(text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
 
 
-def insert(text, verbose=True, variety='BrE'):
+def insert(text, verbose=True, variety='BrE', user_abbrevs={}):
     (expanded_ALPHA,
     expanded_NUMB,
-    expanded_MISC) = list_NSWs(text, verbose=verbose, variety=variety)
+    expanded_MISC) = list_NSWs(text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):

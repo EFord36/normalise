@@ -16,7 +16,7 @@ with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
 func_dict = {
-             'EXPN': 'expand_EXPN(nsw, ind, text)',
+             'EXPN': 'expand_EXPN(nsw, ind, text, user_abbrevs=user_abbrevs)',
              'LSEQ': 'expand_LSEQ(nsw)',
              'WDLK': 'expand_WDLK(nsw)',
              'NUM': 'expand_NUM(nsw)',
@@ -38,7 +38,7 @@ func_dict = {
              }
 
 
-def expand_all(dic, text, verbose=True, variety='BrE'):
+def expand_all(dic, text, verbose=True, variety='BrE', user_abbrevs={}):
     out = {}
     for ind, (nsw, tag, ntag) in dic.items():
         if verbose:

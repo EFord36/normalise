@@ -1,6 +1,8 @@
 import pickle
 from collections import defaultdict
 
+from normalise.detect import mod_path
+
 abbrev_dict = {
                "abbrev.": "abbreviation",
                "abr.": "abridged",
@@ -469,7 +471,7 @@ titles = {
 
 
 def build_abbrevs(dictionary):
-    """Add new dictionary of abbreviations to previous dictionary."""
+    """Builds abbreviation dictionary from input in correct format."""
     abbrevs = defaultdict(list)
     for key in dictionary:
         if key.endswith('.'):
@@ -480,6 +482,25 @@ def build_abbrevs(dictionary):
             abbrevs[k].extend(dictionary[key])
         elif type(dictionary[key]) == str:
             abbrevs[k].append(dictionary[key])
+    return abbrevs
+
+
+def create_user_abbrevs(dictionary):
+    """Stores user and general abbreviations in pickle file."""
+    with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='rb') as f:
+        abbrevs = pickle.load(f)
+    for key in dictionary:
+        if key.endswith('.'):
+            k = key[:-1].lower()
+        else:
+            k = key.lower()
+        if type(dictionary[key]) == list:
+            for exp in dictionary[key]:
+                if exp not in abbrevs[k]:
+                    abbrevs[k].append(exp)
+        elif type(dictionary[key]) == str:
+            if dictionary[key] not in abbrevs[k]:
+                abbrevs[k].append(dictionary[key])
     return abbrevs
 
 
