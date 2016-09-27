@@ -311,6 +311,8 @@ def seed_features(item, context):
            or ((context[3] in ['million', 'billion', 'thousand']
           or (context[3] in meas_dict or context[3] in meas_dict_pl)
           and nsw.isdigit()))),
+          ('/' in nsw and (context[3] in meas_dict or context[3] in meas_dict_pl
+          or context[3] in meas_dict.values() or context[3] in meas_dict_pl.values())),
           looks_datey(nsw, context),
           (len(nsw) == 11 and nsw.startswith('0')) or (nsw.startswith('+44')
            and len(nsw) == 13),
@@ -464,6 +466,9 @@ def seed(dict_tup, text):
           ((context[3] in ['million', 'billion', 'thousand']) or
           (context[3] in meas_dict or context[3] in meas_dict_pl) and
           nsw.isdigit())):
+        return 7
+    elif ('/' in nsw and (context[3] in meas_dict or context[3] in meas_dict_pl
+          or context[3] in meas_dict.values() or context[3] in meas_dict_pl.values())):
         return 7
     elif looks_datey(nsw, context):
         return 10

@@ -19,13 +19,17 @@ def expand_fraction(n):
                     exp += "one hundredth"
                 else:
                     exp += expand_NUM(first) + " hundredths"
-            elif ((int(first) >= int(second)) or int(second) > 10
+            elif ((int(first) >= int(second)) or int(second) > 19
                     or second in ['1', '2']):
                 exp += expand_NUM(first) + " over " + expand_NUM(second)
             else:
-                numbers = ['3', '4', '5', '6', '7', '8', '9']
+                numbers = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
+                           '13', '14', '15', '16', '17', '18', '19']
                 fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh',
-                             'eighth', 'ninth']
+                             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 
+                             'thirteenth', 'fourteenth', 'fifteenth', 
+                             'sixteenth', 'seventeenth', 'eighteenth',
+                             'nineteenth']
                 if first == '1':
                     exp += "one " + fractions[numbers.index(second)]
                 else:
