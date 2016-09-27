@@ -1,5 +1,6 @@
 from __future__ import division, print_function, unicode_literals
 
+import os
 import sys
 import pickle
 from nltk import WordNetLemmatizer
@@ -10,10 +11,12 @@ from nltk.corpus import names
 from normalise.data.contraction_list import contractions
 from normalise.data.tech_words import tech_words
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+mod_path = os.path.dirname(__file__)
+
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/fake_data.pickle', mode='rb') as file:
+with open('{}/data/fake_data.pickle'.format(mod_path), mode='rb') as file:
     fake_data = pickle.load(file)
 
 if __name__ == '__main__':

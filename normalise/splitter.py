@@ -4,9 +4,10 @@ import sys
 import re
 import pickle
 
+from normalise.detect import mod_path
 from normalise.tagger import tagify, NSWs, is_digbased, only_alpha
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
 digits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']

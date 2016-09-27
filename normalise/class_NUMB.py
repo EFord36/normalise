@@ -5,25 +5,26 @@ import pickle
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
+from normalise.detect import mod_path
 from normalise.tagger import tagify, ecurr_dict
 from normalise.data.timezones import timezone_dict
 from normalise.splitter import split, retagify
 from normalise.data.measurements import meas_dict, meas_dict_pl
 
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
+with open('{}/data/word_tokenized.pickle'.format(mod_path), mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/clf_NUMB.pickle', mode='rb') as file:
+with open('{}/data/clf_NUMB.pickle'.format(mod_path), mode='rb') as file:
     clf_NUMB = pickle.load(file)
 
 if __name__ == "__main__":
@@ -410,7 +411,7 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_NUMB.pickle"""
     clf = fit_clf(dic, text)
-    with open('data/clf_NUMB.pickle', 'wb') as file:
+    with open('{}/data/clf_NUMB.pickle'.format(mod_path), 'wb') as file:
         pickle.dump(clf, file)
 
 

@@ -4,9 +4,10 @@ import sys
 import re
 import pickle
 
+from normalise.detect import mod_path
 from normalise.data.measurements import meas_dict
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
 curr_list = ['£', '$', '€']

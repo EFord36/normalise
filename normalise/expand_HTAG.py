@@ -3,10 +3,10 @@ import pickle
 
 from math import log
 from nltk import FreqDist as fd
-from normalise.detect import wordlist
+from normalise.detect import wordlist, mod_path
 from normalise.expand_NUMB import expand_NUM
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
 

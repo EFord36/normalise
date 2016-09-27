@@ -9,21 +9,22 @@ from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
 
+from normalise.detect import mod_path
 from normalise.data.abbrev_dict import states
 from normalise.splitter import split
 from normalise.tagger import is_digbased
 from normalise.data.measurements import meas_dict, meas_dict_pl
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
-with open('../normalise/data/pos_dicts.pickle', mode='rb') as file:
+with open('{}/data/pos_dicts.pickle'.format(mod_path), mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
 
-with open('../normalise/data/abbrev_dict.pickle', mode='rb') as file:
+with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='rb') as file:
     abbrevs = pickle.load(file)
 
-with open('../normalise/data/sig_dict.pickle', mode='rb') as file:
+with open('{}/data/sig_dict.pickle'.format(mod_path), mode='rb') as file:
     sig_dict = pickle.load(file)
 
 brown = word_tokenized_lowered[:1161192]
@@ -33,7 +34,7 @@ words = [w for w, freq in fd(brown).most_common()]
 
 
 def expand_EXPN(nsw, i, text):
-    """Expand abbreviations to best possible match. If no close matches, 
+    """Expand abbreviations to best possible match. If no close matches,
        return nsw."""
     try:
         if nsw in meas_dict:
@@ -192,7 +193,7 @@ def find_matches(word):
 
 def gen_signature(word):
     """Generate a signature for each candidate expansion, using contextual
-       information from the Brown corpus, as well as WordNet definitions and 
+       information from the Brown corpus, as well as WordNet definitions and
        examples (if applicable)."""
     if word in gen_signature.dict:
         return gen_signature.dict[word]

@@ -6,28 +6,29 @@ import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 from roman import romanNumeralPattern
 
+from normalise.detect import mod_path
 from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
 from normalise.splitter import split, retagify
 from normalise.data.measurements import meas_dict, meas_dict_pl
 from normalise.data.element_dict import element_dict
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
+with open('{}/data/word_tokenized.pickle'.format(mod_path), mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
-with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
+with open('{}/data/clf_ALPHA.pickle'.format(mod_path), mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
-with open('../normalise/data/names.pickle', mode='rb') as file:
+with open('{}/data/names.pickle'.format(mod_path), mode='rb') as file:
     names_lower = pickle.load(file)
 
 if __name__ == "__main__":
@@ -173,7 +174,7 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_ALPHA.pickle"""
     clf = fit_clf(dic, text)
-    with open('data/clf_ALPHA.pickle', 'wb') as file:
+    with open('{}/data/clf_ALPHA.pickle'.format(mod_path), 'wb') as file:
         pickle.dump(clf, file)
 
 

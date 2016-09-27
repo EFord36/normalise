@@ -1,9 +1,11 @@
 from __future__ import division, print_function, unicode_literals
 
+import os
 import pickle
+
 from nltk.corpus import names
 
-from normalise.detect import create_NSW_dict
+from normalise.detect import create_NSW_dict, mod_path
 from normalise.tagger import tagify, is_digbased
 from normalise.splitter import split, retagify
 from normalise.class_ALPHA import run_clfALPHA
@@ -12,10 +14,11 @@ from normalise.tag_MISC import tag_MISC
 from normalise.expand_all import expand_all
 from normalise.expand_NUMB import bmoney
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/names.pickle', mode='rb') as file:
+with open('{}/data/names.pickle'.format(mod_path), mode='rb') as file:
     names_lower = pickle.load(file)
 
 

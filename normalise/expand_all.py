@@ -2,6 +2,7 @@ import sys
 import re
 import pickle
 
+from normalise.detect import mod_path
 from normalise.class_ALPHA import triple_rep
 from normalise.spellcheck import correct
 from normalise.expand_EXPN import expand_EXPN
@@ -11,7 +12,7 @@ from normalise.expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD,
                                    expand_NTIME, expand_NRANGE, expand_NTEL,
                                    expand_NDATE, expand_NSCI)
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
 func_dict = {
@@ -52,7 +53,7 @@ def expand_all(dic, text, verbose=True):
 
 
 def expand_NONE(nsw):
-    """For nsws tagged 'NONE', return 'and' if nsw is '&', otherwise return 
+    """For nsws tagged 'NONE', return 'and' if nsw is '&', otherwise return
        nothing."""
     if nsw == '&':
         return 'and'
