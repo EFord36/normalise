@@ -32,10 +32,13 @@ def expand_HTAG(word):
 def expand_URL(word):
     """Expand tokens tagged URL."""
     try:
-        starts = ["http://", "https://", "www."]
-        starts_exp = ['', '', 'W W W dot']
-        ends = [".com", ".org", ".org.uk", ".co.uk"]
-        ends_exp = ["dot com", "dot org", "dot org dot U K", "dot co dot U K"]
+        starts = {"http://": "", "https://": "", "www.": "W W W dot"}
+        # starts = ["http://", "https://", "www."]
+        # starts_exp = ['', '', 'W W W dot']
+        ends = {".com": "dot com", ".org": "dot org",
+                ".org.uk": "dot org dot U K", ".co.uk": "dot co dot UK"}
+        # ends = [".com", ".org", ".org.uk", ".co.uk"]
+        # ends_exp = ["dot com", "dot org", "dot org dot U K", "dot co dot U K"]
         m = urlstart_pattern.match(word)
         n = urlend_pattern.match(word)
         exp = ''
@@ -43,13 +46,13 @@ def expand_URL(word):
             start = m.group(1)
             middle = urlend_pattern.match(m.group(2))
             end = middle.group(2)
-            exp += (starts_exp[starts.index(start)] + " "
+            exp += (starts[start] + " "
                     + infer_spaces(middle.group(1))
-                    + " " + ends_exp[ends.index(end)])
+                    + " " + ends[end])
         elif n:
             middle = n.group(1)
             end = n.group(2)
-            exp += infer_spaces(middle) + " " + ends_exp[ends.index(end)]
+            exp += infer_spaces(middle) + " " + ends[end]
         else:
             return word
         return exp
