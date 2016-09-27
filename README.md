@@ -1,6 +1,6 @@
 ![Title Logo](logo.png)
 
-> A module for normalising text. 
+> A module for normalising text.
 
 ## Introduction
 
@@ -32,12 +32,12 @@ $ pip install --upgrade pip setuptools
 $ pip install normalise
 ```
 
-If `pip` installation fails, you can try `easy_install normalise`. 
+If `pip` installation fails, you can try `easy_install normalise`.
 
 
 ## 2. <a name="usage"><a/>Usage
 
-Your input text can be a list of words, or a string. 
+Your input text can be a list of words, or a string.
 
 To normalise your text, use the `normalise` function. This will return the text with NSWs replaced by their expansions:
 
@@ -46,7 +46,7 @@ text = ["On", "the", "28", "Apr.", "2010", ",", "Dr.", "Banks", "bought", "a", "
 
 normalise(text, verbose=True)
 
-Out: 
+Out:
 ['On',
  'the',
  'twenty-eighth of',
@@ -63,7 +63,7 @@ Out:
  '.']
 ```
 
-`verbose=True` displays the stages of the normalisation process, so you can monitor its progress. To turn this off, use `verbose=False`. 
+`verbose=True` displays the stages of the normalisation process, so you can monitor its progress. To turn this off, use `verbose=False`.
 
 If your input is a string, you can use our basic tokenizer. For best results, input your own custom tokenizer.
 
@@ -98,7 +98,7 @@ normalise(text, variety="AmE")
 Out: ['On', 'the fourth of October', ',', 'he', 'went', 'to', 'the', 'seaside', '.']
 ```
 
-If a variety is not specified, our default is British English. 
+If a variety is not specified, our default is British English.
 
 ### ii. <a name="abbrevs"><a/>Input your own abbreviation dictionary
 
@@ -109,7 +109,7 @@ my_abbreviations = {"bdrm": "bedroom",
                     "KT": "kitchen",
                     "wndw": "window",
                     "ONO": "or near offer"}
-                    
+
 text = ["4bdrm", "house", "for", "sale", ",", "£459k", "ONO"]
 
 normalise(text, user_abbrevs=my_abbreviations)
@@ -123,13 +123,13 @@ Out:
  'four hundred and fifty nine thousand pounds',
  'or near offer']
  ```
-            
+
 ## 3. <a name="example"><a/>Example
 
 A further example demonstrating the expansion of more types of NSW (including abbreviations, spelling mistakes, percentage ranges, currency):
 
 ```python
-text = ["On", "the", "13", "Feb.", "2007", ",", "Theresa", "May", "MP", "announced", 
+text = ["On", "the", "13", "Feb.", "2007", ",", "Theresa", "May", "MP", "announced",
 "on", "ITV", "News", "that", "the", "rate", "of", "childhod", "obesity", "had", "risen",
 "from", "7.3-9.6%", "in", "just", "3", "years", ",", "costing", "the", "Gov.", "£20m", "."]
 
@@ -179,10 +179,13 @@ Out:
 
 This project is licensed under the terms of the GNU General Public License version 3.0 or later.
 
-Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENSE.txt) for more information. 
+Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENSE.txt) for more information.
 
 ## 6. <a name="acknows"><a/>Acknowledgements
 
-This project builds on the work described in [Sproat et al (2001)](http://www.cs.toronto.edu/~gpenn/csc2518/sproatetal01.pdf). 
+This project builds on the work described in [Sproat et al (2001)](http://www.cs.toronto.edu/~gpenn/csc2518/sproatetal01.pdf).
 
-We would like to thank Andrew Caines and Paula Buttery for supervising us during this project. 
+We would like to thank Andrew Caines and Paula Buttery for supervising us during this project.
+
+The font used for the logo was Anita Semi-Square by Gustavo Paz.
+License: [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](http://creativecommons.org/licenses/by-sa/4.0/deed.en_US)
