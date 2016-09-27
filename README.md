@@ -12,15 +12,17 @@ This module takes a text as input, and returns it in a fully normalised form, *i
 
 
 ## Table of Contents
-* [Installation](#installation)
-* [Usage](#usage)
-* [Example](#example)
-* [Authors](#authors)
-* [License](#license)
-* [Acknowledgements](#acknows)
+1. [Installation](#installation)
+2. [Usage](#usage)
+  2. [Customise to your variety](#variety)
+  2. [Input your own abbreviation dictionary](#abbrevs)
+3. [Example](#example)
+4. [Authors](#authors)
+5. [License](#license)
+6. [Acknowledgements](#acknows)
 
 
-## <a name="installation"><a/>Installation
+## 1. <a name="installation"><a/>Installation
 
 To install the module (on Windows, Mac OS X, Linux, etc.) and to ensure that you have the latest version of pip and setuptools:
 
@@ -33,7 +35,7 @@ $ pip install normalise
 If `pip` installation fails, you can try `easy_install normalise`. 
 
 
-## <a name="usage"><a/>Usage
+## 2. <a name="usage"><a/>Usage
 
 Your input text can be a list of words, or a string. 
 
@@ -81,8 +83,49 @@ Out:
   4: ('2010', 'NUMB', 'NYER', 'twenty ten'),
   12: ('£35', 'NUMB', 'MONEY', 'thirty five pounds')}
  ```
- 
-## <a name="example"><a/>Example
+
+### i. <a name="variety"><a/>Customise to your variety
+
+In order to customise normalisation to your variety of English, use `variety="BrE"` for British English, or `variety="AmE"` for American English:
+
+```python
+text = ["On", "10/04", ",", "he", "went", "to", "the", "seaside", "."]
+
+normalise(text, variety="BrE")
+Out: ['On', 'the tenth of April', ',', 'he', 'went', 'to', 'the', 'seaside', '.']
+
+normalise(text, variety="AmE")
+Out: ['On', 'the fourth of October', ',', 'he', 'went', 'to', 'the', 'seaside', '.']
+```
+
+If a variety is not specified, our default is British English. 
+
+### ii. <a name="abbrevs"><a/>Input your own abbreviation dictionary
+
+Although our system aims to be domain-general, users can input their own dictionary of abbreviations in order to tailor to a specific domain. This can be done using the keyword argument `user_abbrevs={}`:
+
+```python
+my_abbreviations = {"Bdrm.": "bedroom",
+                    "Ktchn.": "kitchen",
+                    "Wndw.": "window",
+                    "ono.": "or near offer"}
+                    
+text = ["4", "Bdrm.", "house", "for", "sale", ",", "£459k", "ono."]
+
+normalise(text, user_abbrevs=my_abbreviations)
+
+Out:
+['four',
+ 'bedroom',
+ 'house',
+ 'for',
+ 'sale',
+ ',',
+ 'four hundred and fifty nine thousand pounds',
+ 'or near offer']
+ ```
+            
+## 3. <a name="example"><a/>Example
 
 A further example demonstrating the expansion of more types of NSW (including abbreviations, spelling mistakes, percentage ranges, currency):
 
@@ -128,18 +171,18 @@ Out:
  '.']
  ```
 
-## <a name="authors"><a/>Authors
+## 4. <a name="authors"><a/>Authors
 
 * **Elliot Ford** - [EFord36](https://github.com/EFord36)
 * **Emma Flint** - [emmaflint27](https://github.com/emmaflint27)
 
-## <a name="license"><a/>License
+## 5. <a name="license"><a/>License
 
 This project is licensed under the terms of the GNU General Public License version 3.0 or later.
 
 Please see [LICENSE.txt](https://github.com/EFord36/normalise/blob/master/LICENSE.txt) for more information. 
 
-## <a name="acknows"><a/>Acknowledgements
+## 6. <a name="acknows"><a/>Acknowledgements
 
 This project builds on the work described in [Sproat et al (2001)](http://www.cs.toronto.edu/~gpenn/csc2518/sproatetal01.pdf). 
 
