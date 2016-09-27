@@ -66,7 +66,7 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
     if verbose:
         print("CLASSIFYING ALPHABETIC NSWs")
         print("---------------------------\n")
-    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=verbose)
+    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=verbose, user_abbrevs=user_abbrevs)
     if verbose:
         print("CLASSIFYING NUMERIC NSWs")
         print("------------------------\n")

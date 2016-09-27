@@ -11,6 +11,7 @@ from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
 from normalise.splitter import split, retagify
 from normalise.data.measurements import meas_dict, meas_dict_pl
+from normalise.data.abbrev_dict import abbrev_dict
 from normalise.data.element_dict import element_dict
 
 with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
@@ -64,7 +65,7 @@ ampm = ['am', 'pm', 'AM', 'PM', 'a.m.', 'p.m.', 'A.M.', 'P.M.', 'pm.', 'am.']
 adbc = ['AD', 'A.D.', 'ad', 'a.d.', 'BC', 'B.C.', 'bc', 'B.C.']
 
 
-def run_clfALPHA(dic, text, verbose=True):
+def run_clfALPHA(dic, text, verbose=True, user_abbrevs={}):
     """Train classifier on training data, return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -86,6 +87,8 @@ def run_clfALPHA(dic, text, verbose=True):
             sys.stdout.flush()
         if romanNumeralPattern.match(nsw) and gen_frame((ind, (nsw, tag)), text)[1].lower() in names_lower:
             out.update({ind: (nsw, 'NUMB', 'NORD')})
+        if nsw in user_abbrevs:
+            out.update({ind: (nsw, 'ALPHA', 'EXPN')})
         else:
             pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
             ntag = int_tag_dict[pred_int]
@@ -140,7 +143,8 @@ def seed_features(item, context):
            nsw.isalpha() and nsw.islower() and len(nsw) > 3,
            nsw.endswith('s') and nsw[:-1].isupper(),
            nsw in element_dict,
-           nsw.isalpha and nsw.islower() and len(nsw) > 2
+           nsw.isalpha and nsw.islower() and len(nsw) > 2,
+           nsw.lower() in abbrev_dict
            ]
     return out
 
@@ -191,6 +195,8 @@ def seed(dict_tup, text):
     elif nsw in ['i.e.', 'ie.', 'e.g.', 'eg.']:
         return 2
     elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
+        return 1
+    elif nsw.lower() in abbrev_dict:
         return 1
     elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict
           and is_digbased(context[1]))):
