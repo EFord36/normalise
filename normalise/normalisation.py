@@ -22,7 +22,7 @@ with open('{}/data/names.pickle'.format(mod_path), mode='rb') as file:
     names_lower = pickle.load(file)
 
 
-def list_NSWs(text, verbose=True):
+def list_NSWs(text, verbose=True, variety='BrE'):
     if verbose:
         print("\nCREATING NSW DICTIONARY")
         print("-----------------------\n")
@@ -78,15 +78,15 @@ def list_NSWs(text, verbose=True):
     if verbose:
         print("EXPANDING ALPHABETIC NSWs")
         print("-------------------------\n")
-    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose)
+    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose, variety=variety)
     if verbose:
         print("EXPANDING NUMERIC NSWs")
         print("----------------------\n")
-    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose)
+    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose, variety=variety)
     if verbose:
         print("EXPANDING MISCELLANEOUS NSWs")
         print("----------------------------\n")
-    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose)
+    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose, variety=variety)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
 
@@ -140,23 +140,23 @@ def tokenize_basic(text):
     return out
 
 
-def normalise(text, tokenizer=tokenize_basic, verbose=True):
+def normalise(text, tokenizer=tokenize_basic, verbose=True, variety='BrE'):
     if type(text) == str:
         if tokenizer == tokenize_basic and verbose:
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            return insert(tokenizer(text), verbose=verbose)
+            return insert(tokenizer(text), verbose=verbose, variety=variety)
         else:
-            return insert(tokenizer(text), verbose=verbose)
+            return insert(tokenizer(text), verbose=verbose, variety=variety)
     else:
-        return insert(text, verbose=verbose)
+        return insert(text, verbose=verbose, variety=variety)
 
 
-def insert(text, verbose=True):
+def insert(text, verbose=True, variety='BrE'):
     (expanded_ALPHA,
     expanded_NUMB,
-    expanded_MISC) = list_NSWs(text, verbose=verbose)
+    expanded_MISC) = list_NSWs(text, verbose=verbose, variety=variety)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):

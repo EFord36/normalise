@@ -24,7 +24,7 @@ func_dict = {
              'NRANGE': 'expand_NRANGE(nsw)',
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
-             'NDATE': 'expand_NDATE(nsw)',
+             'NDATE': 'expand_NDATE(nsw, variety=variety)',
              'NADDR': 'expand_NYER(nsw)',
              'NTEL': 'expand_NTEL(nsw)',
              'NSCI': 'expand_NSCI(nsw)',
@@ -38,7 +38,7 @@ func_dict = {
              }
 
 
-def expand_all(dic, text, verbose=True):
+def expand_all(dic, text, verbose=True, variety='BrE'):
     out = {}
     for ind, (nsw, tag, ntag) in dic.items():
         if verbose:

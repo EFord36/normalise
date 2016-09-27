@@ -780,7 +780,7 @@ def expand_NYER(w):
         return w
 
 
-def expand_NDATE(w):
+def expand_NDATE(w, variety="BrE"):
     """Expand a date to words."""
     try:
         numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06',
@@ -791,26 +791,27 @@ def expand_NDATE(w):
                   'October', 'November', 'December']
         m = date_pattern.match(w)
         str2 = ''
-        if m.group(5):
-            if int(m.group(1)) > 12:
+        if variety in ["BrE", "BrEng"]:
+            if m.group(5):
                 str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
-            elif int(m.group(3)) > 12:
+            else:
+                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
+                        + months[numbers.index(m.group(3))])
+        elif variety in ["AmE", "AmEng"]:
+            if m.group(5):
                 str2 += 'the ' + (expand_ordinal(m.group(3)) + ' of '
                         + months[numbers.index(m.group(1))]
                         + " " + expand_NYER(m.group(5)))
             else:
+                str2 += 'the ' + (expand_ordinal(m.group(3)) + ' of '
+                        + months[numbers.index(m.group(1))])
+        else:
+            if m.group(5):
                 str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
-        else:
-            if int(m.group(1)) > 12:
-                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
-                        + months[numbers.index(m.group(3))])
-            elif int(m.group(3)) > 12:
-                str2 += 'the ' + (expand_ordinal(m.group(3)) + ' of '
-                        + months[numbers.index(m.group(1))])
             else:
                 str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
@@ -819,6 +820,7 @@ def expand_NDATE(w):
         raise
     except:
         return w
+            
 
 
 def expand_PRCT(w):
