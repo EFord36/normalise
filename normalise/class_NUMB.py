@@ -138,7 +138,19 @@ def looks_rangey(nsw):
     """Return True if number fits range pattern, not date."""
     m = range_pattern.match(nsw)
     n = seed_range_pattern.match(nsw)
-    if (m or n) and not range_vs_date_hyph(nsw):
+    if m:
+        if m.group(1) and m.group(3):
+            if len(m.group(1)) == 4 and len(m.group(3)) == 2:
+                if int(m.group(1)[-2:]) < int(m.group(3)):
+                    return True
+                else:
+                    return False
+            elif ((int(m.group(1)) >= int(m.group(3))) or m.group(3).startswith('0')
+                or m.group(1).startswith('0')):
+                return False
+            else:
+                return True
+    elif (m or n) and not range_vs_date_hyph(nsw):
         return True
     else:
         return False
@@ -174,7 +186,7 @@ def range_vs_date_slash(nsw):
     else:
         slash = nsw.find('/')
         first = nsw[:slash]
-        second = nsw[slash:]
+        second = nsw[slash+1:]
         if not (first.isdigit() and second.isdigit()):
             return False
         elif len(first) != len(second):
@@ -201,7 +213,7 @@ def range_vs_date_hyph(nsw):
     else:
         hyph = nsw.find('-')
         first = nsw[:hyph]
-        second = nsw[hyph:]
+        second = nsw[hyph+1:]
         if not (first.isdigit() and second.isdigit()):
             return False
         elif len(first) != len(second):
@@ -257,7 +269,7 @@ def looks_datey(nsw, context):
         if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32
             or 12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
                 return True
-        elif context[1] == 'on':
+        elif context[1] == 'on' or context[1].lower() == 'on':
             return True
         else:
             return False
