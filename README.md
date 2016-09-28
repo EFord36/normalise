@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This module takes a text as input, and returns it in a fully normalised form, *ie.* expands everything that is not in a standard, readable format. Non-standard words (NSWs) are detected, classified and expanded. Examples of NSWs that are normalised include:
+This module takes a text as input, and returns it in a normalised form, *ie.* expands all word tokens deemed not to be of a standard type. Non-standard words (NSWs) are detected, classified and expanded. Examples of NSWs that are normalised include:
 
 * Numbers - percentages, dates, currency amounts, ranges, telephone numbers.
 * Abbreviations and acronyms.
@@ -23,6 +23,8 @@ This module takes a text as input, and returns it in a fully normalised form, *i
 
 
 ## 1. <a name="installation"><a/>Installation
+
+normalise requires Python 3. 
 
 To install the module (on Windows, Mac OS X, Linux, etc.) and to ensure that you have the latest version of pip and setuptools:
 
@@ -174,6 +176,8 @@ Out:
 
 * **Elliot Ford** - [EFord36](https://github.com/EFord36)
 * **Emma Flint** - [emmaflint27](https://github.com/emmaflint27)
+
+Our system is described in detail in Emma Flint, Elliot Ford, Olivia Thomas, Andrew Caines & Paula Buttery (2016) - A Text Normalisation System for Non-Standard Words. 
 
 ## 5. <a name="license"><a/>License
 
