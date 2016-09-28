@@ -144,7 +144,7 @@ def seed_features(item, context):
            nsw.endswith('s') and nsw[:-1].isupper(),
            nsw in element_dict,
            nsw.isalpha and nsw.islower() and len(nsw) > 2,
-           nsw.lower() in abbrev_dict
+           nsw.lower() in abbrev_dict or nsw in ['St.', 'st.', 'St']
            ]
     return out
 
@@ -196,7 +196,7 @@ def seed(dict_tup, text):
         return 2
     elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
         return 1
-    elif nsw.lower() in abbrev_dict:
+    elif nsw.lower() in abbrev_dict or nsw in ['St.', 'st.', 'St']:
         return 1
     elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict
           and is_digbased(context[1]))):

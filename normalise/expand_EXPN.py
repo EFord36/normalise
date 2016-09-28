@@ -5,6 +5,7 @@ import pickle
 
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
+from nltk.corpus import names
 from nltk.tokenize import word_tokenize as wt
 from nltk import FreqDist as fd
 from nltk import pos_tag
@@ -31,6 +32,7 @@ brown = word_tokenized_lowered[:1161192]
 brown_common = {word: log(1161192 / freq) for
                 word, freq in fd(brown).most_common(5000)[100:]}
 words = [w for w, freq in fd(brown).most_common()]
+names_lower = {w.lower() for w in names.words()}
 
 
 def expand_EXPN(nsw, i, text, user_abbrevs={}):
@@ -39,7 +41,17 @@ def expand_EXPN(nsw, i, text, user_abbrevs={}):
     try:
         if user_abbrevs:
             abbrevs = create_user_abbrevs(user_abbrevs)
-        if nsw in meas_dict:
+        if nsw in ['St.', 'st.', 'St']:
+            if text[i + 1].lower() in names_lower:
+                return 'Saint'
+            elif text[i + 1].endswith("'s"):
+                if text[i + 1][:-2].lower() in names_lower:
+                    return 'Saint'
+            elif text[i - 1].istitle():
+                return 'street'
+            elif text[i + 1].istitle():
+                return 'Saint'
+        elif nsw in meas_dict:
             if isinstance(i, int):
                 if is_digbased(text[i - 1]):
                     if text[i - 1] == '1':
