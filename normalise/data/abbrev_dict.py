@@ -525,5 +525,5 @@ def add_to_pickled_abbrev(dictionary):
             if dictionary[key] not in abbrevs[k]:
                 abbrevs[k].append(dictionary[key])
     with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='wb') as f:
-        pickle.dump(abbrevs, f)
+        pickle.dump(abbrevs, f, protocol=2)
     print(abbrevs)

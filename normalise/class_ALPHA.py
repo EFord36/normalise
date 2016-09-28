@@ -183,7 +183,7 @@ def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_ALPHA.pickle"""
     clf = fit_clf(dic, text)
     with open('{}/data/clf_ALPHA.pickle'.format(mod_path), 'wb') as file:
-        pickle.dump(clf, file)
+        pickle.dump(clf, file, protocol=2)
 
 
 def seed(dict_tup, text):

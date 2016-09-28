@@ -32,7 +32,7 @@ def store_pos_tag_dicts():
         pos_tag_dict_univ[word.lower()] += ('NOUN',)
     dicts = (pos_tag_dict, pos_tag_dict_univ)
     with open('{}/data/pos_dicts.pickle'.format(mod_path), 'wb') as file:
-        pickle.dump(dicts, file)
+        pickle.dump(dicts, file, protocol=2)
 
 
 def add_to_pos_dicts(pos_dict_new, pos_dict_new_univ):
@@ -59,7 +59,7 @@ def add_to_pos_dicts(pos_dict_new, pos_dict_new_univ):
                                      + (pos_dict_new_univ[key],))
     dicts = (pos_dict, pos_dict_univ)
     with open('{}/data/pos_dicts.pickle'.format(mod_path), mode='wb') as f:
-        pickle.dump(dicts, f)
+        pickle.dump(dicts, f, protocol=2)
     print(dicts)
 
 
