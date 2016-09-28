@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 12 16:15:15 2016
 
-@author: emmaflint
-"""
+from __future__ import division, print_function, unicode_literals
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 recall_score)
 
-from context import normalise
 from gold_standard_dict import gold_standard_dict, gold_standard_tagged
 from normalise.tagger import tagify
 
 # Tag gold standard NSW tokens, return dictionary of predicted tags.
-gold_standard_predicted = tagify(gold_standard_dict)
+gold_standard_predicted = tagify(gold_standard_dict, verbose=False)
 
 def predicted_tags():
     """Return list of predicted tags"""

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 22 09:21:54 2016
-
-@author: emmaflint
-"""
 
 tech_words = [
               'accelerometer',
@@ -34,7 +29,7 @@ tech_words = [
               'debug',
               'ethernet',
               'encryption',
-              'email', 
+              'email',
               'emulator',
               'ethernet',
               'facebook',
@@ -45,13 +40,15 @@ tech_words = [
               'firefox',
               'firewall',
               'google',
+              'gmail',
               'hardware',
+              'hotmail',
               'hypertext',
               'internet',
               'java',
               'joystick',
               'keyboard',
-              'keypad', 
+              'keypad',
               'laptop',
               'linux',
               'macintosh',
@@ -63,7 +60,7 @@ tech_words = [
               'newbie',
               'overclock',
               'phising',
-              'pixel', 
+              'pixel',
               'python',
               'plugin',
               'rooting',

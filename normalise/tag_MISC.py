@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 11 15:50:11 2016
 
-@author: Elliot
-"""
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import re
 
 
-def tag_MISC(dic):
+def tag_MISC(dic, verbose=True):
     """Return dictionary with added tag within the value tuple."""
     out = {}
     for ind, (nsw, tag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} subtagged".format(len(out), len(dic)))
+            sys.stdout.flush()
         if looks_rude(nsw):
             out.update({ind: (nsw, tag, 'PROF')})
         elif is_url(nsw):
@@ -21,6 +21,10 @@ def tag_MISC(dic):
             out.update({ind: (nsw, tag, 'HTAG')})
         else:
             out.update({ind: (nsw, tag, 'NONE')})
+    if verbose:
+        sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 

@@ -1,38 +1,44 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 18 10:12:48 2016
 
-@author: Elliot
-"""
+from __future__ import division, print_function, unicode_literals
+
+import sys
 import re
 import pickle
+from io import open
 
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
+from roman import romanNumeralPattern
 
+from normalise.detect import mod_path
 from normalise.tagger import tagify, is_digbased, acr_pattern
 from normalise.class_NUMB import gen_frame
 from normalise.splitter import split, retagify
 from normalise.data.measurements import meas_dict, meas_dict_pl
+from normalise.data.abbrev_dict import abbrev_dict
 from normalise.data.element_dict import element_dict
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
+with open('{}/data/word_tokenized.pickle'.format(mod_path), mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
-with open('../normalise/data/clf_ALPHA.pickle', mode='rb') as file:
+with open('{}/data/clf_ALPHA.pickle'.format(mod_path), mode='rb') as file:
     clf_ALPHA = pickle.load(file)
 
+with open('{}/data/names.pickle'.format(mod_path), mode='rb') as file:
+    names_lower = pickle.load(file)
+
 if __name__ == "__main__":
-    tagged = tagify(NSWs)
+    tagged = tagify(NSWs, verbose=False)
 
     ALPHA_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                   if tag == 'ALPHA'}
@@ -40,8 +46,8 @@ if __name__ == "__main__":
     SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'SPLT'}
 
-    splitted = split(SPLT_dict)
-    retagged = retagify(splitted)
+    splitted = split(SPLT_dict, verbose=False)
+    retagged = retagify(splitted, verbose=False)
     retagged_ALPHA_dict = {ind: (nsw, tag)
                            for ind, (nsw, tag) in retagged.items()
                            if tag == 'SPLT-ALPHA'}
@@ -64,7 +70,7 @@ ampm = ['am', 'pm', 'AM', 'PM', 'a.m.', 'p.m.', 'A.M.', 'P.M.', 'pm.', 'am.']
 adbc = ['AD', 'A.D.', 'ad', 'a.d.', 'BC', 'B.C.', 'bc', 'B.C.']
 
 
-def run_clfALPHA(dic, text):
+def run_clfALPHA(dic, text, verbose=True, user_abbrevs={}):
     """Train classifier on training data, return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -81,9 +87,21 @@ def run_clfALPHA(dic, text):
                     }
     out = {}
     for (ind, (nsw, tag)) in dic.items():
-        pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
-        ntag = int_tag_dict[pred_int]
-        out.update({ind: (nsw, tag, ntag)})
+        if verbose:
+            sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+            sys.stdout.flush()
+        if romanNumeralPattern.match(nsw) and gen_frame((ind, (nsw, tag)), text)[1].lower() in names_lower:
+            out.update({ind: (nsw, 'NUMB', 'NORD')})
+        if nsw in user_abbrevs:
+            out.update({ind: (nsw, 'ALPHA', 'EXPN')})
+        else:
+            pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
+            ntag = int_tag_dict[pred_int]
+            out.update({ind: (nsw, tag, ntag)})
+    if verbose:
+        sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
@@ -118,8 +136,9 @@ def seed_features(item, context):
            (nsw in meas_dict or nsw in meas_dict_pl) and is_digbased(context[1]),
            (nsw in ampm or nsw in adbc) and is_digbased(context[1]),
            (nsw.istitle() and nsw.isalpha() and len(nsw) > 3 and not is_cons(nsw)),
-           ((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
-           or (nsw.endswith("s'") and nsw[:-2].istitle()),
+           (((nsw.startswith("O'") or nsw.startswith("D'")) and nsw[2:].istitle())
+           or (nsw.endswith("s'") and nsw[:-2].istitle())
+           or (nsw.endswith("'s") and nsw[:-2].istitle())),
            (not (nsw.isupper() or nsw.endswith('s') and nsw[:-1].isupper())
             and (nsw.lower() in wordlist
             or (nsw[:-1].lower() in wordlist and nsw.endswith('s')))
@@ -129,7 +148,8 @@ def seed_features(item, context):
            nsw.isalpha() and nsw.islower() and len(nsw) > 3,
            nsw.endswith('s') and nsw[:-1].isupper(),
            nsw in element_dict,
-           nsw.isalpha and nsw.islower() and len(nsw) > 2
+           nsw.isalpha and nsw.islower() and len(nsw) > 2,
+           nsw.lower() in abbrev_dict or nsw in ['St.', 'st.', 'St']
            ]
     return out
 
@@ -163,8 +183,8 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_ALPHA.pickle"""
     clf = fit_clf(dic, text)
-    with open('data/clf_ALPHA.pickle', 'wb') as file:
-        pickle.dump(clf, file)
+    with open('{}/data/clf_ALPHA.pickle'.format(mod_path), 'wb') as file:
+        pickle.dump(clf, file, protocol=2)
 
 
 def seed(dict_tup, text):
@@ -180,6 +200,8 @@ def seed(dict_tup, text):
     elif nsw in ['i.e.', 'ie.', 'e.g.', 'eg.']:
         return 2
     elif nsw.endswith('.') and nsw.istitle() and not acr_pattern.match(nsw):
+        return 1
+    elif nsw.lower() in abbrev_dict or nsw in ['St.', 'st.', 'St']:
         return 1
     elif (nsw.isupper() and is_cons(nsw) and not (nsw in meas_dict
           and is_digbased(context[1]))):

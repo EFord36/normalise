@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 15 15:21:05 2016
 
-@author: emmaflint
-"""
 gold_standard = [
                  "BBC",
                  "Radio",

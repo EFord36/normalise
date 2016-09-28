@@ -1,39 +1,40 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 14 09:14:19 2016
 
-@author: Elliot
-"""
+from __future__ import division, print_function, unicode_literals
+
+import sys
 import re
 import pickle
+from io import open
 
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp
 
+from normalise.detect import mod_path
 from normalise.tagger import tagify, ecurr_dict
 from normalise.data.timezones import timezone_dict
 from normalise.splitter import split, retagify
 from normalise.data.measurements import meas_dict, meas_dict_pl
 
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
-with open('../normalise/data/word_tokenized.pickle', mode='rb') as file:
+with open('{}/data/word_tokenized.pickle'.format(mod_path), mode='rb') as file:
     word_tokenized = pickle.load(file)
 
-with open('../normalise/data/word_tokenized_lowered.pickle', mode='rb') as f:
+with open('{}/data/word_tokenized_lowered.pickle'.format(mod_path), mode='rb') as f:
     word_tokenized_lowered = pickle.load(f)
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
-with open('../normalise/data/clf_NUMB.pickle', mode='rb') as file:
+with open('{}/data/clf_NUMB.pickle'.format(mod_path), mode='rb') as file:
     clf_NUMB = pickle.load(file)
 
 if __name__ == "__main__":
     # Store all NUMB tags from training data in NUMB_list, including SPLT-NUMB.
-    tagged = tagify(NSWs)
+    tagged = tagify(NSWs, verbose=False)
 
     NUMB_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'NUMB'}
@@ -41,8 +42,8 @@ if __name__ == "__main__":
     SPLT_dict = {ind: (nsw, tag) for ind, (nsw, tag) in tagged.items()
                  if tag == 'SPLT'}
 
-    splitted = split(SPLT_dict)
-    retagged = retagify(splitted)
+    splitted = split(SPLT_dict, verbose=False)
+    retagged = retagify(splitted, verbose=False)
     retagged_NUMB_dict = {ind: (nsw, tag)
                           for ind, (nsw, tag) in retagged.items()
                           if tag == 'SPLT-NUMB'}
@@ -59,7 +60,7 @@ months = ["January", "Jan", "Jan.", "February", "Feb", "Feb.",
 addr_words = ['Road', 'Rd.', 'Street', 'Avenue', 'Ave.']
 
 
-def run_clfNUMB(dic, text):
+def run_clfNUMB(dic, text, verbose=True):
     """Train classifier on training data, return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -84,9 +85,16 @@ def run_clfNUMB(dic, text):
                     }
     out = {}
     for (ind, (nsw, tag)) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+            sys.stdout.flush()
         pred_int = int(clf.predict(gen_featuresetsNUM({ind: (nsw, tag)}, text)))
         ntag = int_tag_dict[pred_int]
         out.update({ind: (nsw, tag, ntag)})
+    if verbose:
+        sys.stdout.write("\r{} of {} classified".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
@@ -135,7 +143,25 @@ def looks_rangey(nsw):
     """Return True if number fits range pattern, not date."""
     m = range_pattern.match(nsw)
     n = seed_range_pattern.match(nsw)
-    if (m or n) and not range_vs_date_hyph(nsw):
+    if m:
+        if m.group(1) and m.group(3):
+            if len(m.group(1)) == 4 and len(m.group(3)) == 2:
+                if m.group(1).isdigit() and m.group(3).isdigit():
+                    if int(m.group(1)[-2:]) < int(m.group(3)):
+                        return True
+                    else:
+                        return False
+                elif (m or n) and not range_vs_date_hyph(nsw):
+                    return True
+            elif m.group(1).isdigit() and m.group(3).isdigit():
+                if ((int(m.group(1)) >= int(m.group(3))) or m.group(3).startswith('0')
+                or m.group(1).startswith('0')):
+                    return False
+                else:
+                    return True
+            elif (m or n) and not range_vs_date_hyph(nsw):
+                return True
+    elif (m or n) and not range_vs_date_hyph(nsw):
         return True
     else:
         return False
@@ -171,7 +197,7 @@ def range_vs_date_slash(nsw):
     else:
         slash = nsw.find('/')
         first = nsw[:slash]
-        second = nsw[slash:]
+        second = nsw[slash+1:]
         if not (first.isdigit() and second.isdigit()):
             return False
         elif len(first) != len(second):
@@ -198,7 +224,7 @@ def range_vs_date_hyph(nsw):
     else:
         hyph = nsw.find('-')
         first = nsw[:hyph]
-        second = nsw[hyph:]
+        second = nsw[hyph+1:]
         if not (first.isdigit() and second.isdigit()):
             return False
         elif len(first) != len(second):
@@ -248,12 +274,13 @@ def time_context(nsw, context):
 
 
 def looks_datey(nsw, context):
+    """Return 'True' if nsw looks like a valid date."""
     m = date_pattern.match(nsw)
     if date_pattern.match(nsw):
         if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32
             or 12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
                 return True
-        elif context[1] == 'on':
+        elif context[1] == 'on' or context[1].lower() == 'on':
             return True
         else:
             return False
@@ -291,12 +318,16 @@ def seed_features(item, context):
             or ((context[1] in months or context[3] in months)
             and nsw.isdigit()
             and int(nsw) < 31)),
+           bool(digit_pattern.match(nsw)),
            ((float_pattern.match(nsw) and float(nsw) > 31)
            or ((context[3] in ['million', 'billion', 'thousand']
           or (context[3] in meas_dict or context[3] in meas_dict_pl)
           and nsw.isdigit()))),
+          ('/' in nsw and (context[3] in meas_dict or context[3] in meas_dict_pl
+          or context[3] in meas_dict.values() or context[3] in meas_dict_pl.values())),
           looks_datey(nsw, context),
-          (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'),
+          (len(nsw) == 11 and nsw.startswith('0')) or (nsw.startswith('+44')
+           and len(nsw) == 13),
           looks_rangey(nsw),
           (nsw.isdigit() and 1950 < int(nsw) < 2100
            and not (context[3] in meas_dict or context[3] in meas_dict_pl)),
@@ -406,8 +437,8 @@ def fit_clf(dic, text):
 def fit_and_store_clf(dic, text):
     """fit a Label Propogation classifier, and store in clf_NUMB.pickle"""
     clf = fit_clf(dic, text)
-    with open('data/clf_NUMB.pickle', 'wb') as file:
-        pickle.dump(clf, file)
+    with open('{}/data/clf_NUMB.pickle'.format(mod_path), 'wb') as file:
+        pickle.dump(clf, file, protocol=2)
 
 
 def seed(dict_tup, text):
@@ -438,6 +469,8 @@ def seed(dict_tup, text):
           len(context[1]) > 1 and context[1].lower() not in wordlist and
           len(nsw) > 1) or nsw.count('.') > 2:
         return 5
+    elif digit_pattern.match(nsw):
+        return 5
     elif (nsw[-2:] in ['st', 'nd', 'rd', 'th'] or
           ((context[1] in months or context[3] in months) and
           nsw.isdigit() and
@@ -448,11 +481,15 @@ def seed(dict_tup, text):
           (context[3] in meas_dict or context[3] in meas_dict_pl) and
           nsw.isdigit())):
         return 7
+    elif ('/' in nsw and (context[3] in meas_dict or context[3] in meas_dict_pl
+          or context[3] in meas_dict.values() or context[3] in meas_dict_pl.values())):
+        return 7
     elif looks_datey(nsw, context):
         return 10
     elif looks_rangey(nsw):
         return 8
-    elif (len(nsw) == 11 and nsw.startswith('0')) or nsw.startswith('+44'):
+    elif (len(nsw) == 11 and nsw.startswith('0')) or (nsw.startswith('+44')
+          and len(nsw) == 13):
         return 9
     elif '.' in nsw or ',' in nsw:
         return 7
@@ -533,5 +570,12 @@ feet_pattern = re.compile('''
 (\.?
 [0-9]+
 ["|″]?)?
+$
+''', re.VERBOSE)
+
+digit_pattern = re.compile('''
+([0-9]+
+\-){2,}
+[0-9]+
 $
 ''', re.VERBOSE)

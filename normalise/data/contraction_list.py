@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep  1 14:40:10 2016
-
-@author: emmaflint
-"""
 
 contractions = [
                 "aren't",

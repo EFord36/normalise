@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 22 14:30:22 2016
 
-@author: emmaflint
-"""
+from __future__ import division, print_function, unicode_literals
 
 import re
+from io import open
 
+from roman import romanNumeralPattern, fromRoman
 from normalise.class_NUMB import gen_frame
 
+
 def expand_fraction(n):
+    """Expand fractions."""
     try:
         slash = n.find('/')
         first = n[:slash]
@@ -23,13 +24,17 @@ def expand_fraction(n):
                     exp += "one hundredth"
                 else:
                     exp += expand_NUM(first) + " hundredths"
-            elif ((int(first) >= int(second)) or int(second) > 10
+            elif ((int(first) >= int(second)) or int(second) > 19
                     or second in ['1', '2']):
                 exp += expand_NUM(first) + " over " + expand_NUM(second)
             else:
-                numbers = ['3', '4', '5', '6', '7', '8', '9']
+                numbers = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
+                           '13', '14', '15', '16', '17', '18', '19']
                 fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh',
-                             'eighth', 'ninth']
+                             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth',
+                             'thirteenth', 'fourteenth', 'fifteenth',
+                             'sixteenth', 'seventeenth', 'eighteenth',
+                             'nineteenth']
                 if first == '1':
                     exp += "one " + fractions[numbers.index(second)]
                 else:
@@ -183,6 +188,7 @@ def expand_NUM(n):
 
 
 def expand_NRANGE(n):
+    """Return a number range in words."""
     try:
         if range_pattern.match(n):
             m = range_pattern.match(n)
@@ -218,8 +224,12 @@ def expand_NRANGE(n):
 
 
 def expand_NORD(dict_tup, text):
+    """Insert 'the' and 'of' if ordinal is a date, to sound more natural.
+       Only if not already in text, eg. 'The 30th of April'."""
     try:
         ind, (nsw, tag, ntag) = dict_tup
+        if romanNumeralPattern.match(nsw):
+            return 'the ' + expand_NORD((ind, (str(fromRoman(nsw)), tag, ntag)), text)
         out = expand_ordinal(nsw)
         if gen_frame(dict_tup, text)[3] in months:
             out += ' of'
@@ -229,7 +239,7 @@ def expand_NORD(dict_tup, text):
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
-        return out
+        return dict_tup[1][0]
 
 
 def expand_ordinal(n):
@@ -654,6 +664,7 @@ def expand_MONEY(dict_tup, text):
 
 
 def expand_NDIG(w):
+    """Expand digit sequences to a series of words."""
     try:
         numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         num_words = ['zero', 'one', 'two', 'three', 'four', 'five',
@@ -676,6 +687,7 @@ def expand_NDIG(w):
 
 
 def expand_NTEL(w):
+    """Expand telephone numbers."""
     try:
         str2 = ''
         if w[0] == '+':
@@ -703,6 +715,7 @@ num_words2 = ['one', 'two', 'three', 'four', 'five',
 
 
 def expand_NTIME(w):
+    """Expand a time to words."""
     try:
         str2 = ''
         m = time_pattern.match(w)
@@ -732,6 +745,7 @@ def expand_NTIME(w):
 
 
 def expand_NYER(w):
+    """Expand a year to words."""
     try:
         if w[-1] == 's':
             if len(w) > 1 and w[-2:] == "'s":
@@ -775,7 +789,8 @@ def expand_NYER(w):
         return w
 
 
-def expand_NDATE(w):
+def expand_NDATE(w, variety="BrE"):
+    """Expand a date to words."""
     try:
         numbers = ['01', '1', '02', '2', '03', '3', '04', '4', '05', '5', '06',
                    '6', '07', '7', '08', '8', '09', '9', '10', '11', '12']
@@ -785,28 +800,29 @@ def expand_NDATE(w):
                   'October', 'November', 'December']
         m = date_pattern.match(w)
         str2 = ''
-        if m.group(5):
-            if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+        if variety in ["BrE", "BrEng"]:
+            if m.group(5):
+                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
-            elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of '
+            else:
+                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
+                        + months[numbers.index(m.group(3))])
+        elif variety in ["AmE", "AmEng"]:
+            if m.group(5):
+                str2 += 'the ' + (expand_ordinal(m.group(3)) + ' of '
                         + months[numbers.index(m.group(1))]
                         + " " + expand_NYER(m.group(5)))
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += 'the ' + (expand_ordinal(m.group(3)) + ' of '
+                        + months[numbers.index(m.group(1))])
+        else:
+            if m.group(5):
+                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))]
                         + " " + expand_NYER(m.group(5)))
-        else:
-            if int(m.group(1)) > 12:
-                str2 += (expand_NORD(m.group(1)) + ' of '
-                        + months[numbers.index(m.group(3))])
-            elif int(m.group(3)) > 12:
-                str2 += (expand_NORD(m.group(3)) + ' of '
-                        + months[numbers.index(m.group(1))])
             else:
-                str2 += (expand_NORD(m.group(1)) + ' of '
+                str2 += 'the ' + (expand_ordinal(m.group(1)) + ' of '
                         + months[numbers.index(m.group(3))])
         return str2
     except (KeyboardInterrupt, SystemExit):
@@ -815,9 +831,11 @@ def expand_NDATE(w):
         return w
 
 
+
 def expand_PRCT(w):
+    """Expand a percentage to words."""
     try:
-        if '-' or '–' in w:
+        if '-' in w or '–' in w:
             return expand_NRANGE(w[:-1]) + " percent"
         elif '.' in w:
             m = percent_pattern2.match(w)
@@ -848,6 +866,7 @@ def expand_PRCT(w):
 
 
 def expand_NSCI(w):
+    """Expand scientific numbers (coordinates, feet and inches) to words."""
     try:
         if coord_pattern.match(w):
             m = coord_pattern.match(w)

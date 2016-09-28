@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 11 13:54:25 2016
-
-@author: Elliot
-"""
 
 from __future__ import division, print_function, unicode_literals
 
+import os
+import sys
 import pickle
-import nltk
+from io import open
+
+from nltk import WordNetLemmatizer
 from nltk.corpus import words
 from nltk.corpus import nps_chat
 from nltk.corpus import brown
@@ -16,11 +15,16 @@ from nltk.corpus import names
 from normalise.data.contraction_list import contractions
 from normalise.data.tech_words import tech_words
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+mod_path = os.path.dirname(__file__)
+
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
+with open('{}/data/fake_data.pickle'.format(mod_path), mode='rb') as file:
+    fake_data = pickle.load(file)
+
 if __name__ == '__main__':
-    word_tokenized = brown.words() + nps_chat.words()
+    word_tokenized = brown.words() + nps_chat.words() + fake_data
     brown_lower = {w.lower() for w in brown.words()
                    if len(w) > 4 and w.isalpha()}
     names_lower = {w.lower() for w in names.words()}
@@ -34,12 +38,12 @@ if __name__ == '__main__':
 # Conditions for identification of NSWs.
 def cond1(w):
     """ Return word if its lower-cased form is not in the wordlist."""
-    return w.lower() not in wordlist
+    return w.lower() not in wordlist or w == 'US'
 
 
 def cond2(w):
     """ Return word if its lemmatised form is not in the wordlist."""
-    wnl = nltk.WordNetLemmatizer()
+    wnl = WordNetLemmatizer()
     return wnl.lemmatize(w.lower()) not in wordlist
 
 
@@ -71,11 +75,6 @@ def ident_NSW(w):
             and not (w.lower() in contractions))
 
 
-def create_NSW_dict(text):
+def create_NSW_dict(text, verbose=True):
     "Create dictionary of NSWs in text: keys are indices, values NSWs"
-    out = {}
-    for i in range(len(text)):
-        w = text[i]
-        if ident_NSW(w):
-            out[i] = w
-    return out
+    return {i: text[i] for i in range(len(text)) if ident_NSW(text[i])}

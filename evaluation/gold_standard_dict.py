@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 12 17:02:05 2016
 
-@author: emmaflint
-"""
+from __future__ import division, print_function, unicode_literals
+
 gold_standard_dict = {
                       1: "BBC",
                       2: "4",

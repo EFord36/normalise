@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division, print_function, unicode_literals
+
+import sys
 import re
 import pickle
+from io import open
 
+from normalise.detect import mod_path
 from normalise.class_ALPHA import triple_rep
 from normalise.spellcheck import correct
 from normalise.expand_EXPN import expand_EXPN
@@ -10,11 +17,11 @@ from normalise.expand_NUMB import (expand_NUM, expand_NDIG, expand_NORD,
                                    expand_NTIME, expand_NRANGE, expand_NTEL,
                                    expand_NDATE, expand_NSCI)
 
-with open('../normalise/data/wordlist.pickle', mode='rb') as file:
+with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
 
 func_dict = {
-             'EXPN': 'expand_EXPN(nsw, ind, text)',
+             'EXPN': 'expand_EXPN(nsw, ind, text, user_abbrevs=user_abbrevs)',
              'LSEQ': 'expand_LSEQ(nsw)',
              'WDLK': 'expand_WDLK(nsw)',
              'NUM': 'expand_NUM(nsw)',
@@ -22,7 +29,7 @@ func_dict = {
              'NRANGE': 'expand_NRANGE(nsw)',
              'NDIG': 'expand_NDIG(nsw)',
              'NTIME': 'expand_NTIME(nsw)',
-             'NDATE': 'expand_NDATE(nsw)',
+             'NDATE': 'expand_NDATE(nsw, variety=variety)',
              'NADDR': 'expand_NYER(nsw)',
              'NTEL': 'expand_NTEL(nsw)',
              'NSCI': 'expand_NSCI(nsw)',
@@ -36,22 +43,35 @@ func_dict = {
              }
 
 
-def expand_all(dic, text):
+def expand_all(dic, text, verbose=True, variety='BrE', user_abbrevs={}):
     out = {}
     for ind, (nsw, tag, ntag) in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} expanded".format(len(out), len(dic)))
+            sys.stdout.flush()
         out.update({ind: (nsw, tag, ntag, (eval(func_dict[ntag])))})
+    if verbose:
+        sys.stdout.write("\r{} of {} expanded".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 
 def expand_NONE(nsw):
-    return ''
+    """For nsws tagged 'NONE', return 'and' if nsw is '&', otherwise return
+       nothing."""
+    if nsw == '&':
+        return 'and'
+    else:
+        return ''
 
 
 def expand_PROF(w):
     try:
-        """Return 'original' rude word from asterisked FNSP."""
-        rude = ['ass', 'asshole', 'balls', 'bitch', 'cunt', 'cock', 'crap',
-                'cum', 'dick', 'fuck', 'pussy', 'shit', 'tits', 'twat']
+        """Return 'original' rude word from asterisked 'WDLK'."""
+        rude = ['ass', 'arse', 'asshole', 'balls', 'bitch', 'cunt',
+                'cock', 'crap', 'cum', 'damn' 'dick', 'fuck', 'motherfucker',
+                'pussy','shit', 'tits', 'twat', 'wank', 'wanker']
         candidates = [r for r in rude if len(r) == len(w)]
         final = ''
         ind = 0
@@ -78,6 +98,7 @@ def expand_PROF(w):
 
 
 def expand_WDLK(word):
+    """Expand 'WDLK' tokens."""
     try:
         if word.lower() in wordlist:
             return word
@@ -132,6 +153,7 @@ def create_regexp(w):
 
 
 def expand_LSEQ(word):
+    """Expand 'LSEQ' tokens to a series of letters."""
     try:
         out = ''
         if word[0].isalpha():

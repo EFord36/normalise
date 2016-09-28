@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 11 14:44:25 2016
 
-@author: Elliot
-"""
 from __future__ import division, print_function, unicode_literals
 
+import sys
 import re
 import pickle
+from io import open
 
+from normalise.detect import mod_path
 from normalise.data.measurements import meas_dict
 
-with open('../normalise/data/NSW_dict.pickle', mode='rb') as file:
+with open('{}/data/NSW_dict.pickle'.format(mod_path), mode='rb') as file:
     NSWs = pickle.load(file)
 
 curr_list = ['£', '$', '€']
 AlPHA_dict, NUMB_dict, MISC_dict = {}, {}, {}
 
 
-def tagify(dic):
+def tagify(dic, verbose=True):
     """Return dictionary with added tag.
 
     dic: dictionary entry where key is index of word in orig text, value
@@ -28,6 +27,9 @@ def tagify(dic):
     """
     out = {}
     for ind, it in dic.items():
+        if verbose:
+            sys.stdout.write("\r{} of {} tagged".format(len(out), len(dic)))
+            sys.stdout.flush()
         if len(it) > 100:
             out.update({ind: (it, 'MISC')})
         if is_digbased(it):
@@ -45,6 +47,10 @@ def tagify(dic):
             out.update({ind: (it, 'SPLT')})
         else:
             out.update({ind: (it, 'MISC')})
+    if verbose:
+        sys.stdout.write("\r{} of {} tagged".format(len(out), len(dic)))
+        sys.stdout.flush()
+        print("\n")
     return out
 
 

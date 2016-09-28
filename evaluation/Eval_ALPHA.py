@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Jul 21 15:24:25 2016
 
-@author: emmaflint
-"""
+from __future__ import division, print_function, unicode_literals
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
                              recall_score)
 
-from context import normalise
 from normalise.class_ALPHA import run_clfALPHA, gen_frame
 from normalise.tagger import tagify
 from gs_ALPHA_dict import gs_ALPHA_dict, gs_ALPHA_tagged
@@ -25,7 +22,7 @@ def create_ALPHA_ex():
     with open('gs_alphas', mode='w', encoding='utf-8') as file:
         file.write(str(ALPHA_ex))
 
-gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text)
+gold_standard_predicted = run_clfALPHA(gs_ALPHA_dict, text, verbose=False)
 
 
 def gold_vs_pred_tuple():

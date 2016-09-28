@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Aug 30 15:39:00 2016
 
-@author: emmaflint
-"""
+from __future__ import division, print_function, unicode_literals
+
 import pickle
 from collections import defaultdict
+
+from normalise.detect import mod_path
 
 abbrev_dict = {
                "abbrev.": "abbreviation",
@@ -475,6 +475,7 @@ titles = {
 
 
 def build_abbrevs(dictionary):
+    """Builds abbreviation dictionary from input in correct format."""
     abbrevs = defaultdict(list)
     for key in dictionary:
         if key.endswith('.'):
@@ -488,8 +489,9 @@ def build_abbrevs(dictionary):
     return abbrevs
 
 
-def add_to_pickled_abbrev(dictionary):
-    with open('../normalise/data/abbrev_dict.pickle', mode='rb') as f:
+def create_user_abbrevs(dictionary):
+    """Stores user and general abbreviations in pickle file."""
+    with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='rb') as f:
         abbrevs = pickle.load(f)
     for key in dictionary:
         if key.endswith('.'):
@@ -503,6 +505,25 @@ def add_to_pickled_abbrev(dictionary):
         elif type(dictionary[key]) == str:
             if dictionary[key] not in abbrevs[k]:
                 abbrevs[k].append(dictionary[key])
-    with open('../normalise/data/abbrev_dict.pickle', mode='wb') as f:
-        pickle.dump(abbrevs, f)
+    return abbrevs
+
+
+def add_to_pickled_abbrev(dictionary):
+    """Add new dictionary to pickled file of abbreviations."""
+    with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='rb') as f:
+        abbrevs = pickle.load(f)
+    for key in dictionary:
+        if key.endswith('.'):
+            k = key[:-1].lower()
+        else:
+            k = key.lower()
+        if type(dictionary[key]) == list:
+            for exp in dictionary[key]:
+                if exp not in abbrevs[k]:
+                    abbrevs[k].append(exp)
+        elif type(dictionary[key]) == str:
+            if dictionary[key] not in abbrevs[k]:
+                abbrevs[k].append(dictionary[key])
+    with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='wb') as f:
+        pickle.dump(abbrevs, f, protocol=2)
     print(abbrevs)

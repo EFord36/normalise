@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 22 09:57:06 2016
-
-@author: emmaflint
-"""
 
 element_dict = {
                 "Ac": "Actinium",

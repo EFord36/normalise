@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 15 11:09:55 2016
 
-@author: emmaflint
-"""
 gs_numb_dict = {
                 2: ("4", "NUMB"),
                 5: ("4", "NUMB"),

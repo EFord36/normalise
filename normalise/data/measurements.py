@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Jul 15 10:23:42 2016
-
-@author: emmaflint
-"""
 
 meas_dict = {
              "%": "percent",

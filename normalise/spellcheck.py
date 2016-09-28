@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import division, print_function, unicode_literals
+
 import re
 import collections
-import nltk
+from nltk.corpus import brown
 
 
 def words(text):
@@ -14,7 +17,7 @@ def train(features):
         model[f] += 1
     return model
 
-NWORDS = train(nltk.corpus.brown.words())
+NWORDS = train(brown.words())
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
 
