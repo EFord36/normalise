@@ -206,13 +206,16 @@ def main():
     parser.add_argument('--AmE', dest='variety', action='store_const',
                         const='AmE', default='BrE',
                         help='specify the variety as American English (default: British English)')
+    parser.add_argument('--V', dest='verbose', action='store_const',
+                        const=True, default=False,
+                        help='specify verbose output (default: False)')
     args = parser.parse_args()
     f = args.text[0]
     with open(f, mode='r') as raw:
         text = raw.read()
     i = f.rfind('.')
     with open('{}_normalised{}'.format(f[:i], f[i:]), mode='w') as out:
-        out.write(rejoin(normalise(text, verbose=False, variety=args.variety)))
+        out.write(rejoin(normalise(text, verbose=args.verbose, variety=args.variety)))
 
 if __name__ == '__main__':
     main()
