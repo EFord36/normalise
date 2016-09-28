@@ -198,7 +198,8 @@ def rejoin(tokenized_text):
 
 def main():
     # script, f = argv
-    parser = argparse.ArgumentParser(description="""normalise text. Will use
+    parser = argparse.ArgumentParser(description="""normalises text in file
+     at path given (path/name.extention'), and stores in 'file_normalised' (path/name_normalised.extention). Will use
      simple default tokenizer and general abbrevations: to use custom tokenizer
      and abbreviations import normalise function from the module.""")
     parser.add_argument('text', metavar='P', type=str, nargs=1,
