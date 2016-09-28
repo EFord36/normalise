@@ -1,4 +1,6 @@
-gs_ALPHA_dict = {                  
+# -*- coding: utf-8 -*-
+
+gs_ALPHA_dict = {
                   9215.1: ('up', 'SPLT-ALPHA'),
                   0: ('BBC', 'ALPHA'),
                   3: ('BBC', 'ALPHA'),

@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
 from ez_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
 
 setup(
     name='normalise',
+    platforms=['any'],
     packages=find_packages(exclude=['tests', 'evaluation']),
     package_data={'normalise': ['data/*.pickle']},
     include_package_data=True,

@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division, print_function, unicode_literals
+
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
                              recall_score)
 
-from context import normalise
 from normalise.class_NUMB import run_clfNUMB, gen_frame
 from gold_standard_numbs import gs_numb_dict, gs_numb_tagged
 from gold_standard_full import gold_standard

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 element_dict = {
                 "Ac": "Actinium",
                 "Ag": "Silver",

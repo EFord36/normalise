@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 gs_numb_dict = {
                 2: ("4", "NUMB"),
                 5: ("4", "NUMB"),

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 gold_standard = [
                  "BBC",
                  "Radio",

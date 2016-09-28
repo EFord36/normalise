@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 tech_words = [
               'accelerometer',
               'android',

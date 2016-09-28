@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division, print_function, unicode_literals
+
 import re
 
 from roman import romanNumeralPattern, fromRoman
@@ -26,8 +30,8 @@ def expand_fraction(n):
                 numbers = ['3', '4', '5', '6', '7', '8', '9', '10', '11', '12',
                            '13', '14', '15', '16', '17', '18', '19']
                 fractions = ['third', 'quarter', 'fifth', 'sixth', 'seventh',
-                             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth', 
-                             'thirteenth', 'fourteenth', 'fifteenth', 
+                             'eighth', 'ninth', 'tenth', 'eleventh', 'twelfth',
+                             'thirteenth', 'fourteenth', 'fifteenth',
                              'sixteenth', 'seventeenth', 'eighteenth',
                              'nineteenth']
                 if first == '1':
@@ -824,7 +828,7 @@ def expand_NDATE(w, variety="BrE"):
         raise
     except:
         return w
-            
+
 
 
 def expand_PRCT(w):

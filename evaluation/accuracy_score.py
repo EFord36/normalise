@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import division, print_function, unicode_literals
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import (accuracy_score, confusion_matrix, precision_score,
 recall_score)
 
-from context import normalise
 from gold_standard_dict import gold_standard_dict, gold_standard_tagged
 from normalise.tagger import tagify
 

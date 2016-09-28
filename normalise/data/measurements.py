@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 meas_dict = {
              "%": "percent",
              "°C": "degree Celsius",

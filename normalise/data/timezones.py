@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 timezone_dict = {
                  "ACDT": "Australian Central Daylight Time",
                  "ACST": "Australian Central Standard Time",
