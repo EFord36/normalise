@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name='normalise',
     packages=find_packages(exclude='tests, evaluation'),
-    version='1.0',
+    version='0.1.0',
     description='A module to normalise non-standard words in text',
     author='Elliot Ford, Emma Flint',
     author_email='ef355@cam.ac.uk',
@@ -16,8 +16,8 @@ setup(
     classifiers=[
         "Natural Language :: English",
         "Topic :: Text Processing",
-        "License :: OSI Approved :: "
-        + "GNU General Public License v3 or later (GPLv3+)"
+        ("License :: OSI Approved :: "
+        "GNU General Public License v3 or later (GPLv3+)")
     ],
     install_requires=['nltk', 'scikit-learn', 'numpy', 'roman']
 )
