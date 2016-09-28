@@ -5,6 +5,7 @@ from __future__ import division, print_function, unicode_literals
 import sys
 import re
 import pickle
+from io import open
 
 import numpy as np
 from sklearn.semi_supervised import LabelPropagation as lp

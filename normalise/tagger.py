@@ -5,6 +5,7 @@ from __future__ import division, print_function, unicode_literals
 import sys
 import re
 import pickle
+from io import open
 
 from normalise.detect import mod_path
 from normalise.data.measurements import meas_dict

@@ -5,6 +5,8 @@ from __future__ import division, print_function, unicode_literals
 import os
 import sys
 import pickle
+from io import open
+
 from nltk import WordNetLemmatizer
 from nltk.corpus import words
 from nltk.corpus import nps_chat

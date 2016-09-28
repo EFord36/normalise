@@ -3,6 +3,7 @@
 from __future__ import division, print_function, unicode_literals
 
 import re
+from io import open
 
 from roman import romanNumeralPattern, fromRoman
 from normalise.class_NUMB import gen_frame

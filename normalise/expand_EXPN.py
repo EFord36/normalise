@@ -6,6 +6,7 @@ from math import log
 from collections import defaultdict
 import re
 import pickle
+from io import open
 
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords

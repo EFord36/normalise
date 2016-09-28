@@ -4,6 +4,7 @@ from __future__ import division, print_function, unicode_literals
 
 import re
 import pickle
+from io import open
 
 from math import log
 from nltk import FreqDist as fd
