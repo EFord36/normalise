@@ -141,14 +141,20 @@ def looks_rangey(nsw):
     if m:
         if m.group(1) and m.group(3):
             if len(m.group(1)) == 4 and len(m.group(3)) == 2:
-                if int(m.group(1)[-2:]) < int(m.group(3)):
+                if m.group(1).isdigit() and m.group(3).isdigit():
+                    if int(m.group(1)[-2:]) < int(m.group(3)):
+                        return True
+                    else:
+                        return False
+                elif (m or n) and not range_vs_date_hyph(nsw):
                     return True
-                else:
-                    return False
-            elif ((int(m.group(1)) >= int(m.group(3))) or m.group(3).startswith('0')
+            elif m.group(1).isdigit() and m.group(3).isdigit():
+                if ((int(m.group(1)) >= int(m.group(3))) or m.group(3).startswith('0')
                 or m.group(1).startswith('0')):
-                return False
-            else:
+                    return False
+                else:
+                    return True
+            elif (m or n) and not range_vs_date_hyph(nsw):
                 return True
     elif (m or n) and not range_vs_date_hyph(nsw):
         return True
