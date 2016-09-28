@@ -3,6 +3,8 @@
 from __future__ import division, print_function, unicode_literals
 
 import os
+from sys import argv, stdout
+import argparse
 import pickle
 from io import open
 
@@ -184,3 +186,33 @@ def insert(text, verbose=True, variety='BrE', user_abbrevs={}):
                     final = final[1:]
                     out[rind] = final
     return out
+
+
+def rejoin(tokenized_text):
+    out = ''
+    for word in tokenized_text:
+        out += word
+        out += ' '
+    return out
+
+
+def main():
+    # script, f = argv
+    parser = argparse.ArgumentParser(description="""normalise text. Will use
+     simple default tokenizer and general abbrevations: to use custom tokenizer
+     and abbreviations import normalise function from the module.""")
+    parser.add_argument('text', metavar='P', type=str, nargs=1,
+                        help='The path of the text to be normalised')
+    parser.add_argument('--AmE', dest='variety', action='store_const',
+                        const='AmE', default='BrE',
+                        help='specify the variety as American English (default: British English)')
+    args = parser.parse_args()
+    f = args.text[0]
+    with open(f, mode='r') as raw:
+        text = raw.read()
+    i = f.rfind('.')
+    with open('{}_normalised{}'.format(f[:i], f[i:]), mode='w') as out:
+        out.write(rejoin(normalise(text, verbose=False, variety=args.variety)))
+
+if __name__ == '__main__':
+    main()
