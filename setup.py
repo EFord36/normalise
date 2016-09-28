@@ -4,7 +4,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='normalise',
-    packages=find_packages(exclude='tests, evaluation'),
+    packages=find_packages(exclude=['tests', 'evaluation']),
+    package_data={'normalise': ['data/*.pickle']},
+    include_package_data=True,
     version='0.1.0',
     description='A module to normalise non-standard words in text',
     author='Elliot Ford, Emma Flint',
