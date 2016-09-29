@@ -25,7 +25,7 @@ This module takes a text as input, and returns it in a normalised form, *ie.* ex
 
 ## 1. <a name="installation"><a/>Installation
 
-normalise requires Python 3. 
+normalise requires Python 3.
 
 To install the module (on Windows, Mac OS X, Linux, etc.) and to ensure that you have the latest version of pip and setuptools:
 
@@ -126,15 +126,15 @@ Out:
  'four hundred and fifty nine thousand pounds',
  'or near offer']
  ```
- 
+
 ### iii. <a name="command"><a/>Execute normalise from the command line
 
-From the command line, you can normalise text from a given .txt file. Use the command `normalise /path/to/your-file.txt`. This will print the normalised output, as well as save it to a separate file "your-file_normalised.txt" in the same directory as the original text. 
+From the command line, you can normalise text from a given .txt file. Use the command `normalise /path/to/your-file.txt`. This will print the normalised output, as well as save it to a separate file "your-file_normalised.txt" in the same directory as the original text.
 
 To specify the variety as American English, use `--AmE` (default is British English). For a verbose output, use `--V`:
 
 ```
-normalise /path/to/your_file.txt --AmE --V
+$ normalise /path/to/your_file.txt --AmE --V
 ```
 
 ## 3. <a name="example"><a/>Example
@@ -188,7 +188,7 @@ Out:
 * **Elliot Ford** - [EFord36](https://github.com/EFord36)
 * **Emma Flint** - [emmaflint27](https://github.com/emmaflint27)
 
-Our system is described in detail in Emma Flint, Elliot Ford, Olivia Thomas, Andrew Caines & Paula Buttery (2016) - A Text Normalisation System for Non-Standard Words. 
+Our system is described in detail in Emma Flint, Elliot Ford, Olivia Thomas, Andrew Caines & Paula Buttery (2016) - A Text Normalisation System for Non-Standard Words.
 
 ## 5. <a name="license"><a/>License
 
