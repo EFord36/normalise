@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from ez_setup import use_setuptools
-use_setuptools()
 from setuptools import setup, find_packages
 from codecs import open
 from os import path
