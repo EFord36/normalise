@@ -1,2 +1,1 @@
-include normalise/data/*.pickle
-include data/*.pickle
+recursive-include normalise *.pickle
