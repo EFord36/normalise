@@ -6,7 +6,7 @@ from normalise import normalise, rejoin
 
 def main():
     parser = argparse.ArgumentParser(description="""normalises text in file
-     at path given (path/name.extention'), and stores in 'file_normalised' (path/name_normalised.extention). Will use
+     at path given (path/name.extension'), and stores in 'file_normalised' (path/name_normalised.extention). Will use
      simple default tokenizer and general abbrevations: to use custom tokenizer
      and abbreviations import normalise function from the module.""")
     parser.add_argument('text', metavar='P', type=str, nargs=1,
