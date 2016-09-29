@@ -18,9 +18,12 @@ Table of Contents
 
 #. `Installation <#installation>`__
 #. `Usage <#usage>`__
-    i. `Customise to your variety`
-    ii. `Input your own abbreviation dictionary`
-    iii. `Execute normalise from the command line`
+    2.1. `Customise to your variety`
+    
+    2.2. `Input your own abbreviation dictionary`
+
+    2.3. `Execute normalise from the command line`
+
 #. `Example <#example>`__
 #. `Authors <#authors>`__
 #. `License <#license>`__
@@ -97,8 +100,8 @@ tags, and expansion, use the ``list_NSWs`` function:
        12: ('£35', 'NUMB', 'MONEY', 'thirty five pounds')}
 
 
-i. Customise to your variety
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.1. Customise to your variety
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In order to customise normalisation to your variety of English, use
 ``variety="BrE"`` for British English, or ``variety="AmE"`` for American
@@ -116,8 +119,8 @@ English:
 
 If a variety is not specified, our default is British English.
 
-ii. Input your own abbreviation dictionary
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2.2. Input your own abbreviation dictionary
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although our system aims to be domain-general, users can input their own
 dictionary of abbreviations in order to tailor to a specific domain.
@@ -142,9 +145,8 @@ This can be done using the keyword argument ``user_abbrevs={}``:
      ',',
      'four hundred and fifty nine thousand pounds',
      'or near offer']
-     ```
 
-iii. Execute normalise from the command line
+2.3. Execute normalise from the command line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     From the command line, you can normalise text from a given .txt file. Use the command `normalise /path/to/your-file.txt`. This will print the normalised output, as well as save it to a separate file "your-file_normalised.txt" in the same directory as the original text.
@@ -161,50 +163,50 @@ A further example demonstrating the expansion of more types of NSW
 (including abbreviations, spelling mistakes, percentage ranges,
 currency):
 
-| \`\`\`python
-| text = ["On", "the", "13", "Feb.", "2007", ",", "Theresa", "May",
-  "MP", "announced",
-| "on", "ITV", "News", "that", "the", "rate", "of", "childhod",
-  "obesity", "had", "risen",
-| "from", "7.3-9.6%", "in", "just", "3", "years", ",", "costing", "the",
-  "Gov.", "£20m", "."]
+.. code:: python
 
-normalise(text, verbose=True)
+    text = ["On", "the", "13", "Feb.", "2007", ",", "Theresa", "May",
+    "MP", "announced",
+    "on", "ITV", "News", "that", "the", "rate", "of", "childhod",
+    "obesity", "had", "risen",
+    "from", "7.3-9.6%", "in", "just", "3", "years", ",", "costing", "the",
+    "Gov.", "£20m", "."]
 
-| Out:
-| ['On',
-|  'the',
-|  'thirteenth of',
-|  'February',
-|  'two thousand and seven',
-|  'Theresa',
-|  'May',
-|  'M P',
-|  'announced',
-|  'on',
-|  'I T V',
-|  'News',
-|  'that',
-|  'the',
-|  'rate',
-|  'of',
-|  'childhood',
-|  'obesity',
-|  'had',
-|  'risen',
-|  'from',
-|  'seven point three to nine point six percent',
-|  'in',
-|  'just',
-|  'three',
-|  'years',
-|  ',',
-|  'costing',
-|  'the',
-|  'government',
-|  'twenty million pounds',
-|  '.']
-|  \`\`\`
+    normalise(text, verbose=True)
+
+    Out:
+    ['On',
+     'the',
+     'thirteenth of',
+     'February',
+     'two thousand and seven',
+     'Theresa',
+     'May',
+     'M P',
+     'announced',
+     'on',
+     'I T V',
+     'News',
+     'that',
+     'the',
+     'rate',
+     'of',
+     'childhood',
+     'obesity',
+     'had',
+     'risen',
+     'from',
+     'seven point three to nine point six percent',
+     'in',
+     'just',
+     'three',
+     'years',
+     ',',
+     'costing',
+     'the',
+     'government',
+     'twenty million pounds',
+     '.']
 
 4. Authors
 ----------
