@@ -190,6 +190,7 @@ def insert(text, verbose=True, variety='BrE', user_abbrevs={}):
 def rejoin(tokenized_text):
     out = ''
     for word in tokenized_text:
-        out += word
-        out += ' '
+        if word:
+            out += word
+            out += ' '
     return out
