@@ -216,7 +216,9 @@ def main():
         text = raw.read()
     i = f.rfind('.')
     with open('{}_normalised{}'.format(f[:i], f[i:]), mode='w') as out:
-        out.write(rejoin(normalise(text, verbose=args.verbose, variety=args.variety)))
+        norm = rejoin(normalise(text, verbose=args.verbose, variety=args.variety))
+        print(norm)
+        out.write(norm)
 
 if __name__ == '__main__':
     main()
