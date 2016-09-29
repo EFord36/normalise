@@ -16,6 +16,7 @@ This module takes a text as input, and returns it in a normalised form, *ie.* ex
 2. [Usage](#usage)
   2. [Customise to your variety](#variety)
   2. [Input your own abbreviation dictionary](#abbrevs)
+  2. [Execute normalise from the command line](#command)
 3. [Example](#example)
 4. [Authors](#authors)
 5. [License](#license)
@@ -125,6 +126,16 @@ Out:
  'four hundred and fifty nine thousand pounds',
  'or near offer']
  ```
+ 
+### iii. <a name="command"><a/>Execute normalise from the command line
+
+From the command line, you can normalise text from a given .txt file. Use the command `normalise /path/to/your-file.txt`. This will print the normalised output, as well as save it to a separate file "your-file_normalised.txt" in the same directory as the original text. 
+
+To specify the variety as American English, use `--AmE` (default is British English). For a verbose output, use `--V`:
+
+```
+normalise /path/to/your_file.txt --AmE --V
+```
 
 ## 3. <a name="example"><a/>Example
 
