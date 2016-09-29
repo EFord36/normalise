@@ -277,10 +277,14 @@ def looks_datey(nsw, context):
     """Return 'True' if nsw looks like a valid date."""
     m = date_pattern.match(nsw)
     if date_pattern.match(nsw):
-        if (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32
+        if m.group(1) and m.group(3) and m.group(5):
+            return True
+        elif (int(m.group(1)) <= 12 and 12 < int(m.group(3)) < 32
             or 12 < int(m.group(1)) < 32 and int(m.group(3)) <= 12):
                 return True
         elif context[1] == 'on' or context[1].lower() == 'on':
+            return True
+        elif m.group(1).startswith('0') or m.group(3).startswith('0'):
             return True
         else:
             return False
