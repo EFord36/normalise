@@ -12,7 +12,6 @@ setup(
     name='normalise',
     platforms=['any'],
     packages=find_packages(exclude=['tests', 'evaluation']),
-    package_data={'normalise': ['data/*.pickle']},
     include_package_data=True,
     version='0.1.2',
     description='A module to normalise non-standard words in text',

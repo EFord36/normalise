@@ -1,0 +1,2 @@
+include normalise/data/*.pickle
+include data/*.pickle
