@@ -28,7 +28,7 @@ with open('{}/data/pos_dicts.pickle'.format(mod_path), mode='rb') as file:
     pos_tag_dict, pos_tag_dict_univ = pickle.load(file)
 
 with open('{}/data/abbrev_dict.pickle'.format(mod_path), mode='rb') as file:
-    abbrevs = pickle.load(file)
+    abbrevs_orig = pickle.load(file)
 
 with open('{}/data/sig_dict.pickle'.format(mod_path), mode='rb') as file:
     sig_dict = pickle.load(file)
@@ -46,16 +46,19 @@ def expand_EXPN(nsw, i, text, user_abbrevs={}):
     try:
         if user_abbrevs:
             abbrevs = create_user_abbrevs(user_abbrevs)
+        else:
+            abbrevs = abbrevs_orig   
         if nsw in ['St.', 'st.', 'St']:
-            if text[i + 1].lower() in names_lower:
-                return 'Saint'
-            elif text[i + 1].endswith("'s"):
-                if text[i + 1][:-2].lower() in names_lower:
+            if i < len(text):
+                if text[i + 1].lower() in names_lower:
                     return 'Saint'
-            elif text[i - 1].istitle():
-                return 'street'
-            elif text[i + 1].istitle():
-                return 'Saint'
+                elif text[i + 1].endswith("'s"):
+                    if text[i + 1][:-2].lower() in names_lower:
+                           return 'Saint'
+                elif text[i - 1].istitle():
+                    return 'street'
+                elif text[i + 1].istitle():
+                    return 'Saint'
         elif nsw in meas_dict:
             if isinstance(i, int):
                 if is_digbased(text[i - 1]):
