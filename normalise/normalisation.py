@@ -2,7 +2,6 @@
 
 from __future__ import division, print_function, unicode_literals
 
-import os
 from sys import argv, stdout
 import argparse
 import pickle
@@ -96,7 +95,8 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
 
 
 def tokenize_basic(text):
-    guess = text.split(' ')
+
+    guess = [d for w in text.split(' ') for d in w.split('\n')]
     out = []
     for i in range(len(guess) - 1):
         if not guess[i]:
