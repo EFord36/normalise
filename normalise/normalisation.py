@@ -2,9 +2,6 @@
 
 from __future__ import division, print_function, unicode_literals
 
-import os
-from sys import argv, stdout
-import argparse
 import pickle
 from io import open
 
@@ -96,7 +93,7 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
 
 
 def tokenize_basic(text):
-    guess = text.split(' ')
+    guess = [d for w in text.split(' ') for d in w.split('\n')]
     out = []
     for i in range(len(guess) - 1):
         if not guess[i]:
@@ -130,7 +127,9 @@ def tokenize_basic(text):
             out.extend([guess[i][:-1], guess[i][-1]])
         else:
             out.append(guess[i])
-    if guess[-1].isalpha():
+    if not guess[-1]:
+        pass
+    elif guess[-1].isalpha():
         out.append(guess[-1])
     elif guess[-1][-1] in ['!', '?'] and guess[-1][:-1].isalpha():
         out.extend([guess[-1][:-1], guess[-1][-1]])
@@ -191,32 +190,7 @@ def insert(text, verbose=True, variety='BrE', user_abbrevs={}):
 def rejoin(tokenized_text):
     out = ''
     for word in tokenized_text:
-        out += word
-        out += ' '
+        if word:
+            out += word
+            out += ' '
     return out
-
-
-def main():
-    # script, f = argv
-    parser = argparse.ArgumentParser(description="""normalises text in file
-     at path given (path/name.extention'), and stores in 'file_normalised' (path/name_normalised.extention). Will use
-     simple default tokenizer and general abbrevations: to use custom tokenizer
-     and abbreviations import normalise function from the module.""")
-    parser.add_argument('text', metavar='P', type=str, nargs=1,
-                        help='The path of the text to be normalised')
-    parser.add_argument('--AmE', dest='variety', action='store_const',
-                        const='AmE', default='BrE',
-                        help='specify the variety as American English (default: British English)')
-    parser.add_argument('--V', dest='verbose', action='store_const',
-                        const=True, default=False,
-                        help='specify verbose output (default: False)')
-    args = parser.parse_args()
-    f = args.text[0]
-    with open(f, mode='r') as raw:
-        text = raw.read()
-    i = f.rfind('.')
-    with open('{}_normalised{}'.format(f[:i], f[i:]), mode='w') as out:
-        out.write(rejoin(normalise(text, verbose=args.verbose, variety=args.variety)))
-
-if __name__ == '__main__':
-    main()
