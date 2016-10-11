@@ -20,7 +20,7 @@ setup(
     author_email='ef355@cam.ac.uk',
     license="GPL",
     url='https://github.com/EFord36/normalise',
-    download_url='https://github.com/EFord36/normalise/tarball/0.1.5',
+    download_url='https://github.com/EFord36/normalise/tarball/0.1.6',
     keywords=['normalisation', 'text', 'pre-processing'],
     classifiers=[
         "Natural Language :: English",
