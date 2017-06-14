@@ -193,4 +193,4 @@ def rejoin(tokenized_text):
         if word:
             out += word
             out += ' '
-    return out
+    return out[:-1]

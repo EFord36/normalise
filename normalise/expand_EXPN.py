@@ -47,7 +47,7 @@ def expand_EXPN(nsw, i, text, user_abbrevs={}):
         if user_abbrevs:
             abbrevs = create_user_abbrevs(user_abbrevs)
         else:
-            abbrevs = abbrevs_orig   
+            abbrevs = abbrevs_orig
         if nsw in ['St.', 'st.', 'St']:
             if i < len(text):
                 if text[i + 1].lower() in names_lower:
