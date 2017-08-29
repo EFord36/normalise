@@ -79,8 +79,10 @@ def is_digbased(w):
         return is_digbased(w[:-3])
     elif w[-2:] in ['st', 'nd', 'rd', 'th']:
         return is_digbased(w[:-2])
-    elif w[-1].lower() in end_dict or w[-1] == 's':
+    elif w[-1] == 's':
         return is_digbased(w[:-1])
+    elif w[0] in curr_list and w[-1] in end_dict:
+        return is_digbased(w[1:-1])
     elif w[0] in curr_list:
         return is_digbased(w[1:])
     elif w[0] == "'" and w[1:].isdigit():
