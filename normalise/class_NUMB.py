@@ -168,7 +168,7 @@ def looks_rangey(nsw):
 
 
 def year_size(nsw):
-    """Return '1' if nsw is greater than 1800."""
+    """Return '1' if nsw is greater than 1800 and less than 2050."""
     if not nsw.isdigit():
         return False
     elif 1800 < int(nsw) < 2050:
