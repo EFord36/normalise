@@ -9,6 +9,7 @@ from io import open
 
 from normalise.detect import mod_path
 from normalise.tagger import tagify, NSWs, is_digbased, only_alpha
+from normalise.data.measurements import meas_dict
 
 with open('{}/data/wordlist.pickle'.format(mod_path), mode='rb') as file:
     wordlist = pickle.load(file)
@@ -100,6 +101,8 @@ def retagify(dic, verbose=True):
                len(it) <= 3 or (it[-1] == 's' and not
                mixedcase_pattern.match(it[:-1])))):
                     out.update({ind: (it, tag + 'ALPHA')})
+        elif it in meas_dict:
+            out.update({ind: (it, tag + 'ALPHA')})
         else:
             out.update({ind: (it, tag + 'MISC')})
     if verbose:
