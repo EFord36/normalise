@@ -166,6 +166,8 @@ def mixedalnum_split(nsw):
             else:
                 pass
         out.append(nsw[ind:])
+        if len(out)==3 and is_digbased(out[0]) and out[2].isdigit() and out[1] + out[2] in meas_dict:
+            out = [out[0], out[1] + out[2]]
         return out
     except(KeyboardInterrupt, SystemExit):
         raise
