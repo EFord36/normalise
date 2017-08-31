@@ -29,12 +29,12 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
         print("\nCREATING NSW DICTIONARY")
         print("-----------------------\n")
 
-    NSWs = create_NSW_dict(text, verbose=True)
+    NSWs = create_NSW_dict(text, verbose=verbose)
     if verbose:
         print("{} NSWs found\n".format(len(NSWs)))
         print("TAGGING NSWs")
         print("------------\n")
-    tagged = tagify(NSWs, verbose=True)
+    tagged = tagify(NSWs, verbose=verbose)
     ALPHA_dict = {}
     NUMB_dict = {}
     MISC_dict = {}
@@ -52,11 +52,11 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
     if verbose:
         print("SPLITTING NSWs")
         print("--------------\n")
-    splitted = split(SPLT_dict, verbose=True)
+    splitted = split(SPLT_dict, verbose=verbose)
     if verbose:
         print("RETAGGING SPLIT NSWs")
         print("--------------------\n")
-    retagged = retagify(splitted, verbose=True)
+    retagged = retagify(splitted, verbose=verbose)
     for item in retagged.items():
         tag = item[1][1]
         if tag == 'SPLT-ALPHA':
@@ -68,27 +68,27 @@ def list_NSWs(text, verbose=True, variety='BrE', user_abbrevs={}):
     if verbose:
         print("CLASSIFYING ALPHABETIC NSWs")
         print("---------------------------\n")
-    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=True, user_abbrevs=user_abbrevs)
+    tagged_ALPHA = run_clfALPHA(ALPHA_dict, text, verbose=verbose, user_abbrevs=user_abbrevs)
     if verbose:
         print("CLASSIFYING NUMERIC NSWs")
         print("------------------------\n")
-    tagged_NUMB = run_clfNUMB(NUMB_dict, text, verbose=True)
+    tagged_NUMB = run_clfNUMB(NUMB_dict, text, verbose=verbose)
     if verbose:
         print("CLASSIFYING MISCELLANEOUS NSWs")
         print("------------------------------\n")
-    tagged_MISC = tag_MISC(MISC_dict, verbose=True)
+    tagged_MISC = tag_MISC(MISC_dict, verbose=verbose)
     if verbose:
         print("EXPANDING ALPHABETIC NSWs")
         print("-------------------------\n")
-    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+    expanded_ALPHA = expand_all(tagged_ALPHA, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     if verbose:
         print("EXPANDING NUMERIC NSWs")
         print("----------------------\n")
-    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+    expanded_NUMB = expand_all(tagged_NUMB, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     if verbose:
         print("EXPANDING MISCELLANEOUS NSWs")
         print("----------------------------\n")
-    expanded_MISC = expand_all(tagged_MISC, text, verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+    expanded_MISC = expand_all(tagged_MISC, text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     return expanded_ALPHA, expanded_NUMB, expanded_MISC
 
 
@@ -150,17 +150,17 @@ def normalise(text, tokenizer=tokenize_basic, verbose=True, variety='BrE', user_
             print("NOTE: using basic tokenizer.\n"
                   "For better results, input tokenized text,"
                   " or use a custom tokenizer")
-            return insert(tokenizer(text), verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+            return insert(tokenizer(text), verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
         else:
-            return insert(tokenizer(text), verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+            return insert(tokenizer(text), verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     else:
-        return insert(text, verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+        return insert(text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
 
 
 def insert(text, verbose=True, variety='BrE', user_abbrevs={}):
     (expanded_ALPHA,
     expanded_NUMB,
-    expanded_MISC) = list_NSWs(text, verbose=True, variety=variety, user_abbrevs=user_abbrevs)
+    expanded_MISC) = list_NSWs(text, verbose=verbose, variety=variety, user_abbrevs=user_abbrevs)
     out = text[:]
     split_dict = {}
     for item in (expanded_ALPHA, expanded_NUMB, expanded_MISC):
