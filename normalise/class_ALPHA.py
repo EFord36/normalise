@@ -92,7 +92,7 @@ def run_clfALPHA(dic, text, verbose=True, user_abbrevs={}):
             sys.stdout.flush()
         if romanNumeralPattern.match(nsw) and gen_frame((ind, (nsw, tag)), text)[1].lower() in names_lower:
             out.update({ind: (nsw, 'NUMB', 'NORD')})
-        if nsw in user_abbrevs:
+        elif nsw in user_abbrevs:
             out.update({ind: (nsw, 'ALPHA', 'EXPN')})
         else:
             pred_int = int(clf.predict(gen_featuresetsALPHA({ind: (nsw, tag)}, text)))
