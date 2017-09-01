@@ -163,6 +163,10 @@ def mixedalnum_split(nsw):
                     out.append(nsw[ind:i])
                     cat = 'let'
                     ind = i
+            elif nsw[i]=='°' and cat=='num' and nsw[i+1:] in ['C', 'F', 'K', 'Re']:
+                out.append(nsw[ind:i])
+                ind = i
+                break
             else:
                 pass
         out.append(nsw[ind:])
