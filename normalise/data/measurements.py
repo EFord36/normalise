@@ -4,6 +4,7 @@ meas_dict = {
              "%": "percent",
              "°C": "degree Celsius",
              "°F": "degree Fahrenheit",
+             "°K": "degrees Kelvin",
              "F": "Fahrenheit",
              "°Re": "degree Reaumur",
              "amu": "atomic mass unit",
