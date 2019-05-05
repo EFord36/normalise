@@ -147,6 +147,8 @@ def expand_EXPN(nsw, i, text, user_abbrevs={}):
             return exp
     except(KeyboardInterrupt, SystemExit):
         raise
+    except LookupError:
+        raise
     except:
         return nsw
 
