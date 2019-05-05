@@ -37,6 +37,13 @@ $ pip install normalise
 
 If `pip` installation fails, you can try `easy_install normalise`.
 
+normalise has several nltk data dependencies. Install these by running the following python commands:
+
+```python
+import nltk
+for dependency in ("brown", "names", "wordnet", "averaged_perceptron_tagger", "universal_tagset"):
+    nltk.download(dependency)
+```
 
 ## 2. <a name="usage"><a/>Usage
 
