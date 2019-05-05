@@ -78,12 +78,14 @@ Out:
 If your input is a string, you can use our basic tokenizer. For best results, input your own custom tokenizer.
 
 ```python
+from normalise import tokenize_basic
 normalise(text, tokenizer=tokenize_basic, verbose=True)
 ```
 
 In order to see a list of all NSWs in your text, along with their index, tags, and expansion, use the `list_NSWs` function:
 
 ```python
+from normalise import list_NSWs
 list_NSWs(text)
 
 Out:
