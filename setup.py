@@ -29,6 +29,6 @@ setup(
         ("License :: OSI Approved :: "
         "GNU General Public License v3 or later (GPLv3+)")
     ],
-    install_requires=['nltk', 'scikit-learn', 'numpy', 'roman', 'scipy'],
+    install_requires=['nltk', 'scikit-learn', 'roman'],
     entry_points={'console_scripts': ['normalise=normalise.command_line:main']}
 )
