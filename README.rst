@@ -45,6 +45,15 @@ that you have the latest version of pip and setuptools:
 
 If ``pip`` installation fails, you can try ``easy_install normalise``.
 
+normalise has several nltk data dependencies. Install these by running the following python commands:
+
+.. code:: python
+
+    import nltk
+
+    for dependency in ("brown", "names", "wordnet", "averaged_perceptron_tagger", "universal_tagset"):
+        nltk.download(dependency)
+
 2. Usage
 --------
 
@@ -83,6 +92,7 @@ results, input your own custom tokenizer.
 
 .. code:: python
 
+    from normalise import tokenize_basic
     normalise(text, tokenizer=tokenize_basic, verbose=True)
 
 In order to see a list of all NSWs in your text, along with their index,
@@ -90,6 +100,7 @@ tags, and expansion, use the ``list_NSWs`` function:
 
 .. code:: python
 
+    from normalise import list_NSWs
     list_NSWs(text)
 
      Out:
