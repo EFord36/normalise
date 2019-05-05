@@ -13,7 +13,7 @@ setup(
     platforms=['any'],
     packages=find_packages(exclude=['tests', 'evaluation']),
     include_package_data=True,
-    version='0.1.7',
+    version='0.1.8',
     description='A module to normalise non-standard words in text',
     long_description=long_description,
     author='Elliot Ford, Emma Flint',
