@@ -13,7 +13,7 @@ setup(
     platforms=['any'],
     packages=find_packages(exclude=['tests', 'evaluation']),
     include_package_data=True,
-    version='0.1.8',
+    version='0.1.9',
     summary='A module to normalise non-standard words in text',
     description=long_description,
     description_content_type='text/markdown',
@@ -21,7 +21,7 @@ setup(
     author_email='elliot.ford@hotmail.co.uk',
     license="GPL",
     url='https://github.com/EFord36/normalise',
-    download_url='https://github.com/EFord36/normalise/tarball/0.1.8',
+    download_url='https://github.com/EFord36/normalise/tarball/0.1.9',
     keywords=['normalisation', 'text', 'pre-processing'],
     classifiers=[
         "Natural Language :: English",
