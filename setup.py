@@ -17,7 +17,7 @@ setup(
     description='A module to normalise non-standard words in text',
     long_description=long_description,
     author='Elliot Ford, Emma Flint',
-    author_email='ef355@cam.ac.uk',
+    author_email='elliot.ford@hotmail.co.uk',
     license="GPL",
     url='https://github.com/EFord36/normalise',
     download_url='https://github.com/EFord36/normalise/tarball/0.1.7',
