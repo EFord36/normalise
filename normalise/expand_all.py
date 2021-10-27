@@ -107,7 +107,8 @@ def expand_WDLK(word):
         elif triple_rep(word):
             return expand_FNSP(word)
         else:
-            return correct(word)
+            # return correct(word)
+            return word
     except (KeyboardInterrupt, SystemExit):
         raise
     except:

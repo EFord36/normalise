@@ -386,6 +386,7 @@ def gen_frame(dict_tup, text):
                 tup += (text[i],)
     else:
         rind = round(ind)
+        rind = len(text) - 1 if rind > len(text) - 1 else rind
         full = text[rind]
         start = ''
         end = ''
